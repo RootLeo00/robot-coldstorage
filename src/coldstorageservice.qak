@@ -24,6 +24,10 @@ Event guicmd : guicmd(COMMAND, PARAMETER) //emitter:serviceaccessgui listener:co
 Dispatch startrobotservice : startrobotservice(ARG)  //sender:coldstorageservice receiver:coldstoragerobot
 
 Dispatch updatestorage : updatestorage(KG) //sender:coldstorageservice receiver:coldstorage
+//robot pos messages
+Request moverobot    :  moverobot(TARGETX, TARGETY)
+Reply moverobotdone  :  moverobotok(ARG)
+Reply moverobotfailed:  moverobotfailed(ARG)
 
 Context ctxall  ip [host="localhost" port=8720]
 Context ctxrobotpos   ip [host="127.0.0.1" port=8111] 
@@ -48,12 +52,12 @@ QActor coldstorageservice context ctxall{
     
   	State startticket{ 
   		onMsg(createticket:createticket(MASS)){
-  			[#
-  				Mass = payloadArg(0);	
-  			#]
+  			//[#
+  		//		Mass = payloadArg(0);	
+  		//	#]
   		println("startticket  ") 
   		//ask cold storage if there is enough space
-  		request coldstorage -m checkspace : checkspace($Mass)
+  		request coldstorage -m checkspace : checkspace(10)
   			
   		} 	
   			  
@@ -67,11 +71,11 @@ QActor coldstorageservice context ctxall{
 	}	  
 	State doticket{     	
 		//generate ticket code
-		[#
-			Ticket="paperinik"	
-		#]
+		//[#
+		//	Ticket="paperinik"	
+		//#]
 		//send ticket code to gui
-		replyTo createticket with acceptticket : acceptticket($Ticket)
+		replyTo createticket with acceptticket : acceptticket(paperinik)
 
 		
      }
@@ -88,7 +92,7 @@ QActor coldstorageservice context ctxall{
   	State updatecoldstorage {
   		
   		//add kg already arrived to cold storage
-  		forward coldstorage -m updatestorage:updatestorage($Mass)
+  		forward coldstorage -m updatestorage:updatestorage(10)
   	}
   	
    	Transition t0 whenRequest createticket -> startticket
@@ -146,23 +150,34 @@ QActor coldstoragerobot context ctxall{
 	Transition t0 whenMsg startrobotservice -> moverobottoindoor
 	State moverobottoindoor{
 		//send event "robot is in indoor"
-		emit robotisindoor : robotisindoor(ARG)
+		request worker -m moverobot:moverobot(1,6)
+		
 		
 	}
-	Goto moverobottostorage
+	Transition t0 whenReply moverobotdone -> moverobottostorage
+ 					whenReply moverobotfailed -> moverobottohome
 	//when robot has taken kg from camion -> move robot to coldstorage
 	State moverobottostorage{
-		//send event "robot is in storage"
-		emit robotisinstorage : robotisinstorage(ARG)
+		//send event "robot is in indoor"
+		emit robotisindoor : robotisindoor(ARG)
+		request worker -m moverobot:moverobot(3,5)
+		
 	}
-	Goto moverobottohome
+	Transition t0 whenReply moverobotdone -> moverobottohome
+ 					whenReply moverobotfailed -> moverobottohome
+	
 	//when robot has placed kg into storage -> move robot to home
 	State moverobottohome{
 		//send event "robot is in home"
+		onMsg(moverobotdone:moverobotdone(ARG)){
+			emit robotisinstorage : robotisinstorage(ARG)
+		}
 		emit robotisinhome : robotisinhome(ARG)
 	}
 	//wait next startcoldstoragerobot --> transition to moverobottoindoor
   	Transition t1 whenMsg startrobotservice -> moverobottoindoor
+  	
+  	
 }
 
 
@@ -174,7 +189,7 @@ QActor coldstoragerobot context ctxall{
 /*
  * Usa un supporto che emette streamevent 
    Converte streamevent in comando a appl */
-QActor serviceaccessgui context ctxall{
+QActor serviceaccessgui context ctxall{ 
 	State s0 initial{
 		printCurrentMessage		
 		[# gui.GuiUtils.createGui(myself) #]	
@@ -190,10 +205,10 @@ QActor serviceaccessgui context ctxall{
 		printCurrentMessage
 		// request ticket to coldstorageservice actor
 		onMsg ( guicmd : guicmd(createticket,MASS)){
-			[# CommUtils.outmagenta("request ticket creation") 
+			/*[# CommUtils.outmagenta("request ticket creation") 
 				Mass = payloadArg(1);
-			#]
-			request coldstorageservice -m createticket : createticket($Mass) 
+			#]*/
+			request coldstorageservice -m createticket : createticket(10) 
 		}
 		
 		
@@ -218,10 +233,10 @@ QActor serviceaccessgui context ctxall{
 	State handleticketfromuser{
 		// send camionin dispatch when truck is in the indoor area
 		onMsg ( guicmd : guicmd(insertticket,TICKET)){
-			[# CommUtils.outmagenta("insert ticket"); 
-				Ticket  = payloadArg(1);
-			#]
-			forward coldstorageservice -m camionin : camionin($Ticket) 
+			//[# CommUtils.outmagenta("insert ticket"); 
+			//	Ticket  = payloadArg(1);
+			//#]
+			forward coldstorageservice -m camionin : camionin(paperino) 
 		}
 	}
 	Goto waitticketrequest
