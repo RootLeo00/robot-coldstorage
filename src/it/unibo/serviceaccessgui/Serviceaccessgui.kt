@@ -72,9 +72,9 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t114",targetState="waitticketfromuser",cond=whenEvent("guicmd"))
+					 transition(edgeName="t114",targetState="handleticketfromuser",cond=whenEvent("guicmd"))
 				}	 
-				state("waitticketfromuser") { //this:State
+				state("handleticketfromuser") { //this:State
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("guicmd(COMMAND,PARAMETER)"), Term.createTerm("guicmd(insertticket,TICKET)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList

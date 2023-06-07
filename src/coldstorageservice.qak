@@ -213,9 +213,9 @@ QActor serviceaccessgui context ctxall{
 		}
 		
 	}
-	Transition t1 whenEvent guicmd -> waitticketfromuser	
+	Transition t1 whenEvent guicmd -> handleticketfromuser	
 	
-	State waitticketfromuser{
+	State handleticketfromuser{
 		// send camionin dispatch when truck is in the indoor area
 		onMsg ( guicmd : guicmd(insertticket,TICKET)){
 			[# CommUtils.outmagenta("insert ticket"); 
