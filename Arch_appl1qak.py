@@ -20,24 +20,20 @@ with Diagram('appl1qakArch', show=False, outformat='png', graph_attr=graphattr) 
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctxall', graph_attr=nodeattr):
-          appl=Custom('appl','./qakicons/symActorSmall.png')
-          consoleobs=Custom('consoleobs','./qakicons/symActorSmall.png')
-          sonarobs=Custom('sonarobs','./qakicons/symActorSmall.png')
-          obsforpath=Custom('obsforpath','./qakicons/symActorSmall.png')
-          console=Custom('console','./qakicons/symActorSmall.png')
+          coldstorageservice=Custom('coldstorageservice','./qakicons/symActorSmall.png')
+          coldstorage=Custom('coldstorage','./qakicons/symActorSmall.png')
+          coldstoragerobot=Custom('coldstoragerobot','./qakicons/symActorSmall.png')
+          serviceaccessgui=Custom('serviceaccessgui','./qakicons/symActorSmall.png')
      with Cluster('ctxrobotpos', graph_attr=nodeattr):
           worker=Custom('worker(ext)','./qakicons/externalQActor.png')
-     appl >> Edge(color='blue', style='solid', xlabel='restart', fontcolor='blue') >> appl
-     consoleobs >> Edge(color='blue', style='solid', xlabel='stopappl', fontcolor='blue') >> appl
-     consoleobs >> Edge(color='blue', style='solid', xlabel='resumeappl', fontcolor='blue') >> appl
-     sys >> Edge(color='red', style='dashed', xlabel='sonardata', fontcolor='red') >> sonarobs
-     sonarobs >> Edge(color='blue', style='solid', xlabel='stopcmd', fontcolor='blue') >> appl
-     sonarobs >> Edge(color='blue', style='solid', xlabel='resumecmd', fontcolor='blue') >> appl
-     sys >> Edge(color='red', style='dashed', xlabel='info', fontcolor='red') >> obsforpath
-     sys >> Edge(color='red', style='dashed', xlabel='guicmd', fontcolor='red') >> console
-     sys >> Edge(color='red', style='dashed', xlabel='getpath', fontcolor='red') >> console
-     console >> Edge(color='blue', style='solid', xlabel='startcmd', fontcolor='blue') >> appl
-     console >> Edge(color='blue', style='solid', xlabel='stopcmd', fontcolor='blue') >> appl
-     console >> Edge(color='blue', style='solid', xlabel='resumecmd', fontcolor='blue') >> appl
-     console >> Edge(color='magenta', style='solid', xlabel='getpath', fontcolor='magenta') >> appl
+     coldstorageservice >> Edge(color='magenta', style='solid', xlabel='checkspace', fontcolor='magenta') >> coldstorage
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='startrobotservice', fontcolor='blue') >> coldstoragerobot
+     sys >> Edge(color='red', style='dashed', xlabel='robotincoldstorage', fontcolor='red') >> coldstorageservice
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='updatestorage', fontcolor='blue') >> coldstorage
+     coldstoragerobot >> Edge( xlabel='robotisindoor', **eventedgeattr, fontcolor='red') >> sys
+     coldstoragerobot >> Edge( xlabel='robotisinstorage', **eventedgeattr, fontcolor='red') >> sys
+     coldstoragerobot >> Edge( xlabel='robotisinhome', **eventedgeattr, fontcolor='red') >> sys
+     sys >> Edge(color='red', style='dashed', xlabel='guicmd', fontcolor='red') >> serviceaccessgui
+     serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='createticket', fontcolor='magenta') >> coldstorageservice
+     serviceaccessgui >> Edge(color='blue', style='solid', xlabel='camionin', fontcolor='blue') >> coldstorageservice
 diag

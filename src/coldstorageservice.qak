@@ -5,7 +5,7 @@ System /* -msglog */ appl1qak
 
 //Dispatch startcmd   : start( ARG ) 			//sender:serviceaccessgui receiver:appl
 Request createticket : createticket( ARG ) 			//sender:serviceaccessgui receiver:coldstorageservice
-Reply acceptticket    : acceptticket( ARG )
+Reply acceptticket    : acceptticket( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
 Reply denyticket    : denyticket( ARG ) //sender:coldstorageservice receiver:serviceaccessgui
 
 Request checkspace : checkspace( ARG ) 			//sender:coldstorageservice receiver:coldstorage
@@ -15,13 +15,11 @@ Reply notenoughspace    : notenoughspace( ARG )
 //Dispatch failticket : failticket(ARG) 
 Dispatch camionin : camionin(ARG) //sender:serviceaccessgui receiver:coldstorageservice
 
-Dispatch ticketgenerated : ticketgenerated(CODE) //sender:coldstorageservice receiver:serviceaccessgui
-
 Event robotincoldstorage : robotincoldstorage(ARG) //emitter:coldstorage listener:coldstorageservice
 Event robotisindoor : robotisindoor(ARG)  //emitter:coldstoragerobot listener:coldstorageservice
 Event robotisinstorage : robotisinstorage(ARG)  //emitter:coldstoragerobot listener:coldstorageservice
 Event robotisinhome : robotisinhome(ARG)  //emitter:coldstoragerobot listener:coldstorageservice
-Event guicmd : guicmd(ARG) //emitter:serviceaccessgui listener:coldstorageservice
+Event guicmd : guicmd(COMMAND, PARAMETER) //emitter:serviceaccessgui listener:coldstorageservice
 
 Dispatch startrobotservice : startrobotservice(ARG)  //sender:coldstorageservice receiver:coldstoragerobot
 
@@ -33,7 +31,7 @@ Context ctxrobotpos   ip [host="127.0.0.1" port=8111]
 ExternalQActor worker context ctxrobotpos
 
 /*  
- * ------------------------------------------------------------------
+ * --------------------------------------------------------ARG----------
  *  coldstorageservice 
  * ------------------------------------------------------------------
 */     
@@ -43,20 +41,21 @@ QActor coldstorageservice context ctxall{
 
 	State s0 initial {	 
 		println("&&&  appl coldstorageservice is now ACTIVE ...") 
-		//Da spostare in basicrobot ...
-		[#  //unibo.basicomm23.utils.Connection.trace=true
-			utils.Appl1Startup.setConfigFilePath("./robotConfig.json");
-			CommUtils.outblue(name + " | init $currentMsg"   ) 
-		#] 	
+			
 		
-//		delegate "isrunning" to obsforpath
    	}  
    	Transition t0 whenRequest createticket -> startticket
     
-  	State startticket{  	
+  	State startticket{ 
+  		onMsg(createticket:createticket(MASS)){
+  			[#
+  				Mass = payloadArg(0);	
+  			#]
   		println("startticket  ") 
   		//ask cold storage if there is enough space
-  		request coldstorage -m checkspace : checkspace($kg)
+  		request coldstorage -m checkspace : checkspace($Mass)
+  			
+  		} 	
   			  
 	}
 	Transition t0 whenReply  enoughspace -> doticket   
@@ -64,13 +63,16 @@ QActor coldstorageservice context ctxall{
 	 		
 	State failticket{
 		//send message that ticket is not accepted
-		replyTo createticket with denyticket : denyticket(ARG)
+		replyTo createticket with denyticket : denyticket(deny)
 	}	  
 	State doticket{     	
 		//generate ticket code
-		
+		[#
+			Ticket="paperinik"	
+		#]
 		//send ticket code to gui
-		forward serviceaccessgui -m ticketgenerated($code)
+		replyTo createticket with acceptticket : acceptticket($Ticket)
+
 		
      }
   	Transition t0 whenMsg camionin -> startcoldstoragerobot
@@ -86,7 +88,7 @@ QActor coldstorageservice context ctxall{
   	State updatecoldstorage {
   		
   		//add kg already arrived to cold storage
-  		forward coldstorage -m updatestorage($kg)
+  		forward coldstorage -m updatestorage:updatestorage($Mass)
   	}
   	
    	Transition t0 whenRequest createticket -> startticket
@@ -178,28 +180,58 @@ QActor serviceaccessgui context ctxall{
 		[# gui.GuiUtils.createGui(myself) #]	
 			
 	}
-	Goto waitevents
+	Goto waitticketrequest
 	
-	State waitevents{}
-	Transition t0 whenEvent guicmd -> handleGuicmd
-	              whenReply getpath -> handleGuigetpath
+	State waitticketrequest{}
+	Transition t0 whenEvent guicmd -> handleticketrequest
+	             
 	
-	State handleGuicmd {
+	State handleticketrequest {
 		printCurrentMessage
-		onMsg ( guicmd : guicmd(createticket)){
-			[# CommUtils.outmagenta("serviceaccessgui createticket") #]
-			request coldstorageservice -m createticket : createticket(serviceaccessgui) 
+		// request ticket to coldstorageservice actor
+		onMsg ( guicmd : guicmd(createticket,MASS)){
+			[# CommUtils.outmagenta("request ticket creation") 
+				Mass = payloadArg(1);
+			#]
+			request coldstorageservice -m createticket : createticket($Mass) 
 		}
+		
+		
 	} 
 		Transition t1 whenReply acceptticket -> ticketaccepted
 						whenReply denyticket -> ticketdenied
 		
 	State ticketaccepted {
+		//print ticket
+		[# CommUtils.outgreen("ticket"+ticket) #]
+		onMsg( acceptticket : acceptticket(TICKET)){
+			[# 
+				Ticket  = payloadArg(0);
+				CommUtils.outmagenta("ticket: "+ Ticket); 
+			#]
+			
+		}
 		
-	}	
+	}
+	Transition t1 whenEvent guicmd -> waitticketfromuser	
+	
+	State waitticketfromuser{
+		// send camionin dispatch when truck is in the indoor area
+		onMsg ( guicmd : guicmd(insertticket,TICKET)){
+			[# CommUtils.outmagenta("insert ticket"); 
+				Ticket  = payloadArg(1);
+			#]
+			forward coldstorageservice -m camionin : camionin($Ticket) 
+		}
+	}
+	Goto waitticketrequest
 	
 	State  ticketdenied{
+		//print red
+		[# CommUtils.outred("not enough space") #]
+		
 	}
+	Goto waitticketrequest
 }
 
  
