@@ -19,11 +19,13 @@ public class GuiObsForQak implements IObserver {
     @Override
     public void update(String move) {
         IApplMessage curMsg ;
-        if( move.equals("getpath") ){
-            curMsg = CommUtils.buildEvent("gui", "getpath", "getpath(gui)" );
+        /*if( move.equals("acceptticket") ){
+            curMsg = CommUtils.buildEvent("gui", "guicmd", "getpath(gui)" );
         }else {
-            curMsg = CommUtils.buildEvent("gui",  "guicmd", "guicmd("+move+")" );
-        }
+            curMsg = CommUtils.buildEvent("gui",  "guicmd", "guicmd("+move+",10)" );
+        }*/
+        curMsg = CommUtils.buildEvent("gui",  "guicmd", "guicmd("+move+",10)" );
+        
         //MsgUtil.emitLocalStreamEvent(curMsg, owner, null);
         owner.sendMsgToMyself(curMsg);
         CommUtils.outyellow("GuiObsForQak emits: " + curMsg);

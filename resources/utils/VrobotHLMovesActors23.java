@@ -85,7 +85,7 @@ public class VrobotHLMovesActors23 extends ApplAbstractObserver implements IVrob
             while (moveResult == null) {
                 wait();
             }
-            if( tracing ) CommUtils.outblack("     VrobotHLMovesActors23 | sendSynchToWenv RESUMES moveResult=" + moveResult);
+       //     if( tracing ) CommUtils.outblack("     VrobotHLMovesActors23 | sendSynchToWenv RESUMES moveResult=" + moveResult);
             return moveResult;
         }
     }
@@ -102,9 +102,9 @@ public class VrobotHLMovesActors23 extends ApplAbstractObserver implements IVrob
          try {
             elapsed = getDuration();
             //if( tracing )
-                CommUtils.outblack(
+          /*      CommUtils.outblack(
                     "     VrobotHLMovesActors23 | update:" + info + " elapsed=" + elapsed +
-                            " " + Thread.currentThread().getName());
+                            " " + Thread.currentThread().getName());*/
 
              JSONObject jsonObj = CommUtils.parseForJson(info);
             if (jsonObj == null) {
@@ -192,10 +192,10 @@ public class VrobotHLMovesActors23 extends ApplAbstractObserver implements IVrob
     @Override
     public boolean step(int time) throws Exception {
         doingStep = true;
-        if( tracing ) CommUtils.outblack("     VrobotHLMovesActors23 | step time=" + time);
+/*        if( tracing ) CommUtils.outblack("     VrobotHLMovesActors23 | step time=" + time);*/
         String cmd    = VrobotMsgs.forwardcmd.replace("TIME", "" + time);
         String result = sendSynchToWenv(cmd);
-        if( tracing ) CommUtils.outblack("     VrobotHLMovesActors23 | step result="+result);
+/*        if( tracing ) CommUtils.outblack("     VrobotHLMovesActors23 | step result="+result);*/
         //result=true elapsed=... OPPURE collision elapsed=...
         doingStep = false;
         return result.contains("true");
@@ -205,7 +205,7 @@ public class VrobotHLMovesActors23 extends ApplAbstractObserver implements IVrob
     public void stepAsynch(int time) {
         try {
             startTimer(); //per getDuration()
-            if( tracing ) CommUtils.outblack("     VrobotHLMovesActors23 | stepAsynch" );
+/*            if( tracing ) CommUtils.outblack("     VrobotHLMovesActors23 | stepAsynch" );*/
             wsCommSupport.forward(VrobotMsgs.forwardcmd.replace("TIME", "" + time));
         } catch (Exception e) {
             e.printStackTrace();

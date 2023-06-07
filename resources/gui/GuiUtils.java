@@ -60,7 +60,7 @@ public class GuiUtils {
 	}
 
 	public static void createGui(ActorBasic owner) {
-		String[] buttonLabels  = new String[] {"start", "stop", "resume", "getpath" };
+		String[] buttonLabels  = new String[] {"createticket", "acceptticket"};
         ButtonAsGui concreteButton = ButtonAsGui.createButtons( "", buttonLabels );
         concreteButton.addObserver( new GuiObsForQak(owner) );
 
