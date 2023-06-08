@@ -30,7 +30,7 @@ class Coldstoragerobot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("moverobottoindoor") { //this:State
 					action { //it:State
-						request("moverobot", "moverobot(1,6)" ,"worker" )  
+						request("moverobot", "moverobot(1,6)" ,"robotpos" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -42,7 +42,7 @@ class Coldstoragerobot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("moverobottostorage") { //this:State
 					action { //it:State
 						emit("robotisindoor", "robotisindoor(ARG)" ) 
-						request("moverobot", "moverobot(3,5)" ,"worker" )  
+						request("moverobot", "moverobot(3,5)" ,"robotpos" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

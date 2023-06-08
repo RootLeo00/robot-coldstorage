@@ -23,7 +23,6 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
-						 gui.GuiUtils.createGui(myself)  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -58,11 +57,15 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("ticketaccepted") { //this:State
 					action { //it:State
-						 CommUtils.outgreen("ticket")
+						 CommUtils.outgreen("ticket")  
 						if( checkMsgContent( Term.createTerm("acceptticket(ARG)"), Term.createTerm("acceptticket(TICKET)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
-												CommUtils.outmagenta("ticket: ");
+												
+												CommUtils.outmagenta("ticket: "); 
+												
+												
+								emit("ticketaccepted", "ticketaccepted(paperinik)" ) 
 						}
 						//genTimer( actor, state )
 					}

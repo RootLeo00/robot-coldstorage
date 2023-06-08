@@ -11,7 +11,6 @@ Reply denyticket    : denyticket( ARG ) //sender:coldstorageservice receiver:ser
 Request checkspace : checkspace( ARG ) 			//sender:coldstorageservice receiver:coldstorage
 Reply enoughspace    : enoughspace( ARG )
 Reply notenoughspace    : notenoughspace( ARG )
-
 //Dispatch failticket : failticket(ARG) 
 Dispatch camionin : camionin(ARG) //sender:serviceaccessgui receiver:coldstorageservice
 
@@ -29,19 +28,19 @@ Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
 
-Context ctxall  ip [host="localhost" port=8720]
-Context ctxrobotpos   ip [host="localhost" port=8111] 
+Context ctxall ip [host="localhost" port=8720]
+Context ctxrobotpos ip [host="127.0.0.1" port=8111]  
 
-ExternalQActor worker context ctxrobotpos
+ExternalQActor robotpos context ctxrobotpos
 
 /*  
- * --------------------------------------------------------ARG----------
+ * ------------------------------------------------------------------
  *  coldstorageservice 
  * ------------------------------------------------------------------
-*/     
+*/      
 
 QActor coldstorageservice context ctxall{         
- 
+   
 
 	State s0 initial {	 
 		println("&&&  appl coldstorageservice is now ACTIVE ...") 
@@ -150,7 +149,7 @@ QActor coldstoragerobot context ctxall{
 	Transition t0 whenMsg startrobotservice -> moverobottoindoor
 	State moverobottoindoor{
 		//send event "robot is in indoor"
-		request worker -m moverobot:moverobot(1,6)
+		request robotpos -m moverobot:moverobot(1,6)
 		
 		
 	}
@@ -160,12 +159,11 @@ QActor coldstoragerobot context ctxall{
 	State moverobottostorage{
 		//send event "robot is in indoor"
 		emit robotisindoor : robotisindoor(ARG)
-		request worker -m moverobot:moverobot(3,5)
+		request robotpos -m moverobot:moverobot(3,5)
 		
 	}
 	Transition t0 whenReply moverobotdone -> moverobottohome
  					whenReply moverobotfailed -> moverobottohome
-	
 	//when robot has placed kg into storage -> move robot to home
 	State moverobottohome{
 		//send event "robot is in home"
@@ -206,7 +204,7 @@ QActor serviceaccessgui context ctxall{
 		// request ticket to coldstorageservice actor
 		onMsg ( guicmd : guicmd(createticket,MASS)){
 			/*[# CommUtils.outmagenta("request ticket creation") 
-				Mass = payloadArg(1);
+				Mass = payloadArg(1); 
 			#]*/
 			request coldstorageservice -m createticket : createticket(10) 
 		}
