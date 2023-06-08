@@ -20,7 +20,7 @@ Event robotisindoor : robotisindoor(ARG)  //emitter:coldstoragerobot listener:co
 Event robotisinstorage : robotisinstorage(ARG)  //emitter:coldstoragerobot listener:coldstorageservice
 Event robotisinhome : robotisinhome(ARG)  //emitter:coldstoragerobot listener:coldstorageservice
 Event guicmd : guicmd(COMMAND, PARAMETER) //emitter:serviceaccessgui listener:coldstorageservice
-
+Event ticketaccepted : ticketaccepted(ARG) 
 Dispatch startrobotservice : startrobotservice(ARG)  //sender:coldstorageservice receiver:coldstoragerobot
 
 Dispatch updatestorage : updatestorage(KG) //sender:coldstorageservice receiver:coldstorage
@@ -30,7 +30,7 @@ Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
 
 Context ctxall  ip [host="localhost" port=8720]
-Context ctxrobotpos   ip [host="127.0.0.1" port=8111] 
+Context ctxrobotpos   ip [host="localhost" port=8111] 
 
 ExternalQActor worker context ctxrobotpos
 
@@ -192,7 +192,7 @@ QActor coldstoragerobot context ctxall{
 QActor serviceaccessgui context ctxall{ 
 	State s0 initial{
 		printCurrentMessage		
-		[# gui.GuiUtils.createGui(myself) #]	
+		//[# gui.GuiUtils.createGui(myself) #] 	
 			
 	}
 	Goto waitticketrequest
@@ -218,12 +218,15 @@ QActor serviceaccessgui context ctxall{
 		
 	State ticketaccepted {
 		//print ticket
-		[# CommUtils.outgreen("ticket"+ticket) #]
+		[# CommUtils.outgreen("ticket") #]
 		onMsg( acceptticket : acceptticket(TICKET)){
 			[# 
-				Ticket  = payloadArg(0);
-				CommUtils.outmagenta("ticket: "+ Ticket); 
+				
+				CommUtils.outmagenta("ticket: "); 
+				
+				
 			#]
+			emit ticketaccepted:ticketaccepted(paperinik)
 			
 		}
 		
@@ -247,6 +250,17 @@ QActor serviceaccessgui context ctxall{
 		
 	}
 	Goto waitticketrequest
+}
+QActor fakeuser context ctxall{
+	State s0 initial{
+		printCurrentMessage		
+		 emit guicmd:guicmd(createticket,10)
+			
+	}
+	Transition t0 whenEvent ticketaccepted -> sendticket
+	State sendticket{
+		emit guicmd:guicmd(insertticket,paperinik)
+	}
 }
 
  
