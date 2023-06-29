@@ -1,4 +1,3 @@
-{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"doticket", "nextstate":"startcoldstoragerobot", "msgId":"camionin"}
-{"actor":"coldstorage", "msgType":"dispatch", "curstate":"checkspacestate", "nextstate":"updateKg", "msgId":"updatestorage"}
+{"actor":"coldroom", "msgType":"dispatch", "curstate":"getcoldroomspacestate", "nextstate":"updateKg", "msgId":"updatestorage"}
 {"actor":"coldstoragerobot", "msgType":"dispatch", "curstate":"s0", "nextstate":"moverobottoindoor", "msgId":"startrobotservice"}
 {"actor":"coldstoragerobot", "msgType":"dispatch", "curstate":"moverobottohome", "nextstate":"moverobottoindoor", "msgId":"startrobotservice"}

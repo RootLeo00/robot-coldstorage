@@ -37,7 +37,7 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t015",targetState="handleticketrequest",cond=whenEvent("guicmd"))
+					 transition(edgeName="t014",targetState="handleticketrequest",cond=whenEvent("guicmd"))
 				}	 
 				state("handleticketrequest") { //this:State
 					action { //it:State
@@ -45,40 +45,40 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						 	   
 						if( checkMsgContent( Term.createTerm("guicmd(COMMAND,PARAMETER)"), Term.createTerm("guicmd(createticket,MASS)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								request("createticket", "createticket(10)" ,"coldstorageservice" )  
+								 val Mass=10  
+								request("createticket", "createticket($Mass)" ,"coldstorageservice" )  
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t116",targetState="ticketaccepted",cond=whenReply("acceptticket"))
-					transition(edgeName="t117",targetState="ticketdenied",cond=whenReply("denyticket"))
+					 transition(edgeName="t115",targetState="ticketaccepted",cond=whenReply("acceptticket"))
+					transition(edgeName="t116",targetState="ticketdenied",cond=whenReply("denyticket"))
 				}	 
 				state("ticketaccepted") { //this:State
 					action { //it:State
 						 CommUtils.outgreen("ticket")  
-						if( checkMsgContent( Term.createTerm("acceptticket(ARG)"), Term.createTerm("acceptticket(TICKET)"), 
+						if( checkMsgContent( Term.createTerm("acceptticket(TICKETCODE)"), Term.createTerm("acceptticket(TICKETCODE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
-												
-												CommUtils.outmagenta("ticket: "); 
-												
-												
-								emit("ticketaccepted", "ticketaccepted(paperinik)" ) 
+												CommUtils.outmagenta("ticket: ${TICKETCODE}"); 
+								emit("ticketaccepted", "ticketaccepted(ok)" ) 
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t118",targetState="handleticketfromuser",cond=whenEvent("guicmd"))
+					 transition(edgeName="t117",targetState="handleticketfromuser",cond=whenEvent("guicmd"))
 				}	 
 				state("handleticketfromuser") { //this:State
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("guicmd(COMMAND,PARAMETER)"), Term.createTerm("guicmd(insertticket,TICKET)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								forward("camionin", "camionin(paperino)" ,"coldstorageservice" ) 
+								 
+												Ticket  = "faketicket";
+								request("sendcamion", "sendcamion($TICKET)" ,"coldstorageservice" )  
 						}
 						//genTimer( actor, state )
 					}

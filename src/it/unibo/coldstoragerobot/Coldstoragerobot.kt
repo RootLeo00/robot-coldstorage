@@ -21,12 +21,13 @@ class Coldstoragerobot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
+						CommUtils.outblack("&&&  appl coldstoragerobot is now ACTIVE ...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="moverobottoindoor",cond=whenDispatch("startrobotservice"))
+					 transition(edgeName="t08",targetState="moverobottoindoor",cond=whenDispatch("startrobotservice"))
 				}	 
 				state("moverobottoindoor") { //this:State
 					action { //it:State
@@ -36,34 +37,34 @@ class Coldstoragerobot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t010",targetState="moverobottostorage",cond=whenReply("moverobotdone"))
-					transition(edgeName="t011",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t09",targetState="moverobottostorage",cond=whenReply("moverobotdone"))
+					transition(edgeName="t010",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
 				}	 
 				state("moverobottostorage") { //this:State
 					action { //it:State
-						emit("robotisindoor", "robotisindoor(ARG)" ) 
+						emit("robotisindoor", "robotisindoor(ok)" ) 
 						request("moverobot", "moverobot(3,5)" ,"robotpos" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t012",targetState="moverobottohome",cond=whenReply("moverobotdone"))
-					transition(edgeName="t013",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t011",targetState="moverobottohome",cond=whenReply("moverobotdone"))
+					transition(edgeName="t012",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
 				}	 
 				state("moverobottohome") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("moverobotok(ARG)"), Term.createTerm("moverobotdone(ARG)"), 
+						if( checkMsgContent( Term.createTerm("moverobotok(ARG)"), Term.createTerm("moverobotdone(ok)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								emit("robotisinstorage", "robotisinstorage(ARG)" ) 
+								emit("robotisinstorage", "robotisinstorage(ok)" ) 
 						}
-						emit("robotisinhome", "robotisinhome(ARG)" ) 
+						emit("robotisinhome", "robotisinhome(ok)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t114",targetState="moverobottoindoor",cond=whenDispatch("startrobotservice"))
+					 transition(edgeName="t113",targetState="moverobottoindoor",cond=whenDispatch("startrobotservice"))
 				}	 
 			}
 		}

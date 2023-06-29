@@ -18,10 +18,13 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		 var Mass = 0  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outblack("&&&  appl coldstorageservice is now ACTIVE ...")
+						discardMessages = false
+						CommUtils.outblack("currentMsg=${currentMsg}")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -31,57 +34,54 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				}	 
 				state("startticket") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("createticket(ARG)"), Term.createTerm("createticket(MASS)"), 
+						if( checkMsgContent( Term.createTerm("createticket(KG)"), Term.createTerm("createticket(MASS)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outblack("startticket  ")
-								request("checkspace", "checkspace(10)" ,"coldstorage" )  
+								 var Mass = payloadArg(0).toLong()  
+								request("getcoldroomspace", "getcoldroomspace(ok)" ,"coldroom" )  
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t01",targetState="doticket",cond=whenReply("enoughspace"))
-					transition(edgeName="t02",targetState="failticket",cond=whenReply("notenoughspace"))
+					 transition(edgeName="t01",targetState="answerticketrequest",cond=whenReply("coldroomspace"))
 				}	 
-				state("failticket") { //this:State
+				state("answerticketrequest") { //this:State
 					action { //it:State
-						answer("createticket", "denyticket", "denyticket(deny)"   )  
+						  if( (Mass - space) < 0 ) {  
+						answer("createticket", "denyticket", "denyticket(ok)"   )  
+						 }  
+						  else  {
+									val TICKETCODE="faketicket" 
+						answer("createticket", "acceptticket", "acceptticket($TICKETCODE)"   )  
+						 }  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-				}	 
-				state("doticket") { //this:State
-					action { //it:State
-						answer("createticket", "acceptticket", "acceptticket(paperinik)"   )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t03",targetState="startcoldstoragerobot",cond=whenDispatch("camionin"))
+					 transition(edgeName="t02",targetState="startcoldstoragerobot",cond=whenRequest("sendcamion"))
 				}	 
 				state("startcoldstoragerobot") { //this:State
 					action { //it:State
-						forward("startrobotservice", "startrobotservice(arg)" ,"coldstoragerobot" ) 
+						answer("sendcamion", "chargetaken", "chargetaken(ok)"   )  
+						forward("startrobotservice", "startrobotservice(ok)" ,"coldstoragerobot" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t14",targetState="updatecoldstorage",cond=whenEvent("robotincoldstorage"))
+					 transition(edgeName="t13",targetState="updatecoldstorage",cond=whenEvent("robotincoldstorage"))
 				}	 
 				state("updatecoldstorage") { //this:State
 					action { //it:State
-						forward("updatestorage", "updatestorage(10)" ,"coldstorage" ) 
+						forward("updatestorage", "updatestorage($Mass)" ,"coldroom" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t05",targetState="startticket",cond=whenRequest("createticket"))
+					 transition(edgeName="t04",targetState="startticket",cond=whenRequest("createticket"))
 				}	 
 			}
 		}
