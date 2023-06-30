@@ -29,11 +29,13 @@ class Fakeuser ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t018",targetState="sendticket",cond=whenEvent("ticketaccepted"))
+					 transition(edgeName="t020",targetState="sendticket",cond=whenEvent("ticketaccepted"))
 				}	 
 				state("sendticket") { //this:State
 					action { //it:State
-						emit("guicmd", "guicmd(insertticket,$TICKETCODE)" ) 
+						 CommUtils.outmagenta("[state] send ticket"); 
+										TicketCode  = payloadArg(0);
+						emit("guicmd", "guicmd(insertticket,$TicketCode)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

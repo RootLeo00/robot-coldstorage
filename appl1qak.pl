@@ -2,7 +2,7 @@
 % appl1qak description   
 %====================================================================================
 context(ctxall, "localhost",  "TCP", "8720").
-context(ctxrobotpos, "127.0.0.1",  "TCP", "8111").
+context(ctxrobotpos, "10.0.0.3",  "TCP", "8020").
  qactor( robotpos, ctxrobotpos, "external").
   qactor( coldstorageservice, ctxall, "it.unibo.coldstorageservice.Coldstorageservice").
   qactor( coldroom, ctxall, "it.unibo.coldroom.Coldroom").

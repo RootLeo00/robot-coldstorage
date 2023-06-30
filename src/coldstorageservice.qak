@@ -31,7 +31,7 @@ Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
 
 Context ctxall ip [host="localhost" port=8720]
-Context ctxrobotpos ip [host="127.0.0.1" port=8111]  
+Context ctxrobotpos ip [host="10.0.0.3" port=8020]  
 //Context ctxgui ip [host="127.0.0.1" port=8112]  
 
 ExternalQActor robotpos context ctxrobotpos
@@ -67,7 +67,10 @@ QActor coldstorageservice context ctxall{
 		//recupera parametro della richiesta
 		//check if there is enough space
 		//#TODO fare controllo vero con Mass
-		[#  if( (Mass - space) < 0 ) { #]
+		[#  
+			var Space= payloadArg(0).toLong()
+			if( (Space - Mass ) < 0 ) { #
+		]
 		//send message that ticket is not accepted
 			replyTo createticket with denyticket : denyticket(ok)	 
 		[# } #] 	
@@ -141,7 +144,7 @@ QActor coldstoragerobot context ctxall{
 		//send event "robot is in indoor"
 		request robotpos -m moverobot:moverobot(1,6)
 	}
-	Transition t0 whenReply moverobotdone -> moverobottostorage
+	Transition t1 whenReply moverobotdone -> moverobottostorage
  				  whenReply moverobotfailed -> moverobottohome
 	//when robot has taken kg from camion -> move robot to coldstorage
 	State moverobottostorage{
@@ -149,18 +152,21 @@ QActor coldstoragerobot context ctxall{
 		emit robotisindoor : robotisindoor(ok)
 		request robotpos -m moverobot:moverobot(3,5)
 	}
-	Transition t0 whenReply moverobotdone -> moverobottohome
- 					whenReply moverobotfailed -> moverobottohome
+	Transition t2 whenReply moverobotdone -> moverobottohome
+ 				  whenReply moverobotfailed -> moverobottohome
 	//when robot has placed kg into storage -> move robot to home
 	State moverobottohome{
 		//send event "robot is in home"
-		onMsg(moverobotdone:moverobotdone(ok)){
-			emit robotisinstorage : robotisinstorage(ok)
-		}
-		emit robotisinhome : robotisinhome(ok)
+		emit robotisinstorage : robotisinstorage(ok)
+		request robotpos -m moverobot:moverobot(1,1)
 	}
+	Transition t3 whenReply moverobotdone -> emitrobotisinhome
+ 				  whenReply moverobotfailed -> moverobottohome
+ 	State emitrobotisinhome{
+ 		emit robotisinhome : robotisinhome(ok)
+ 	}
 	//wait next startcoldstoragerobot --> transition to moverobottoindoor
-  	Transition t1 whenMsg startrobotservice -> moverobottoindoor
+  	Transition t4 whenMsg startrobotservice -> moverobottoindoor
   	
   	
 }
@@ -201,9 +207,10 @@ QActor serviceaccessgui context ctxall{
 		[# CommUtils.outgreen("ticket") #]
 		onMsg( acceptticket : acceptticket(TICKETCODE)){
 			[# 
+				val TicketCode= payloadArg(0)
 				CommUtils.outmagenta("ticket: ${TICKETCODE}"); 
 			#]
-			emit ticketaccepted:ticketaccepted(ok)
+			emit ticketaccepted:ticketaccepted($TicketCode)
 		}
 	}
 	Transition t1 whenEvent guicmd -> handleticketfromuser	
@@ -217,7 +224,7 @@ QActor serviceaccessgui context ctxall{
 			[# 
 				Ticket  = "faketicket";
 			#]
-			request coldstorageservice -m sendcamion : sendcamion($TICKET) 
+			request coldstorageservice -m sendcamion : sendcamion($Ticket) 
 		}
 	}
 	Goto waitticketrequest
@@ -245,7 +252,10 @@ QActor fakeuser context ctxall{
 	Transition t0 whenEvent ticketaccepted -> sendticket
 	
 	State sendticket{
-		emit guicmd:guicmd(insertticket,$TICKETCODE)
+			[# CommUtils.outmagenta("[state] send ticket"); 
+				TicketCode  = payloadArg(0);
+			#]
+		emit guicmd:guicmd(insertticket,$TicketCode)
 	}
 }
 

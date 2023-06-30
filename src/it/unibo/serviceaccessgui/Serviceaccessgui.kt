@@ -37,7 +37,7 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t014",targetState="handleticketrequest",cond=whenEvent("guicmd"))
+					 transition(edgeName="t016",targetState="handleticketrequest",cond=whenEvent("guicmd"))
 				}	 
 				state("handleticketrequest") { //this:State
 					action { //it:State
@@ -53,8 +53,8 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t115",targetState="ticketaccepted",cond=whenReply("acceptticket"))
-					transition(edgeName="t116",targetState="ticketdenied",cond=whenReply("denyticket"))
+					 transition(edgeName="t117",targetState="ticketaccepted",cond=whenReply("acceptticket"))
+					transition(edgeName="t118",targetState="ticketdenied",cond=whenReply("denyticket"))
 				}	 
 				state("ticketaccepted") { //this:State
 					action { //it:State
@@ -62,15 +62,16 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						if( checkMsgContent( Term.createTerm("acceptticket(TICKETCODE)"), Term.createTerm("acceptticket(TICKETCODE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
+												val TicketCode= payloadArg(0)
 												CommUtils.outmagenta("ticket: ${TICKETCODE}"); 
-								emit("ticketaccepted", "ticketaccepted(ok)" ) 
+								emit("ticketaccepted", "ticketaccepted($TicketCode)" ) 
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t117",targetState="handleticketfromuser",cond=whenEvent("guicmd"))
+					 transition(edgeName="t119",targetState="handleticketfromuser",cond=whenEvent("guicmd"))
 				}	 
 				state("handleticketfromuser") { //this:State
 					action { //it:State
@@ -78,7 +79,7 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
 												Ticket  = "faketicket";
-								request("sendcamion", "sendcamion($TICKET)" ,"coldstorageservice" )  
+								request("sendcamion", "sendcamion($Ticket)" ,"coldstorageservice" )  
 						}
 						//genTimer( actor, state )
 					}

@@ -48,7 +48,9 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				}	 
 				state("answerticketrequest") { //this:State
 					action { //it:State
-						  if( (Mass - space) < 0 ) {  
+						  
+									var Space= payloadArg(0).toLong()
+									if( (Space - Mass ) < 0 ) {  
 						answer("createticket", "denyticket", "denyticket(ok)"   )  
 						 }  
 						  else  {
