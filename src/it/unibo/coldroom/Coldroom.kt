@@ -32,7 +32,6 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 				}	 
 				state("getcoldroomspacestate") { //this:State
 					action { //it:State
-						 var Mass = payloadArg(0).toLong()  
 						answer("getcoldroomspace", "coldroomspace", "coldroomspace($SpaceKg)"   )  
 						//genTimer( actor, state )
 					}

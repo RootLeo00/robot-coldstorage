@@ -56,7 +56,7 @@ QActor coldstorageservice context ctxall{
     
   	State startticket{ 
   		onMsg(createticket:createticket(MASS)){
-  		[# var Mass = payloadArg(0).toLong() #]
+  		[# var Mass = payloadArg(0).toLong() #] //payloadArg(0) == MASS
   		//chiedi a cold room quanto spazio è occupato
   		request coldroom -m getcoldroomspace : getcoldroomspace(ok)
   		} 	
@@ -110,9 +110,8 @@ QActor coldroom context ctxall{
 	//wait request on info kg
 	Transition t0 whenRequest getcoldroomspace -> getcoldroomspacestate
 	
-	State getcoldroomspacestate{
+	State getcoldroomspacestate{ 
 		//send the actual state of the space
-		[# var Mass = payloadArg(0).toLong() #]
 		replyTo getcoldroomspace with coldroomspace : coldroomspace($SpaceKg)
 	}
 	//requesto to update kg
