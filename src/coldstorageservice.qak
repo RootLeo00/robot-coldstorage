@@ -8,7 +8,7 @@ Request createticket : createticket( KG ) 		//sender:serviceaccessgui receiver:c
 Reply acceptticket    : acceptticket( TICKETCODE ) 	//sender:coldstorageservice receiver:serviceaccessgui
 Reply denyticket    : denyticket( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
 
-Request getcoldroomspace : getcoldroomspace( ARG ) 				//sender:coldstorageservice receiver:coldstorage
+Request getcoldroomspace : getcoldroomspace( ARG ) 			//sender:coldstorageservice receiver:coldstorage
 Reply coldroomspace : coldroomspace(KG)						//sender:coldstorage receiver:coldstorageservice
 Reply enoughspace    : enoughspace( ARG )
 Reply notenoughspace    : notenoughspace( ARG )
@@ -21,7 +21,7 @@ Event robotisindoor : robotisindoor(ARG)  			//emitter:coldstoragerobot listener
 Event robotisinstorage : robotisinstorage(ARG)  	//emitter:coldstoragerobot listener:coldstorageservice
 Event robotisinhome : robotisinhome(ARG)  			//emitter:coldstoragerobot listener:coldstorageservice
 Event guicmd : guicmd(COMMAND, PARAMETER) 			//emitter:serviceaccessgui listener:coldstorageservice
-Event ticketaccepted : ticketaccepted(TICKETCODE) 			//emitter:serviceaccessgui listener:fakeuser
+Event ticketaccepted : ticketaccepted(TICKETCODE) 	//emitter:serviceaccessgui listener:fakeuser
 Dispatch startrobotservice : startrobotservice(ARG) //sender:coldstorageservice receiver:coldstoragerobot
 Dispatch updatestorage : updatestorage(KG) 			//sender:coldstorageservice receiver:coldstorage
 
@@ -208,7 +208,7 @@ QActor serviceaccessgui context ctxall{
 		onMsg( acceptticket : acceptticket(TICKETCODE)){
 			[# 
 				val TicketCode= payloadArg(0)
-				CommUtils.outmagenta("ticket: ${TICKETCODE}"); 
+				CommUtils.outmagenta("ticket: ${TicketCode}"); 
 			#]
 			emit ticketaccepted:ticketaccepted($TicketCode)
 		}
@@ -222,7 +222,7 @@ QActor serviceaccessgui context ctxall{
 //				Ticket  = payloadArg(1);
 //			#]
 			[# 
-				Ticket  = "faketicket";
+				val Ticket  = "faketicket";
 			#]
 			request coldstorageservice -m sendcamion : sendcamion($Ticket) 
 		}
@@ -253,7 +253,7 @@ QActor fakeuser context ctxall{
 	
 	State sendticket{
 			[# CommUtils.outmagenta("[state] send ticket"); 
-				TicketCode  = payloadArg(0);
+				val TicketCode  = payloadArg(0);
 			#]
 		emit guicmd:guicmd(insertticket,$TicketCode)
 	}

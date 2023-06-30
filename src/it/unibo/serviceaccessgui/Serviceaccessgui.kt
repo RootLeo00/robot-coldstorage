@@ -63,7 +63,7 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
 												val TicketCode= payloadArg(0)
-												CommUtils.outmagenta("ticket: ${TICKETCODE}"); 
+												CommUtils.outmagenta("ticket: ${TicketCode}"); 
 								emit("ticketaccepted", "ticketaccepted($TicketCode)" ) 
 						}
 						//genTimer( actor, state )
@@ -78,7 +78,7 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						if( checkMsgContent( Term.createTerm("guicmd(COMMAND,PARAMETER)"), Term.createTerm("guicmd(insertticket,TICKET)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
-												Ticket  = "faketicket";
+												val Ticket  = "faketicket";
 								request("sendcamion", "sendcamion($Ticket)" ,"coldstorageservice" )  
 						}
 						//genTimer( actor, state )

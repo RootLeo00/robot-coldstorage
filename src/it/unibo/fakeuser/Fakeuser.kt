@@ -34,7 +34,7 @@ class Fakeuser ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 				state("sendticket") { //this:State
 					action { //it:State
 						 CommUtils.outmagenta("[state] send ticket"); 
-										TicketCode  = payloadArg(0);
+										val TicketCode  = payloadArg(0);
 						emit("guicmd", "guicmd(insertticket,$TicketCode)" ) 
 						//genTimer( actor, state )
 					}
