@@ -31,10 +31,10 @@ Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
 
 Context ctxall ip [host="localhost" port=8720]
-Context ctxrobotpos ip [host="10.0.0.3" port=8020]  
+Context ctxbasicrobot ip [host="10.0.0.3" port=8020]  
 //Context ctxgui ip [host="127.0.0.1" port=8112]  
 
-ExternalQActor robotpos context ctxrobotpos
+ExternalQActor basicrobot context ctxbasicrobot
 //ExternalQActor serviceaccessgui context ctxgui
 
 /*  
@@ -100,7 +100,7 @@ QActor coldstorageservice context ctxall{
   	}
   
 
-/*  
+/*   
  * ------------------------------------------------------------------
  *  coldroom
  * ------------------------------------------------------------------
@@ -142,7 +142,7 @@ QActor coldstoragerobot context ctxall{
 	Transition t0 whenMsg startrobotservice -> moverobottoindoor
 	State moverobottoindoor{
 		//send event "robot is in indoor"
-		request robotpos -m moverobot:moverobot(1,6)
+		request basicrobot -m moverobot:moverobot(1,6)
 	}
 	Transition t1 whenReply moverobotdone -> moverobottostorage
  				  whenReply moverobotfailed -> moverobottohome
@@ -150,7 +150,7 @@ QActor coldstoragerobot context ctxall{
 	State moverobottostorage{
 		//send event "robot is in indoor"
 		emit robotisindoor : robotisindoor(ok)
-		request robotpos -m moverobot:moverobot(3,5)
+		request basicrobot -m moverobot:moverobot(3,5)
 	}
 	Transition t2 whenReply moverobotdone -> moverobottohome
  				  whenReply moverobotfailed -> moverobottohome
@@ -158,7 +158,7 @@ QActor coldstoragerobot context ctxall{
 	State moverobottohome{
 		//send event "robot is in home"
 		emit robotisinstorage : robotisinstorage(ok)
-		request robotpos -m moverobot:moverobot(1,1)
+		request basicrobot -m moverobot:moverobot(1,1)
 	}
 	Transition t3 whenReply moverobotdone -> emitrobotisinhome
  				  whenReply moverobotfailed -> moverobottohome
@@ -229,7 +229,7 @@ QActor serviceaccessgui context ctxall{
 	}
 	Goto waitticketrequest
 	
-	State  ticketdenied{
+	State  ticketdenied{ 
 		//print red
 		[# CommUtils.outred("not enough space") #]
 		
