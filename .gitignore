@@ -4,6 +4,7 @@ bin/default
 .classpath
 .project
 .idea
+.gradle
 build
 logs 
 
@@ -23,3 +24,5 @@ package-lock.json
 docker/
 /.metadata/
 /src-gen/
+
+.settings/
