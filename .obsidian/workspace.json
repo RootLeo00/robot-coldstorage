@@ -148,9 +148,19 @@
   },
   "active": "4501d733684e93af",
   "lastOpenFiles": [
+    "src/it/unibo/sonar/Sonar.kt",
+    "src/it/unibo/sonar",
+    "src/it/unibo/ctxsonar/MainCtxsonar.kt",
+    "src/it/unibo/ctxsonar",
+    "Api_coldstorageservice.txt",
+    "Arch_coldstorageservice.py",
+    "src/it/unibo/fakeuser/Fakeuser.kt",
+    "src/it/unibo/fakeuser",
+    "src/it/unibo/serviceaccessgui/Serviceaccessgui.kt",
+    "src/it/unibo/serviceaccessgui",
+    "src/it/unibo/transporttrolley/Transporttrolley.kt",
     "appl1qakarch 1.png.md",
     "coldstoragesprint0.md",
-    "appl1qakarch.png",
-    "style.css"
+    "appl1qakarch.png"
   ]
 }

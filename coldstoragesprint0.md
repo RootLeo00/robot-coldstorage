@@ -50,7 +50,7 @@ Il sistema è composto da:
   - Scarico: entità esterna che effettua una operazione di scarico della Cold Room, diminuendo i kg presenti in essa
 ![[appl1qakarch.png]]
 ### la struttura containerizzata
-- la software house possiede degli strumenti per l'interazione con il robot ddr sotto forma di progetti qak, per facilitare lo sviluppo si prevede di containerizzare questi componenti in modo da avere una infrastruttura sistem independent per lo sviluppo e il testing della logica applicativa.
+- la software house possiede degli strumenti per l'interazione con il robot ddr sotto forma di progetti qak, per facilitare lo sviluppo si prevede di containerizzare questi componenti in modo da avere una infrastruttura system independent per lo sviluppo e il testing della logica applicativa.
 ## Piano di lavoro
 prevediamo di suddividere in sprint lo sviluppo del sistema secondo il seguente elenco
 #### SPRINT 1
@@ -60,7 +60,7 @@ nello sprint 1 prevediamo due fasi principali
 si prevede di svolgere queste due fasi in parallelo in quanto non fortemente dipendenti tra loro
 - test finale del sistema per mezzo della infrastruttura containerizzata tempo stimato 2 ore
 #### SPRINT 2
-- introduzione del allarm requirement nel prototipo sviluppato allo sprint1, tempo stimato 1 giorno
+- introduzione del alarm requirement nel prototipo sviluppato allo sprint1, tempo stimato 1 giorno
 - test delle funzionalità introdotte tempo stimato 2 ore
 #### SPRINT 3
 - introduzione della  la GUI nel sistema tempo stimato, 1 giorno
@@ -71,7 +71,7 @@ si prevede di svolgere queste due fasi in parallelo in quanto non fortemente dip
 
 ## Test plan
 si prevede di testare le seguenti funzionalità del sistema
-- i movimenti del robot all'interno della mappa secondo i requisiti
+- i movimenti del transport trolley all'interno della mappa secondo i requisiti
 - la correttezza dello stato della  COLDROOM durante le fasi di richiesta del ticket e di scarico merce
 ### realizzazione mediante eventi 
 per implementare i test si prevede di sfruttare la generazione degli eventi da parte del transport trolley e della cooldroom in modo da essere il meno invasivi possibile sul sistema 

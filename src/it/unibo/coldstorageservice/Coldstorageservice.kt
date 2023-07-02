@@ -67,7 +67,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				state("startcoldstoragerobot") { //this:State
 					action { //it:State
 						answer("sendcamion", "chargetaken", "chargetaken(ok)"   )  
-						forward("startrobotservice", "startrobotservice(ok)" ,"coldstoragerobot" ) 
+						forward("startrobotservice", "startrobotservice(ok)" ,"transporttrolley" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

@@ -1,7 +1,7 @@
 /*
 
- */  
-System /* -msglog */ appl1qak 
+ */   
+System /* -msglog */ coldstorageservice 
 
 //Dispatch startcmd   : start( ARG ) 			//sender:serviceaccessgui receiver:appl
 Request createticket : createticket( KG ) 		//sender:serviceaccessgui receiver:coldstorageservice
@@ -31,6 +31,11 @@ Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
 
 Context ctxall ip [host="localhost" port=8720]
+Context ctxtransporttrolley ip [host="localhost" port=8720]
+Context ctxserviceaccessgui ip [host="localhost" port=8720]
+Context ctxcoldstorageservice ip [host="localhost" port=8720]
+Context ctxsonar ip [host="localhost" port=8720]
+Context ctxcoldroom ip [host="localhost" port=8720]
 Context ctxbasicrobot ip [host="10.0.0.3" port=8020]  
 //Context ctxgui ip [host="127.0.0.1" port=8112]  
 
@@ -42,7 +47,7 @@ ExternalQActor basicrobot context ctxbasicrobot
  *  coldstorageservice 
  * ------------------------------------------------------------------
 */      
-QActor coldstorageservice context ctxall{  
+QActor coldstorageservice context ctxcoldstorageservice{  
 	[# var Mass = 0 #]       
 	State s0 initial {	 
 		println("&&&  appl coldstorageservice is now ACTIVE ...") 
@@ -65,7 +70,7 @@ QActor coldstorageservice context ctxall{
 	 		 
 	State answerticketrequest{
 		//recupera parametro della richiesta
-		//check if there is enough space
+		//check if there is enough spacectxserviceaccessgui
 		//#TODO fare controllo vero con Mass
 		[#  
 			var Space= payloadArg(0).toLong()
@@ -86,7 +91,8 @@ QActor coldstorageservice context ctxall{
   	State startcoldstoragerobot{
   		replyTo sendcamion with chargetaken : chargetaken(ok)
   		//send start command to coldstoragerobot
-  		forward coldstoragerobot -m  startrobotservice : startrobotservice(ok)
+  		forward transporttrolley
+  		 -m  startrobotservice : startrobotservice(ok)
   	}
   	Transition t1 whenEvent  robotincoldstorage -> updatecoldstorage
   	
@@ -105,7 +111,7 @@ QActor coldstorageservice context ctxall{
  *  coldroom
  * ------------------------------------------------------------------
 */     
-QActor coldroom context ctxall{  
+QActor coldroom context ctxcoldroom{  
 	[# var SpaceKg = 100 #]   //TODO
 		State s0 initial {	 
 		println("&&&  appl coldroom is now ACTIVE ...") 
@@ -132,8 +138,8 @@ QActor coldroom context ctxall{
  * ------------------------------------------------------------------
  *  coldstoragerobot
  * ------------------------------------------------------------------
-*/     
-QActor coldstoragerobot context ctxall{     
+*/      
+QActor transporttrolley context ctxtransporttrolley{     
 	
 	State s0 initial{
 		println("&&&  appl coldstoragerobot is now ACTIVE ...") 
@@ -177,7 +183,7 @@ QActor coldstoragerobot context ctxall{
  serviceaccessgui
 --------------------------------------
 */
-QActor serviceaccessgui context ctxall{ 
+QActor serviceaccessgui context ctxserviceaccessgui{ 
 	State s0 initial{
 		printCurrentMessage		
 		//[# gui.GuiUtils.createGui(myself) #] 	
@@ -258,5 +264,25 @@ QActor fakeuser context ctxall{
 		emit guicmd:guicmd(insertticket,$TicketCode)
 	}
 }
-
+/*  
+ * ------------------------------------------------------------------
+ *  sonar
+ * ------------------------------------------------------------------
+ * attore per l'interfacciamento con il sonar
+ */   
+QActor sonar context ctxsonar{
+	State s0 initial{
+		printCurrentMessage		
+		// emit guicmd:guicmd(createticket,10)
+			
+	}
+	//Transition t0 whenEvent ticketaccepted -> sendticket
+	
+	/*State sendticket{
+			[# CommUtils.outmagenta("[state] send ticket"); 
+				val TicketCode  = payloadArg(0);
+			#]
+		emit guicmd:guicmd(insertticket,$TicketCode)
+	}*/
+}
  

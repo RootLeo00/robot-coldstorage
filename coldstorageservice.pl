@@ -1,0 +1,17 @@
+%====================================================================================
+% coldstorageservice description   
+%====================================================================================
+context(ctxall, "localhost",  "TCP", "8720").
+context(ctxtransporttrolley, "localhost",  "TCP", "8720").
+context(ctxserviceaccessgui, "localhost",  "TCP", "8720").
+context(ctxcoldstorageservice, "localhost",  "TCP", "8720").
+context(ctxsonar, "localhost",  "TCP", "8720").
+context(ctxcoldroom, "localhost",  "TCP", "8720").
+context(ctxbasicrobot, "10.0.0.3",  "TCP", "8020").
+ qactor( basicrobot, ctxbasicrobot, "external").
+  qactor( coldstorageservice, ctxcoldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
+  qactor( coldroom, ctxcoldroom, "it.unibo.coldroom.Coldroom").
+  qactor( transporttrolley, ctxtransporttrolley, "it.unibo.transporttrolley.Transporttrolley").
+  qactor( serviceaccessgui, ctxserviceaccessgui, "it.unibo.serviceaccessgui.Serviceaccessgui").
+  qactor( fakeuser, ctxall, "it.unibo.fakeuser.Fakeuser").
+  qactor( sonar, ctxsonar, "it.unibo.sonar.Sonar").
