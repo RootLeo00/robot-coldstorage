@@ -75,3 +75,18 @@ si prevede di testare le seguenti funzionalità del sistema
 - la correttezza dello stato della  **COLDROOM** durante le fasi di richiesta del ticket e di scarico merce
 ### realizzazione mediante eventi 
 per implementare i test si prevede di sfruttare la generazione degli eventi da parte del transport trolley e della cooldroom in modo da essere il meno invasivi possibile sul sistema.
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+        By Caterina Leonelli email: caterina.leonelli2@studio.unibo.it,
+        GIT repo: https://github.com/RootLeo00/sw-eng.git
+    </div>
+
+![[Pasted image 20230703104028.png]]
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+By Matteo Longhi email: matteo.longhi5@studio.unibo.it
+GIT repo: https://github.com/carnivuth/iss_2023_matteo_longhi.git
+</div>
+
+
+![[Pasted image 20230703103516.png]]
