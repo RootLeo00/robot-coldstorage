@@ -62,11 +62,11 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="startcoldstoragerobot",cond=whenRequest("sendcamion"))
+					 transition(edgeName="t02",targetState="startcoldstoragerobot",cond=whenDispatch("sendcamion"))
 				}	 
 				state("startcoldstoragerobot") { //this:State
 					action { //it:State
-						answer("sendcamion", "chargetaken", "chargetaken(ok)"   )  
+						forward("chargetaken", "chargetaken(ok)" ,"serviceaccessgui" ) 
 						forward("startrobotservice", "startrobotservice(ok)" ,"transporttrolley" ) 
 						//genTimer( actor, state )
 					}

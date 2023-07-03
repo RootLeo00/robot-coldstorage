@@ -79,7 +79,7 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
 												val Ticket  = "faketicket";
-								request("sendcamion", "sendcamion($Ticket)" ,"coldstorageservice" )  
+								forward("sendcamion", "sendcamion($Ticket)" ,"coldstorageservice" ) 
 						}
 						//genTimer( actor, state )
 					}

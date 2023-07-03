@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "83e235fe672869ba",
+        "id": "8f6647e263ff50f7",
         "type": "tabs",
         "children": [
           {
-            "id": "7d0b4c93ed2a726a",
+            "id": "4501d733684e93af",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -146,23 +146,31 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7d0b4c93ed2a726a",
+  "active": "4501d733684e93af",
   "lastOpenFiles": [
-    "macrocomponents.png",
-    "coldstoragesprint0.md",
+    "coldstorageservicearch",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/social.cpython-311.pyc",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/media.cpython-311.pyc",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/recommendation.cpython-311.pyc",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/identity.cpython-311.pyc",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/logging.cpython-311.pyc",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/filesharing.cpython-311.pyc",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/communication.cpython-311.pyc",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/chat.cpython-311.pyc",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/cdn.cpython-311.pyc",
+    "lib/python3.11/site-packages/diagrams/saas/__pycache__/analytics.cpython-311.pyc",
+    "lib/python3.11/site-packages/resources/saas/social/twitter.png",
+    "lib/python3.11/site-packages/resources/saas/social/facebook.png",
+    "lib/python3.11/site-packages/resources/saas/recommendation/recombee.png",
+    "lib/python3.11/site-packages/resources/saas/media/cloudinary.png",
+    "lib/python3.11/site-packages/resources/saas/logging/papertrail.png",
+    "lib/python3.11/site-packages/resources/saas/logging/newrelic.png",
+    "lib/python3.11/site-packages/resources/saas/logging/datadog.png",
+    "lib/python3.11/site-packages/resources/saas/identity/okta.png",
+    "lib/python3.11/site-packages/resources/saas/identity/auth0.png",
+    "lib/python3.11/site-packages/resources/saas/filesharing/nextcloud.png",
     "macrocomponents 1.png.md",
-    "coldstorageservicearch.png",
-    "src/it/unibo/sonar/Sonar.kt",
-    "src/it/unibo/sonar",
-    "src/it/unibo/ctxsonar/MainCtxsonar.kt",
-    "src/it/unibo/ctxsonar",
-    "Api_coldstorageservice.txt",
-    "Arch_coldstorageservice.py",
-    "src/it/unibo/fakeuser/Fakeuser.kt",
-    "src/it/unibo/fakeuser",
-    "src/it/unibo/serviceaccessgui/Serviceaccessgui.kt",
-    "src/it/unibo/serviceaccessgui",
     "appl1qakarch 1.png.md",
-    "appl1qakarch.png"
+    "coldstoragesprint0.md"
   ]
 }

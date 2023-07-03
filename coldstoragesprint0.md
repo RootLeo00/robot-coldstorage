@@ -64,7 +64,7 @@ si prevede di svolgere queste due fasi in parallelo in quanto non fortemente dip
 - test delle funzionalità introdotte tempo stimato 2 ore
 #### SPRINT 3
 - introduzione della  la GUI nel sistema tempo stimato, 1 giorno
-- test della GUI del sistema, tempo stimato 2 ore
+- test della GUI del sistema,tempo stimato  2 ore
 - test finale del sistema nella sua interezza, tempo stimato 2 ore
 #### SPRINT 4
 - deployment su robot fisico, tempo stimato 2 giorni

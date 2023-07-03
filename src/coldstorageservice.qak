@@ -13,8 +13,8 @@ Reply coldroomspace : coldroomspace(KG)						//sender:coldstorage receiver:colds
 Reply enoughspace    : enoughspace( ARG )
 Reply notenoughspace    : notenoughspace( ARG )
 //Dispatch failticket : failticket(ARG) 
-Request sendcamion : sendcamion(ARG) 			//sender:serviceaccessgui receiver:coldstorageservice
-Reply chargetaken : chargetaken(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
+Dispatch sendcamion : sendcamion(ARG) 			//sender:serviceaccessgui receiver:coldstorageservice
+Dispatch chargetaken : chargetaken(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
 Event robotincoldstorage : robotincoldstorage(ARG)  //emitter:coldstorage listener:coldstorageservice
 Event robotisindoor : robotisindoor(ARG)  			//emitter:coldstoragerobot listener:coldstorageservice
@@ -86,10 +86,10 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			replyTo createticket with acceptticket : acceptticket($TICKETCODE)
 		[# } #] 
 	}	  
-  	Transition t0 whenRequest sendcamion -> startcoldstoragerobot
+  	Transition t0 whenMsg sendcamion -> startcoldstoragerobot
   	
   	State startcoldstoragerobot{
-  		replyTo sendcamion with chargetaken : chargetaken(ok)
+  		forward serviceaccessgui -m chargetaken : chargetaken(ok)
   		//send start command to coldstoragerobot
   		forward transporttrolley
   		 -m  startrobotservice : startrobotservice(ok)
@@ -230,7 +230,7 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 			[# 
 				val Ticket  = "faketicket";
 			#]
-			request coldstorageservice -m sendcamion : sendcamion($Ticket) 
+			forward coldstorageservice -m sendcamion : sendcamion($Ticket) 
 		}
 	}
 	Goto waitticketrequest

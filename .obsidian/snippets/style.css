@@ -32,20 +32,6 @@ hr {
 h1, h2, h3 {
     color: #242424;
     clear: left;
-    font: 100% Tahoma, Helvetica, Arial, sans-serif;
-    margin-bottom: 0.5em;
-    padding-top: 0.5em;
-	border-radius: 10px;
-	padding: 5px;
-}
-
-top {
-	width: 100%;
-}
-
-
-#i {
-    color: #ff1010;
 }
 tt{
 	font-family: "Arial";
@@ -183,4 +169,8 @@ div.wrapdesc{
 div.imagedesc{
 	width: 85%;
 	margin: auto;
+}
+.text-red{
+    color: red;
+    background-color: auto;
 }

@@ -34,6 +34,7 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
      coldstorageservice >> Edge(color='magenta', style='solid', xlabel='getcoldroomspace', fontcolor='magenta') >> coldroom
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='chargetaken', fontcolor='blue') >> serviceaccessgui
      coldstorageservice >> Edge(color='blue', style='solid', xlabel='startrobotservice', fontcolor='blue') >> transporttrolley
      sys >> Edge(color='red', style='dashed', xlabel='robotincoldstorage', fontcolor='red') >> coldstorageservice
      coldstorageservice >> Edge(color='blue', style='solid', xlabel='updatestorage', fontcolor='blue') >> coldroom
@@ -44,7 +45,7 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
      sys >> Edge(color='red', style='dashed', xlabel='guicmd', fontcolor='red') >> serviceaccessgui
      serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='createticket', fontcolor='magenta') >> coldstorageservice
      serviceaccessgui >> Edge( xlabel='ticketaccepted', **eventedgeattr, fontcolor='red') >> sys
-     serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='sendcamion', fontcolor='magenta') >> coldstorageservice
+     serviceaccessgui >> Edge(color='blue', style='solid', xlabel='sendcamion', fontcolor='blue') >> coldstorageservice
      fakeuser >> Edge( xlabel='guicmd', **eventedgeattr, fontcolor='red') >> sys
      sys >> Edge(color='red', style='dashed', xlabel='ticketaccepted', fontcolor='red') >> fakeuser
 diag
