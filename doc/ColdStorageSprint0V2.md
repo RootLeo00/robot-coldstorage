@@ -14,7 +14,8 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 - Non deve succedere che un camion, ricevuto il proprio ticket si veda rifiutata l'operazione di scarico una volta arrivato in INDOOR.
 - E' possibile che il transport trolley non riesca a scaricare un intero truck tutto in un solo viaggio. Il committente ha affermato che non è una casistica da prendere in considerazione.
 - la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti
-- dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**."
+### Macrocomponenti
+dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**."
 - Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD
 
 ![[modello_stanza.png]]
@@ -42,7 +43,6 @@ Dai requisiti possiamo asserire che:
 - Le macroentità sono:
 	- *ColdStorageService*
 	- *Transport Trolley* 
-	- *DDR Robot*
 	- *Sonar e Led*
 	- *ServiceAcessGUI* 
 	- *ColdRoom*
