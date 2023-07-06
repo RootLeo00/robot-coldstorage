@@ -11,12 +11,8 @@
             "id": "06e21e224216bad1",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "doc/ColdStorageSprint0V2.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -85,7 +81,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "doc/ColdStorageSprint0V2.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +97,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "doc/ColdStorageSprint0V2.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -124,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "doc/ColdStorageSprint0V2.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -148,35 +140,39 @@
   },
   "active": "06e21e224216bad1",
   "lastOpenFiles": [
-    "doc/coldstorageservicearchV2.png",
-    "doc/coldstorageservicearchV2.png",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld.java",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld$3.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld$2.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld$1.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnection.java",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnection.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnSysObserver.java",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnSysObserver.class",
+    "sprint0/unibolibs/unibo/basicomm23/utils/SystemTimer.java",
+    "sprint0/unibolibs/unibo/basicomm23/utils/SystemTimer.class",
+    "sprint0/qakicons/system.PNG",
+    "sprint0/qakicons/symActorSmall.png",
+    "sprint0/qakicons/externalQActor.png",
+    "sprint0/qakicons/symActor.png",
+    "sprint0/qakicons/codedQActor.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/social/twitter.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/social/facebook.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/recommendation/recombee.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/media/cloudinary.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/logging/papertrail.png",
     "doc/ColdStorageSprint0V2.md",
-    "coldstorageservicearch",
-    "macrocomponents.drawio",
-    "doc/coldstorageservicearchV1.png",
-    "doc/cate_img.png",
-    "doc/macrocomponents.drawio",
-    "doc",
+    "sprint0/doc/NOTES.md",
+    "sprint0/doc/ColdStorageSprint0V2.md",
+    "sprint0/doc/ColdStorageSprint0V1.md",
     "Pasted image 20230705231626.png.md",
-    "doc/macrocomponentsV1.png",
     "macrocomponents.jpg.md",
-    "doc/macrocomponentsV2.jpg",
-    "doc/modello_stanza.png",
     "doc/ColdStorageSprint0V1.md",
-    "myself.png",
-    "macrocomponents.png",
-    "macrocomponents.jpg",
     "macrocomponents 1.png.md",
     "coldstoragesprint0.md",
     "doc/NOTES.md",
     "README.md",
     "macrocomponents.png.md",
-    "img",
-    "src/it/unibo/sonar/Sonar.kt",
-    "src/it/unibo/sonar",
-    "src/it/unibo/ctxsonar/MainCtxsonar.kt",
-    "src/it/unibo/ctxsonar",
-    "Api_coldstorageservice.txt",
     "appl1qakarch 1.png.md"
   ]
 }
