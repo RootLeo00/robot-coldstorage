@@ -36,4 +36,5 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='moverobot', fontcolor='magenta') >> basicrobot
      serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='createticket', fontcolor='magenta') >> coldstorageservice
      serviceaccessgui >> Edge(color='blue', style='solid', xlabel='sendtruck', fontcolor='blue') >> coldstorageservice
+     sonar >> Edge(color='blue', style='solid', xlabel='stoprobot', fontcolor='blue') >> transporttrolley
 diag

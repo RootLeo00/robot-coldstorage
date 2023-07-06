@@ -66,6 +66,9 @@ Come si legge nei requisiti, le interazioni tra le entità sono
 | ColdStorageService | ServiceAccessGui| Quando la Cold Room ha finito lo spazio disponibile, allora non può essere emesso il ticket | denyticket | il committente ha specificato che l'utente non può rimanere bloccato su questa richeista|
 | ServiceAccessGui | ColdStorageService| the driver uses the ServiceAcessGUI to enter the ticket number and waits until the message **charge taken** | sendtruck | frase letterale dei requisiti |
 | ColdStorageService | ServiceAccessGui| messaggio che permette al truck di presentarsi ad INDOOR | chargetaken | frase letterale dei requisiti; Attenzione non è una richiesta perchè il committente ha specificato che non è possibile ottenere una risposta diversa da chargetaken |
+| TransportTrolley | BasicRobot | messaggio di allarme del BasicRobot. Alla ricezione, il BasicRobot deve fermarsi  | alarm | fa parte dei comandi presenti già nel Basic Robot |
+| Sonar | TransportTrolley | when it measures a distance less that a prefixed value **DLIMT**, the transport trolley must be stopped  | stoprobot | frase letterale dei requisiti |
+
 
 
 
