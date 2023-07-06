@@ -20,6 +20,8 @@ Dispatch chargetaken : chargetaken(ARG) 			//sender:coldstorageservice receiver:
 Dispatch startrobotservice : startrobotservice(ARG) //sender:coldstorageservice receiver:coldstoragerobot
 Dispatch updatestorage : updatestorage(KG) 			//sender:coldstorageservice receiver:coldstorage
 
+Dispatch alarm : alarm(ARG)
+
 //robot pos messages
 Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
@@ -254,7 +256,8 @@ QActor serviceaccessgui context ctxserviceaccessgui{
  */   
 QActor sonar context ctxsonar{
 	State s0 initial{
-		printCurrentMessage		
+		printCurrentMessage
+		forward transporttrolley -m alarm:alarm(ARG)		
 		// emit guicmd:guicmd(createticket,10)
 			
 	}
