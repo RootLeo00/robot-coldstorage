@@ -11,8 +11,12 @@
             "id": "06e21e224216bad1",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "sprint0/doc/NOTES.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -81,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "sprint0/doc/NOTES.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "sprint0/doc/NOTES.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "sprint0/doc/NOTES.md"
+              }
             }
           }
         ]
@@ -140,6 +148,14 @@
   },
   "active": "06e21e224216bad1",
   "lastOpenFiles": [
+    "sprint0/doc/modello_stanza.png",
+    "sprint0/doc/macrocomponentsV2.jpg",
+    "sprint0/doc/macrocomponentsV1.png",
+    "sprint0/doc/ColdStorageSprint0V2.md",
+    "sprint0/doc/ColdStorageSprint0V2.pdf",
+    "README.md",
+    "sprint0/doc/coldstorageservicearchV2.png",
+    "sprint0/readme.md",
     "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld.java",
     "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld.class",
     "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld$3.class",
@@ -149,29 +165,23 @@
     "sprint0/unibolibs/unibo/basicomm23/ws/WsConnection.class",
     "sprint0/unibolibs/unibo/basicomm23/ws/WsConnSysObserver.java",
     "sprint0/unibolibs/unibo/basicomm23/ws/WsConnSysObserver.class",
-    "sprint0/unibolibs/unibo/basicomm23/utils/SystemTimer.java",
-    "sprint0/unibolibs/unibo/basicomm23/utils/SystemTimer.class",
     "sprint0/qakicons/system.PNG",
     "sprint0/qakicons/symActorSmall.png",
-    "sprint0/qakicons/externalQActor.png",
     "sprint0/qakicons/symActor.png",
+    "sprint0/qakicons/externalQActor.png",
     "sprint0/qakicons/codedQActor.png",
     "sprint0/lib/python3.11/site-packages/resources/saas/social/twitter.png",
     "sprint0/lib/python3.11/site-packages/resources/saas/social/facebook.png",
-    "sprint0/lib/python3.11/site-packages/resources/saas/recommendation/recombee.png",
-    "sprint0/lib/python3.11/site-packages/resources/saas/media/cloudinary.png",
-    "sprint0/lib/python3.11/site-packages/resources/saas/logging/papertrail.png",
-    "doc/ColdStorageSprint0V2.md",
     "sprint0/doc/NOTES.md",
-    "sprint0/doc/ColdStorageSprint0V2.md",
     "sprint0/doc/ColdStorageSprint0V1.md",
+    "NOTES.md",
+    "doc/ColdStorageSprint0V2.md",
     "Pasted image 20230705231626.png.md",
     "macrocomponents.jpg.md",
     "doc/ColdStorageSprint0V1.md",
     "macrocomponents 1.png.md",
     "coldstoragesprint0.md",
     "doc/NOTES.md",
-    "README.md",
     "macrocomponents.png.md",
     "appl1qakarch 1.png.md"
   ]
