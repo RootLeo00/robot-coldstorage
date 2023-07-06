@@ -1,0 +1,178 @@
+{
+  "main": {
+    "id": "be791aa84e0992e7",
+    "type": "split",
+    "children": [
+      {
+        "id": "bd3fd62f7fc60e11",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "06e21e224216bad1",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "061908ca37dcaabb",
+    "type": "split",
+    "children": [
+      {
+        "id": "05cb9cffd235bd19",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a11033c454e0a63e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "c86853f598f8b72f",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "754186d36fde810e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "ccc313ac06f95008",
+    "type": "split",
+    "children": [
+      {
+        "id": "d201608c27bbea35",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7b907efec2e8cc40",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "45f4bbfca149bcce",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "663efa7031a2c760",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "73aacc2baeac37e2",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "06e21e224216bad1",
+  "lastOpenFiles": [
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld.java",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld$3.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld$2.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld$1.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnection.java",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnection.class",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnSysObserver.java",
+    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnSysObserver.class",
+    "sprint0/unibolibs/unibo/basicomm23/utils/SystemTimer.java",
+    "sprint0/unibolibs/unibo/basicomm23/utils/SystemTimer.class",
+    "sprint0/qakicons/system.PNG",
+    "sprint0/qakicons/symActorSmall.png",
+    "sprint0/qakicons/externalQActor.png",
+    "sprint0/qakicons/symActor.png",
+    "sprint0/qakicons/codedQActor.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/social/twitter.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/social/facebook.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/recommendation/recombee.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/media/cloudinary.png",
+    "sprint0/lib/python3.11/site-packages/resources/saas/logging/papertrail.png",
+    "doc/ColdStorageSprint0V2.md",
+    "sprint0/doc/NOTES.md",
+    "sprint0/doc/ColdStorageSprint0V2.md",
+    "sprint0/doc/ColdStorageSprint0V1.md",
+    "Pasted image 20230705231626.png.md",
+    "macrocomponents.jpg.md",
+    "doc/ColdStorageSprint0V1.md",
+    "macrocomponents 1.png.md",
+    "coldstoragesprint0.md",
+    "doc/NOTES.md",
+    "README.md",
+    "macrocomponents.png.md",
+    "appl1qakarch 1.png.md"
+  ]
+}
