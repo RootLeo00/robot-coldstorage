@@ -15,7 +15,7 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 - <div class="kp"> le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.</div>
 
 - <div class="kp"> Non deve succedere che un camion, ricevuto il proprio ticket si veda rifiutata l'operazione di scarico una volta arrivato in INDOOR.</div>
-- <div class="kp">E' possibile che il transport trolley non riesca a scaricare un intero truck tutto in un solo viaggio</div>
+- <div class="kp">E' possibile che il transport trolley non riesca a scaricare un intero truck tutto in un solo viaggio. </div>
 - <div class="kp">la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti</div>
 
 
