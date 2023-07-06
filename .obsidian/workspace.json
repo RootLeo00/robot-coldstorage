@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "sprint0/doc/NOTES.md",
+                "file": "sprint0/doc/ColdStorageSprint0V2.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "sprint0/doc/NOTES.md",
+                "file": "sprint0/doc/ColdStorageSprint0V2.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "sprint0/doc/NOTES.md",
+                "file": "sprint0/doc/ColdStorageSprint0V2.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "sprint0/doc/NOTES.md"
+                "file": "sprint0/doc/ColdStorageSprint0V2.md"
               }
             }
           }
@@ -148,11 +148,12 @@
   },
   "active": "06e21e224216bad1",
   "lastOpenFiles": [
+    "sprint0/doc/ColdStorageSprint0V2.pdf",
+    "sprint0/doc/ColdStorageSprint0V2.md",
+    "sprint0/doc/NOTES.md",
     "sprint0/doc/modello_stanza.png",
     "sprint0/doc/macrocomponentsV2.jpg",
     "sprint0/doc/macrocomponentsV1.png",
-    "sprint0/doc/ColdStorageSprint0V2.md",
-    "sprint0/doc/ColdStorageSprint0V2.pdf",
     "README.md",
     "sprint0/doc/coldstorageservicearchV2.png",
     "sprint0/readme.md",
@@ -171,8 +172,6 @@
     "sprint0/qakicons/externalQActor.png",
     "sprint0/qakicons/codedQActor.png",
     "sprint0/lib/python3.11/site-packages/resources/saas/social/twitter.png",
-    "sprint0/lib/python3.11/site-packages/resources/saas/social/facebook.png",
-    "sprint0/doc/NOTES.md",
     "sprint0/doc/ColdStorageSprint0V1.md",
     "NOTES.md",
     "doc/ColdStorageSprint0V2.md",
