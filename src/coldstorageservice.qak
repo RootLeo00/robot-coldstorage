@@ -10,18 +10,13 @@ Reply denyticket    : denyticket( ARG ) 		//sender:coldstorageservice receiver:s
 
 Request getcoldroomspace : getcoldroomspace( ARG ) 			//sender:coldstorageservice receiver:coldstorage
 Reply coldroomspace : coldroomspace(KG)						//sender:coldstorage receiver:coldstorageservice
-Reply enoughspace    : enoughspace( ARG )
-Reply notenoughspace    : notenoughspace( ARG )
+
 //Dispatch failticket : failticket(ARG) 
-Dispatch sendcamion : sendcamion(ARG) 			//sender:serviceaccessgui receiver:coldstorageservice
+Dispatch sendtruck : sendtruck(ARG) 			//sender:serviceaccessgui receiver:coldstorageservice
 Dispatch chargetaken : chargetaken(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
-Event robotincoldstorage : robotincoldstorage(ARG)  //emitter:coldstorage listener:coldstorageservice
-Event robotisindoor : robotisindoor(ARG)  			//emitter:coldstoragerobot listener:coldstorageservice
-Event robotisinstorage : robotisinstorage(ARG)  	//emitter:coldstoragerobot listener:coldstorageservice
-Event robotisinhome : robotisinhome(ARG)  			//emitter:coldstoragerobot listener:coldstorageservice
-Event guicmd : guicmd(COMMAND, PARAMETER) 			//emitter:serviceaccessgui listener:coldstorageservice
-Event ticketaccepted : ticketaccepted(TICKETCODE) 	//emitter:serviceaccessgui listener:fakeuser
+			//emitter:serviceaccessgui listener:coldstorageservice
+	//emitter:serviceaccessgui listener:fakeuser
 Dispatch startrobotservice : startrobotservice(ARG) //sender:coldstorageservice receiver:coldstoragerobot
 Dispatch updatestorage : updatestorage(KG) 			//sender:coldstorageservice receiver:coldstorage
 
@@ -30,12 +25,10 @@ Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
 
-Context ctxall ip [host="localhost" port=8720]
-Context ctxtransporttrolley ip [host="localhost" port=8720]
+
 Context ctxserviceaccessgui ip [host="localhost" port=8720]
 Context ctxcoldstorageservice ip [host="localhost" port=8720]
 Context ctxsonar ip [host="localhost" port=8720]
-Context ctxcoldroom ip [host="localhost" port=8720]
 Context ctxbasicrobot ip [host="10.0.0.3" port=8020]  
 //Context ctxgui ip [host="127.0.0.1" port=8112]  
 
@@ -86,7 +79,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			replyTo createticket with acceptticket : acceptticket($TICKETCODE)
 		[# } #] 
 	}	  
-  	Transition t0 whenMsg sendcamion -> startcoldstoragerobot
+  	Transition t0 whenMsg sendtruck-> startcoldstoragerobot
   	
   	State startcoldstoragerobot{
   		forward serviceaccessgui -m chargetaken : chargetaken(ok)
@@ -94,7 +87,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
   		forward transporttrolley
   		 -m  startrobotservice : startrobotservice(ok)
   	}
-  	Transition t1 whenEvent  robotincoldstorage -> updatecoldstorage
+  	
   	
   	State updatecoldstorage {
   		//add kg already arrived to cold storage
@@ -111,7 +104,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
  *  coldroom
  * ------------------------------------------------------------------
 */     
-QActor coldroom context ctxcoldroom{  
+QActor coldroom context ctxcoldstorageservice{  
 	[# var SpaceKg = 100 #]   //TODO
 		State s0 initial {	 
 		println("&&&  appl coldroom is now ACTIVE ...") 
@@ -139,7 +132,7 @@ QActor coldroom context ctxcoldroom{
  *  coldstoragerobot
  * ------------------------------------------------------------------
 */      
-QActor transporttrolley context ctxtransporttrolley{     
+QActor transporttrolley context ctxcoldstorageservice{     
 	
 	State s0 initial{
 		println("&&&  appl coldstoragerobot is now ACTIVE ...") 
@@ -155,7 +148,7 @@ QActor transporttrolley context ctxtransporttrolley{
 	//when robot has taken kg from camion -> move robot to coldstorage
 	State moverobottostorage{
 		//send event "robot is in indoor"
-		emit robotisindoor : robotisindoor(ok)
+		
 		request basicrobot -m moverobot:moverobot(3,5)
 	}
 	Transition t2 whenReply moverobotdone -> moverobottohome
@@ -163,13 +156,13 @@ QActor transporttrolley context ctxtransporttrolley{
 	//when robot has placed kg into storage -> move robot to home
 	State moverobottohome{
 		//send event "robot is in home"
-		emit robotisinstorage : robotisinstorage(ok)
+		
 		request basicrobot -m moverobot:moverobot(1,1)
 	}
 	Transition t3 whenReply moverobotdone -> emitrobotisinhome
  				  whenReply moverobotfailed -> moverobottohome
  	State emitrobotisinhome{
- 		emit robotisinhome : robotisinhome(ok)
+ 		
  	}
 	//wait next startcoldstoragerobot --> transition to moverobottoindoor
   	Transition t4 whenMsg startrobotservice -> moverobottoindoor
@@ -191,18 +184,14 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 	Goto waitticketrequest
 	
 	State waitticketrequest{}
-	Transition t0 whenEvent guicmd -> handleticketrequest
+	
 	
 	State handleticketrequest {
 		printCurrentMessage
 		// request ticket to coldstorageservice actor
-		onMsg ( guicmd : guicmd(createticket,MASS)){
-			/*[# CommUtils.outmagenta("request ticket creation") 
-				Mass = payloadArg(1); 
-			#]*/
-			[# val Mass=10 #]
+		
 			request coldstorageservice -m createticket : createticket($Mass) 
-		}
+		
 		
 	} 
 	Transition t1 whenReply acceptticket -> ticketaccepted
@@ -216,22 +205,15 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 				val TicketCode= payloadArg(0)
 				CommUtils.outmagenta("ticket: ${TicketCode}"); 
 			#]
-			emit ticketaccepted:ticketaccepted($TicketCode)
+			
 		}
 	}
-	Transition t1 whenEvent guicmd -> handleticketfromuser	
 	
 	State handleticketfromuser{
 		// send sendcamion request to send truck in the indoor area
-		onMsg ( guicmd : guicmd(insertticket,TICKET)){
-//			[# CommUtils.outmagenta("insert ticket"); 
-//				Ticket  = payloadArg(1);
-//			#]
-			[# 
-				val Ticket  = "faketicket";
-			#]
-			forward coldstorageservice -m sendcamion : sendcamion($Ticket) 
-		}
+	
+			forward coldstorageservice -m sendtruck: sendcamion($Ticket) 
+		
 	}
 	Goto waitticketrequest
 	
@@ -249,7 +231,7 @@ QActor serviceaccessgui context ctxserviceaccessgui{
  * ------------------------------------------------------------------
  * utente fake per sprint1, in attesa di creare una console remota 
  */   
-QActor fakeuser context ctxall{
+/*QActor fakeuser context ctxall{
 	State s0 initial{
 		printCurrentMessage		
 		 emit guicmd:guicmd(createticket,10)
@@ -263,7 +245,7 @@ QActor fakeuser context ctxall{
 			#]
 		emit guicmd:guicmd(insertticket,$TicketCode)
 	}
-}
+}*/
 /*  
  * ------------------------------------------------------------------
  *  sonar
