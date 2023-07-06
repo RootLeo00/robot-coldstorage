@@ -12,7 +12,7 @@ I requisiti sono scritti dal committente TemaFinale23.
 Dopo opportuni colloqui con il committente, possiano affermare che :
 -  le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.
 - Non deve succedere che un camion, ricevuto il proprio ticket si veda rifiutata l'operazione di scarico una volta arrivato in INDOOR.
-- E' possibile che il transport trolley non riesca a scaricare un intero truck tutto in un solo viaggio. Il committente ha richiesto che si prenda in esame anche questa casistica.
+- E' possibile che il transport trolley non riesca a scaricare un intero truck tutto in un solo viaggio. Il committente ha affermato che non è una casistica da prendere in considerazione.
 - la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti
 - dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**."
 - Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD
@@ -25,11 +25,12 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 	- **moveBackward** : il robot si muove indietro di uno step
 	- **alarm** : il robot si ferma
 
-- Il transport trolley è quell'entità della applicazione che ha la responsabilità di muovere il ddr robot, il quale ci è stato già consegnato dal committente.
-- Fridge Truck è un'entità che non fa parte del sistema, dunque non verrà modellato.
-- ServiceAccessGUI è un'entità formalizzata come un attore che ha la responsabilità di inviare messaggi alla ColdStorageService
+- Il transport trolley è quell'entità della applicazione che ha la responsabilità di controllare il basicrobot, il quale ci è stato già consegnato dal committente.
+- Fridge Truck è un'entità che interagisce con il sistema ma non ne fa parte, dunque non verrà modellato.
+- ServiceAccessGUI è un'entità formalizzata come un attore che ha la responsabilità di inviare messaggi alla ColdStorageService e di interagire con l'utente
 - ColdStorageService è l'entità core business del sistema e siccome il sistema è distribuito, allora ColdStorageService è modellata come un attore
-- Cold Room viene modellata come un attore di modo da interagire con ColdStorageService. KEYPOINT: essa potrebbe essere modellata come un POJO all'interno di ColdStorageService stesso, ma riteniamo che modellando Cold Room come un attore porti ai seguenti vantaggi:
+- Cold Room viene modellata come un attore di modo da interagire con ColdStorageService. 
+- KEYPOINT: essa potrebbe essere modellata come un POJO all'interno di ColdStorageService stesso, ma riteniamo che modellando Cold Room come un attore porti ai seguenti vantaggi:
 	- si alleggerisce ColdStorageService di un altro compito, dato che ColdStorageService è l'entità core business
 	- si segue il principio di singola responsabilità
 	- se verranno previste in futuro una entità di "Scarico della Cold Room", allora questa entità potrà interagire direttamente con la Cold Room, senza dover interagire con ColdStorageService
@@ -84,7 +85,7 @@ prevediamo di suddividere in sprint lo sviluppo del sistema secondo il seguente 
 | SPRINT 3 | a) introduzione del alarm requirement nel prototipo sviluppato allo sprint1 | 1 giorno | |
 |  | b) test alarm requirement | 2 ore |  
 |  | c) test totale del sistema | 2 ore |  
-| SPRINT 4 | a) deployment su robot fisico | 2 giorni | |
+| SPRINT 4 | a) deployment su robot fisico | 3 ore | |
 
 Lo sprint 3 e lo sprint 4 possono essere realizzati in parallelo.
 
