@@ -1,20 +1,15 @@
 ## Introduction
 ### Goal dello sprint0
+
 - individuare un architettura logica iniziale che definisca le macro-entità del sistema e le loro interazioni
 - definire un piano di lavoro iniziale 
 
-
 ## Requirements
+
 I requisiti sono scritti dal committente TemaFinale23.
 
-
 ## Requirements analysis
-Dopo opportuni colloqui con il committente, possiano affermare che :
--  le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.
-- Non deve succedere che un camion, ricevuto il proprio ticket si veda rifiutata l'operazione di scarico una volta arrivato in INDOOR.
-- E' possibile che il transport trolley non riesca a scaricare un intero truck tutto in un solo viaggio. Il committente ha affermato che non è una casistica da prendere in considerazione.
-- la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti
-### Macrocomponenti
+
 dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**."
 - Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD
 
@@ -40,6 +35,16 @@ dai requisiti si evince che la stanza sia modellabile tramite una mappa che rapp
 Dai requisiti possiamo asserire che:
 -  il sistema è **distribuito** su più nodi di elaborazione;
 
+### Dialogo con il committente
+
+Dopo opportuni colloqui con il committente, possiano affermare che :
+-  le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.
+- Non deve succedere che un camion, ricevuto il proprio ticket si veda rifiutata l'operazione di scarico una volta arrivato in INDOOR.
+- E' possibile che il transport trolley non riesca a scaricare un intero truck tutto in un solo viaggio. Il committente ha affermato che non è una casistica da prendere in considerazione.
+- la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti
+
+### Macrocomponenti
+
 - Le macroentità sono:
 	- *ColdStorageService*
 	- *Transport Trolley* 
@@ -50,6 +55,7 @@ Dai requisiti possiamo asserire che:
 ![[macrocomponentsV2.jpg]]
 
 ## Architettura logica
+
 Il sistema è composto da:
   - *ColdStorageService*: prende in carico richieste di generazione ticket e richieste di invio di un camion; si interfaccia con la ColdRoom per saperne lo stato; fa partire le deposit action; E' inserita in un suo contesto perchè è la core business.
   - *Transport Trolley*: invia al Basic Robot la sequenza di comandi necessari per effettuare una deposit action
@@ -75,8 +81,8 @@ Come si legge nei requisiti, le interazioni tra le entità sono
 
 ![[coldstorageservicearchV2.png]]
 
-
 ## Piano di lavoro
+
 prevediamo di suddividere in sprint lo sviluppo del sistema secondo il seguente elenco
 
 | SPRINT | GOAL | TEMPO STIMATO | NOTE |
