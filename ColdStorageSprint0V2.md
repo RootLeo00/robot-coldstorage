@@ -16,7 +16,8 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 - la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti
 - dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**."
 - Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD
-![[Pasted image 20230705231626.png]]
+
+![[modello_stanza.png]]
 - Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. In particolare INDOOR è formalizzata con la cella di coordinate la coordinata **(!!!!!!),** mentre PORT è formalizzata con la cella di coordinate **(!!!!!)**
 - Il committente ha predisposto il software per modellare il ddr robot. Il ddr robot è modellato tramite l'entità robot astratta BasicRobot. Il ddr robot è modellato come un attore. I comandi che possono essere inviati al ddr robot sono:
 	-  **turnLeft** : il robot ruota a sinistra di 90°
@@ -45,7 +46,8 @@ Dai requisiti possiamo asserire che:
 	- *Sonar e Led*
 	- *ServiceAcessGUI* 
 	- *ColdRoom*
-![[macrocomponents.jpg]]
+	
+![[macrocomponentsV2.jpg]]
 
 ## Architettura logica
 Il sistema è composto da:
@@ -95,11 +97,11 @@ Lo sprint 3 e lo sprint 4 possono essere realizzati in parallelo.
         GIT repo: https://github.com/RootLeo00/sw-eng.git
     </div>
 
-![[Pasted image 20230703104028.png]]
+![[cate_img.png]]
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
 By Matteo Longhi email: matteo.longhi5@studio.unibo.it
 GIT repo: https://github.com/carnivuth/iss_2023_matteo_longhi.git
 </div>
 
-![[Pasted image 20230703103516.png]]
+![[longhi_img.png]]

@@ -27,7 +27,7 @@ Dai requisiti possiamo asserire che:
 	- *Transport Trolley* (fisico o virtuale)
 	- *ServiceAcessGUI* 
 
-![[macrocomponents.png]]
+![[macrocomponentsV1.png]]
 
 ## Problem Analysis
 ### Il problema delle operazioni parallele
@@ -81,7 +81,7 @@ per implementare i test si prevede di sfruttare la generazione degli eventi da p
         GIT repo: https://github.com/RootLeo00/sw-eng.git
     </div>
 
-![[Pasted image 20230703104028.png]]
+![[cate_img.png]]
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
 By Matteo Longhi email: matteo.longhi5@studio.unibo.it
@@ -89,4 +89,4 @@ GIT repo: https://github.com/carnivuth/iss_2023_matteo_longhi.git
 </div>
 
 
-![[Pasted image 20230703103516.png]]
+![[longhi_img.png]]
