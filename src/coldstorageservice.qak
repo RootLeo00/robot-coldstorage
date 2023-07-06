@@ -1,6 +1,6 @@
 /*
 
- */   
+ */     
 System /* -msglog */ coldstorageservice 
 
 //Dispatch startcmd   : start( ARG ) 			//sender:serviceaccessgui receiver:appl

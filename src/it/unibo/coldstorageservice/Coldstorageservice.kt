@@ -62,7 +62,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="startcoldstoragerobot",cond=whenDispatch("sendcamion"))
+					 transition(edgeName="t02",targetState="startcoldstoragerobot",cond=whenDispatch("sendtruck"))
 				}	 
 				state("startcoldstoragerobot") { //this:State
 					action { //it:State
@@ -73,7 +73,6 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t13",targetState="updatecoldstorage",cond=whenEvent("robotincoldstorage"))
 				}	 
 				state("updatecoldstorage") { //this:State
 					action { //it:State
@@ -83,7 +82,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="startticket",cond=whenRequest("createticket"))
+					 transition(edgeName="t03",targetState="startticket",cond=whenRequest("createticket"))
 				}	 
 			}
 		}

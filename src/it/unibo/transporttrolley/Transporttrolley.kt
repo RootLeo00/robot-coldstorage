@@ -27,7 +27,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t08",targetState="moverobottoindoor",cond=whenDispatch("startrobotservice"))
+					 transition(edgeName="t07",targetState="moverobottoindoor",cond=whenDispatch("startrobotservice"))
 				}	 
 				state("moverobottoindoor") { //this:State
 					action { //it:State
@@ -37,42 +37,39 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t19",targetState="moverobottostorage",cond=whenReply("moverobotdone"))
-					transition(edgeName="t110",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t18",targetState="moverobottostorage",cond=whenReply("moverobotdone"))
+					transition(edgeName="t19",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
 				}	 
 				state("moverobottostorage") { //this:State
 					action { //it:State
-						emit("robotisindoor", "robotisindoor(ok)" ) 
 						request("moverobot", "moverobot(3,5)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t211",targetState="moverobottohome",cond=whenReply("moverobotdone"))
-					transition(edgeName="t212",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t210",targetState="moverobottohome",cond=whenReply("moverobotdone"))
+					transition(edgeName="t211",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
 				}	 
 				state("moverobottohome") { //this:State
 					action { //it:State
-						emit("robotisinstorage", "robotisinstorage(ok)" ) 
 						request("moverobot", "moverobot(1,1)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t313",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
-					transition(edgeName="t314",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t312",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
+					transition(edgeName="t313",targetState="moverobottohome",cond=whenReply("moverobotfailed"))
 				}	 
 				state("emitrobotisinhome") { //this:State
 					action { //it:State
-						emit("robotisinhome", "robotisinhome(ok)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t415",targetState="moverobottoindoor",cond=whenDispatch("startrobotservice"))
+					 transition(edgeName="t414",targetState="moverobottoindoor",cond=whenDispatch("startrobotservice"))
 				}	 
 			}
 		}

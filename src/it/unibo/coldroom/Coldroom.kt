@@ -28,7 +28,7 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t05",targetState="getcoldroomspacestate",cond=whenRequest("getcoldroomspace"))
+					 transition(edgeName="t04",targetState="getcoldroomspacestate",cond=whenRequest("getcoldroomspace"))
 				}	 
 				state("getcoldroomspacestate") { //this:State
 					action { //it:State
@@ -38,7 +38,7 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t06",targetState="updateKg",cond=whenDispatch("updatestorage"))
+					 transition(edgeName="t05",targetState="updateKg",cond=whenDispatch("updatestorage"))
 				}	 
 				state("updateKg") { //this:State
 					action { //it:State
@@ -47,7 +47,7 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t07",targetState="getcoldroomspacestate",cond=whenRequest("getcoldroomspace"))
+					 transition(edgeName="t06",targetState="getcoldroomspacestate",cond=whenRequest("getcoldroomspace"))
 				}	 
 			}
 		}

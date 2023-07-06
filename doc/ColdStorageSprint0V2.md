@@ -70,7 +70,7 @@ Come si legge nei requisiti, le interazioni tra le entità sono
 
 
 
-![[coldstorageservicearch.png]]
+![[coldstorageservicearchV2.png]]
 
 
 ## Piano di lavoro

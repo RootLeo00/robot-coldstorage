@@ -37,24 +37,19 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t016",targetState="handleticketrequest",cond=whenEvent("guicmd"))
 				}	 
 				state("handleticketrequest") { //this:State
 					action { //it:State
 						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
-						if( checkMsgContent( Term.createTerm("guicmd(COMMAND,PARAMETER)"), Term.createTerm("guicmd(createticket,MASS)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 val Mass=10  
-								request("createticket", "createticket($Mass)" ,"coldstorageservice" )  
-						}
+						request("createticket", "createticket($Mass)" ,"coldstorageservice" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t117",targetState="ticketaccepted",cond=whenReply("acceptticket"))
-					transition(edgeName="t118",targetState="ticketdenied",cond=whenReply("denyticket"))
+					 transition(edgeName="t115",targetState="ticketaccepted",cond=whenReply("acceptticket"))
+					transition(edgeName="t116",targetState="ticketdenied",cond=whenReply("denyticket"))
 				}	 
 				state("ticketaccepted") { //this:State
 					action { //it:State
@@ -64,23 +59,16 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 								 
 												val TicketCode= payloadArg(0)
 												CommUtils.outmagenta("ticket: ${TicketCode}"); 
-								emit("ticketaccepted", "ticketaccepted($TicketCode)" ) 
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t119",targetState="handleticketfromuser",cond=whenEvent("guicmd"))
 				}	 
 				state("handleticketfromuser") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("guicmd(COMMAND,PARAMETER)"), Term.createTerm("guicmd(insertticket,TICKET)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 
-												val Ticket  = "faketicket";
-								forward("sendcamion", "sendcamion($Ticket)" ,"coldstorageservice" ) 
-						}
+						forward("sendtruck", "sendcamion($Ticket)" ,"coldstorageservice" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
