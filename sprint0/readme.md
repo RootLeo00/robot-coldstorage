@@ -14,13 +14,11 @@ dai requisiti si evince che la stanza sia modellabile tramite una mappa che rapp
 - Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD
 
 ![[modello_stanza.png]]
-- Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. In particolare INDOOR è formalizzata con la cella di coordinate la coordinata **(!!!!!!),** mentre PORT è formalizzata con la cella di coordinate **(!!!!!)**
-- Il committente ha predisposto il software per modellare il ddr robot. Il ddr robot è modellato tramite l'entità robot astratta BasicRobot. Il ddr robot è modellato come un attore. I comandi che possono essere inviati al ddr robot sono:
-	-  **turnLeft** : il robot ruota a sinistra di 90°
-	-  **turnRight** : il robot ruota a destra di 90°
-	- **moveForward** : il robot si muove in avanti di uno step
-	- **moveBackward** : il robot si muove indietro di uno step
-	- **alarm** : il robot si ferma
+- Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. Le coordinate precise di INDOOR e PORT verranno specificate nello sprint 1.
+- Il committente ha predisposto il software per modellare il ddr robot. Il ddr robot è modellato tramite l'entità robot astratta BasicRobot. le **API del componente basic robot** sono le seguenti:
+- **Request moverobot    :  moverobot(TARGETX, TARGETY)**
+- **Reply moverobotdone  :  moverobotok(ARG)**
+- **Reply moverobotfailed:  moverobotfailed(ARG)**
 
 - Il transport trolley è quell'entità della applicazione che ha la responsabilità di controllare il basicrobot, il quale ci è stato già consegnato dal committente.
 - Fridge Truck è un'entità che interagisce con il sistema ma non ne fa parte, dunque non verrà modellato.
@@ -65,21 +63,19 @@ Il sistema è composto da:
   - *Cold Room*: aggiorna lo stato della quantità di kg
 Come si legge nei requisiti, le interazioni tra le entità sono
 
-| Sender | Receiver | Description | Signature | Notes |
+| Sender | Receiver | Description | Messaggio | Notes |
 | -------- |--------- | --------- | --------- | --------- |
-| ServiceAccessGui | ColdStorageService| send to the ColdStorageService a request to store new **FW** kg of food | createticket | frase letterale dei requisiti |
-| ColdStorageService | ServiceAccessGui| If the request is accepted, the services return a ticket [with the ticket number] | acceptticket(TICKETNUMBER) | frase letterale dei requisiti |
-| ColdStorageService | ServiceAccessGui| Quando la Cold Room ha finito lo spazio disponibile, allora non può essere emesso il ticket | denyticket | il committente ha specificato che l'utente non può rimanere bloccato su questa richeista|
-| ServiceAccessGui | ColdStorageService| the driver uses the ServiceAcessGUI to enter the ticket number and waits until the message **charge taken** | sendtruck | frase letterale dei requisiti |
-| ColdStorageService | ServiceAccessGui| messaggio che permette al truck di presentarsi ad INDOOR | chargetaken | frase letterale dei requisiti; Attenzione non è una richiesta perchè il committente ha specificato che non è possibile ottenere una risposta diversa da chargetaken |
-| TransportTrolley | BasicRobot | messaggio di allarme del BasicRobot. Alla ricezione, il BasicRobot deve fermarsi  | alarm | fa parte dei comandi presenti già nel Basic Robot |
-| Sonar | TransportTrolley | when it measures a distance less that a prefixed value **DLIMT**, the transport trolley must be stopped  | stoprobot | frase letterale dei requisiti |
+| ServiceAccessGui | ColdStorageService| send to the ColdStorageService a request to store new **FW** kg of food | Request storefood : storefood( KG ) | frase letterale dei requisiti |
+| ColdStorageService | ServiceAccessGui| If the request is accepted, the services return a ticket [with the ticket number] | Reply ticketaccepted : ticketaccepted( TICKETCODE ) | frase letterale dei requisiti |
+| ColdStorageService | ServiceAccessGui| Quando la Cold Room ha finito lo spazio disponibile, allora non può essere emesso il ticket | Reply ticketdenied : ticketdenied( ARG ) | il committente ha specificato che l'utente non può rimanere bloccato su questa richeista|
+| ServiceAccessGui | ColdStorageService| the driver uses the ServiceAcessGUI to enter the ticket number and waits until the message **charge taken** | Request sendticket: sendticket(TICKETCODE) | frase letterale dei requisiti |
+| ColdStorageService | ServiceAccessGui| messaggio che permette al truck di presentarsi ad INDOOR | Reply chargetaken : chargetaken(ARG) | frase letterale dei requisiti |
 
 
 
 
 
-![[coldstorageservicearchV2.png]]
+![[coldstorageservicearchV3.png]]
 
 ## Piano di lavoro
 
