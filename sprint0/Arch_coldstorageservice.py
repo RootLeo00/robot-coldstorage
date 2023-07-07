@@ -27,14 +27,10 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
      with Cluster('ctxsonar', graph_attr=nodeattr):
           sonar=Custom('sonar','./qakicons/symActorSmall.png')
+          led=Custom('led','./qakicons/symActorSmall.png')
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
-     coldstorageservice >> Edge(color='magenta', style='solid', xlabel='getcoldroomspace', fontcolor='magenta') >> coldroom
-     coldstorageservice >> Edge(color='blue', style='solid', xlabel='chargetaken', fontcolor='blue') >> serviceaccessgui
-     coldstorageservice >> Edge(color='blue', style='solid', xlabel='startrobotservice', fontcolor='blue') >> transporttrolley
-     coldstorageservice >> Edge(color='blue', style='solid', xlabel='updatestorage', fontcolor='blue') >> coldroom
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='moverobot', fontcolor='magenta') >> basicrobot
-     serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='createticket', fontcolor='magenta') >> coldstorageservice
-     serviceaccessgui >> Edge(color='blue', style='solid', xlabel='sendtruck', fontcolor='blue') >> coldstorageservice
-     sonar >> Edge(color='blue', style='solid', xlabel='stoprobot', fontcolor='blue') >> transporttrolley
+     serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='storefood', fontcolor='magenta') >> coldstorageservice
+     serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='sendticket', fontcolor='magenta') >> coldstorageservice
 diag

@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "sprint0/doc/ColdStorageSprint0V2.md",
+                "file": "sprint0/doc/ColdStorageSprint0V3.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "sprint0/doc/ColdStorageSprint0V2.md",
+                "file": "sprint0/doc/ColdStorageSprint0V3.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "sprint0/doc/ColdStorageSprint0V2.md",
+                "file": "sprint0/doc/ColdStorageSprint0V3.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "sprint0/doc/ColdStorageSprint0V2.md"
+                "file": "sprint0/doc/ColdStorageSprint0V3.md"
               }
             }
           }
@@ -148,8 +148,12 @@
   },
   "active": "06e21e224216bad1",
   "lastOpenFiles": [
-    "sprint0/doc/ColdStorageSprint0V2.pdf",
+    "bin/sprint0/src/it/unibo/led",
+    "sprint0/src/it/unibo/led/Led.kt",
+    "sprint0/src/it/unibo/led",
+    "sprint0/src-gen",
     "sprint0/doc/ColdStorageSprint0V2.md",
+    "sprint0/doc/ColdStorageSprint0V2.pdf",
     "sprint0/doc/NOTES.md",
     "sprint0/doc/modello_stanza.png",
     "sprint0/doc/macrocomponentsV2.jpg",
@@ -163,9 +167,6 @@
     "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld$2.class",
     "sprint0/unibolibs/unibo/basicomm23/ws/WsConnectionOld$1.class",
     "sprint0/unibolibs/unibo/basicomm23/ws/WsConnection.java",
-    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnection.class",
-    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnSysObserver.java",
-    "sprint0/unibolibs/unibo/basicomm23/ws/WsConnSysObserver.class",
     "sprint0/qakicons/system.PNG",
     "sprint0/qakicons/symActorSmall.png",
     "sprint0/qakicons/symActor.png",

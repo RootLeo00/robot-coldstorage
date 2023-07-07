@@ -11,3 +11,4 @@ context(ctxbasicrobot, "10.0.0.3",  "TCP", "8020").
   qactor( transporttrolley, ctxcoldstorageservice, "it.unibo.transporttrolley.Transporttrolley").
   qactor( serviceaccessgui, ctxserviceaccessgui, "it.unibo.serviceaccessgui.Serviceaccessgui").
   qactor( sonar, ctxsonar, "it.unibo.sonar.Sonar").
+  qactor( led, ctxsonar, "it.unibo.led.Led").

@@ -42,19 +42,19 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
-						request("createticket", "createticket($Mass)" ,"coldstorageservice" )  
+						request("storefood", "storefood($Mass)" ,"coldstorageservice" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t115",targetState="ticketaccepted",cond=whenReply("acceptticket"))
-					transition(edgeName="t116",targetState="ticketdenied",cond=whenReply("denyticket"))
+					 transition(edgeName="t19",targetState="ticketaccepted",cond=whenReply("ticketaccepted"))
+					transition(edgeName="t110",targetState="ticketdenied",cond=whenReply("ticketdenied"))
 				}	 
 				state("ticketaccepted") { //this:State
 					action { //it:State
 						 CommUtils.outgreen("ticket")  
-						if( checkMsgContent( Term.createTerm("acceptticket(TICKETCODE)"), Term.createTerm("acceptticket(TICKETCODE)"), 
+						if( checkMsgContent( Term.createTerm("ticketaccepted(TICKETCODE)"), Term.createTerm("acceptticket(TICKETCODE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
 												val TicketCode= payloadArg(0)
@@ -68,7 +68,7 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("handleticketfromuser") { //this:State
 					action { //it:State
-						forward("sendtruck", "sendcamion($Ticket)" ,"coldstorageservice" ) 
+						request("sendticket", "sendticket($Ticket)" ,"coldstorageservice" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
