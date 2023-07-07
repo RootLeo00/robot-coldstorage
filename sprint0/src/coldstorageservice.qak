@@ -8,8 +8,7 @@ Request createticket : createticket( KG ) 		//sender:serviceaccessgui receiver:c
 Reply acceptticket    : acceptticket( TICKETCODE ) 	//sender:coldstorageservice receiver:serviceaccessgui
 Reply denyticket    : denyticket( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
 
-Request getcoldroomspace : getcoldroomspace( ARG ) 			//sender:coldstorageservice receiver:coldstorage
-Reply coldroomspace : coldroomspace(KG)						//sender:coldstorage receiver:coldstorageservice
+				//sender:coldstorage receiver:coldstorageservice
 
 //Dispatch failticket : failticket(ARG) 
 Dispatch sendtruck : sendtruck(ARG) 			//sender:serviceaccessgui receiver:coldstorageservice
@@ -17,10 +16,7 @@ Dispatch chargetaken : chargetaken(ARG) 			//sender:coldstorageservice receiver:
 
 			//emitter:serviceaccessgui listener:coldstorageservice
 	//emitter:serviceaccessgui listener:fakeuser
-Dispatch startrobotservice : startrobotservice(ARG) //sender:coldstorageservice receiver:coldstoragerobot
-Dispatch updatestorage : updatestorage(KG) 			//sender:coldstorageservice receiver:coldstorage
 
-Dispatch stoprobot : stoprobot(ARG)
 
 //robot pos messages
 Request moverobot    :  moverobot(TARGETX, TARGETY)
@@ -58,10 +54,10 @@ QActor coldstorageservice context ctxcoldstorageservice{
   		onMsg(createticket:createticket(MASS)){
   		[# var Mass = payloadArg(0).toLong() #] //payloadArg(0) == MASS
   		//chiedi a cold room quanto spazio è occupato
-  		request coldroom -m getcoldroomspace : getcoldroomspace(ok)
+  		
   		} 	
 	}
-	Transition t0 whenReply coldroomspace -> answerticketrequest
+	
 	 		 
 	State answerticketrequest{
 		//recupera parametro della richiesta
@@ -86,14 +82,13 @@ QActor coldstorageservice context ctxcoldstorageservice{
   	State startcoldstoragerobot{
   		forward serviceaccessgui -m chargetaken : chargetaken(ok)
   		//send start command to coldstoragerobot
-  		forward transporttrolley
-  		 -m  startrobotservice : startrobotservice(ok)
+  		
   	}
   	
   	
   	State updatecoldstorage {
   		//add kg already arrived to cold storage
-  		forward coldroom -m updatestorage:updatestorage($Mass)
+  		
   	}
   	
    	Transition t0 whenRequest createticket -> startticket
@@ -112,20 +107,20 @@ QActor coldroom context ctxcoldstorageservice{
 		println("&&&  appl coldroom is now ACTIVE ...") 
    	}  
 	//wait request on info kg
-	Transition t0 whenRequest getcoldroomspace -> getcoldroomspacestate
+	
 	
 	State getcoldroomspacestate{ 
 		//send the actual state of the space
-		replyTo getcoldroomspace with coldroomspace : coldroomspace($SpaceKg)
+		
 	}
 	//requesto to update kg
 		//wait request on info kg
-	Transition t0 whenMsg updatestorage -> updateKg
+	
 	
 		State updateKg{
 		//update storage
 	}
-	Transition t0 whenRequest getcoldroomspace -> getcoldroomspacestate
+	
 }
 
 
@@ -140,7 +135,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 		println("&&&  appl coldstoragerobot is now ACTIVE ...") 
 	}
 	//when coldstorageservice sends start command --> start moving robot
-	Transition t0 whenMsg startrobotservice -> moverobottoindoor
+	
 	State moverobottoindoor{
 		//send event "robot is in indoor"
 		request basicrobot -m moverobot:moverobot(1,6)
@@ -167,7 +162,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  		
  	}
 	//wait next startcoldstoragerobot --> transition to moverobottoindoor
-  	Transition t4 whenMsg startrobotservice -> moverobottoindoor
+  	
   	
   	
 }
@@ -257,7 +252,24 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 QActor sonar context ctxsonar{
 	State s0 initial{
 		printCurrentMessage
-		forward transporttrolley -m stoprobot:stoprobot(ARG)		
+			
+		// emit guicmd:guicmd(createticket,10)
+			
+	}
+	//Transition t0 whenEvent ticketaccepted -> sendticket
+	
+	/*State sendticket{
+			[# CommUtils.outmagenta("[state] send ticket"); 
+				val TicketCode  = payloadArg(0);
+			#]
+		emit guicmd:guicmd(insertticket,$TicketCode)
+	}*/
+}
+
+QActor led context ctxsonar{
+	State s0 initial{
+		printCurrentMessage
+			
 		// emit guicmd:guicmd(createticket,10)
 			
 	}
