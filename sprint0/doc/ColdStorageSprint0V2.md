@@ -14,7 +14,7 @@ dai requisiti si evince che la stanza sia modellabile tramite una mappa che rapp
 - Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD
 
 ![[modello_stanza.png]]
-- Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. In particolare INDOOR è formalizzata con la cella di coordinate la coordinata **(!!!!!!),** mentre PORT è formalizzata con la cella di coordinate **(!!!!!)**
+- Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. Le coordinate precise di INDOOR e PORT verranno specificate nello sprint 1.
 - Il committente ha predisposto il software per modellare il ddr robot. Il ddr robot è modellato tramite l'entità robot astratta BasicRobot. Il ddr robot è modellato come un attore. I comandi che possono essere inviati al ddr robot sono:
 	-  **turnLeft** : il robot ruota a sinistra di 90°
 	-  **turnRight** : il robot ruota a destra di 90°

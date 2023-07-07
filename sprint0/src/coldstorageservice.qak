@@ -4,29 +4,26 @@
 System /* -msglog */ coldstorageservice 
 
 //Dispatch startcmd   : start( ARG ) 			//sender:serviceaccessgui receiver:appl
-Request createticket : createticket( KG ) 		//sender:serviceaccessgui receiver:coldstorageservice
-Reply acceptticket    : acceptticket( TICKETCODE ) 	//sender:coldstorageservice receiver:serviceaccessgui
-Reply denyticket    : denyticket( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
+Request storefood : storefood( KG ) 		//sender:serviceaccessgui receiver:coldstorageservice
+Reply ticketaccepted    : ticketaccepted( TICKETCODE ) 	//sender:coldstorageservice receiver:serviceaccessgui
+Reply ticketdenied    : ticketdenied( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
 
-Request getcoldroomspace : getcoldroomspace( ARG ) 			//sender:coldstorageservice receiver:coldstorage
-Reply coldroomspace : coldroomspace(KG)						//sender:coldstorage receiver:coldstorageservice
+				//sender:coldstorage receiver:coldstorageservice
 
 //Dispatch failticket : failticket(ARG) 
-Dispatch sendtruck : sendtruck(ARG) 			//sender:serviceaccessgui receiver:coldstorageservice
-Dispatch chargetaken : chargetaken(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
+Request sendticket: sendticket(TICKETCODE) 			//sender:serviceaccessgui receiver:coldstorageservice
+Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
+Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
 			//emitter:serviceaccessgui listener:coldstorageservice
 	//emitter:serviceaccessgui listener:fakeuser
-Dispatch startrobotservice : startrobotservice(ARG) //sender:coldstorageservice receiver:coldstoragerobot
-Dispatch updatestorage : updatestorage(KG) 			//sender:coldstorageservice receiver:coldstorage
 
-Dispatch stoprobot : stoprobot(ARG)
 
 //robot pos messages
 Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
-
+ 
 
 Context ctxserviceaccessgui ip [host="localhost" port=8720]
 Context ctxcoldstorageservice ip [host="localhost" port=8720]
@@ -52,16 +49,16 @@ QActor coldstorageservice context ctxcoldstorageservice{
 		discardMsg Off  //default: discardMsg On
     	println("currentMsg=${currentMsg}")
    	}  
-   	Transition t0 whenRequest createticket -> startticket
+   	Transition t0 whenRequest storefood -> startticket
     
   	State startticket{ 
-  		onMsg(createticket:createticket(MASS)){
+  		onMsg(storefood:createticket(MASS)){
   		[# var Mass = payloadArg(0).toLong() #] //payloadArg(0) == MASS
   		//chiedi a cold room quanto spazio è occupato
-  		request coldroom -m getcoldroomspace : getcoldroomspace(ok)
+  		
   		} 	
 	}
-	Transition t0 whenReply coldroomspace -> answerticketrequest
+	
 	 		 
 	State answerticketrequest{
 		//recupera parametro della richiesta
@@ -72,31 +69,31 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			if( (Space - Mass ) < 0 ) { #
 		]
 		//send message that ticket is not accepted
-			replyTo createticket with denyticket : denyticket(ok)	 
+			replyTo storefood with ticketdenied : ticketdenied(ok)	 
 		[# } #] 	
 		[#  else  {
 			val TICKETCODE="faketicket" 
 		#] 	
 		//send ticket code to gui
-			replyTo createticket with acceptticket : acceptticket($TICKETCODE)
+			replyTo storefood with ticketaccepted : ticketaccepted($TICKETCODE)
 		[# } #] 
 	}	  
-  	Transition t0 whenMsg sendtruck-> startcoldstoragerobot
+  	Transition t0 whenRequest sendticket-> startcoldstoragerobot
   	
   	State startcoldstoragerobot{
-  		forward serviceaccessgui -m chargetaken : chargetaken(ok)
+  		replyTo  sendticket with chargetaken : chargetaken(ok)
   		//send start command to coldstoragerobot
-  		forward transporttrolley
-  		 -m  startrobotservice : startrobotservice(ok)
+  		
   	}
+  	
   	
   	
   	State updatecoldstorage {
   		//add kg already arrived to cold storage
-  		forward coldroom -m updatestorage:updatestorage($Mass)
+  		
   	}
   	
-   	Transition t0 whenRequest createticket -> startticket
+   	Transition t0 whenRequest storefood -> startticket
   		
   	}
   
@@ -112,20 +109,20 @@ QActor coldroom context ctxcoldstorageservice{
 		println("&&&  appl coldroom is now ACTIVE ...") 
    	}  
 	//wait request on info kg
-	Transition t0 whenRequest getcoldroomspace -> getcoldroomspacestate
+	
 	
 	State getcoldroomspacestate{ 
 		//send the actual state of the space
-		replyTo getcoldroomspace with coldroomspace : coldroomspace($SpaceKg)
+		
 	}
 	//requesto to update kg
 		//wait request on info kg
-	Transition t0 whenMsg updatestorage -> updateKg
+	
 	
 		State updateKg{
 		//update storage
 	}
-	Transition t0 whenRequest getcoldroomspace -> getcoldroomspacestate
+	
 }
 
 
@@ -140,7 +137,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 		println("&&&  appl coldstoragerobot is now ACTIVE ...") 
 	}
 	//when coldstorageservice sends start command --> start moving robot
-	Transition t0 whenMsg startrobotservice -> moverobottoindoor
+	
 	State moverobottoindoor{
 		//send event "robot is in indoor"
 		request basicrobot -m moverobot:moverobot(1,6)
@@ -167,7 +164,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  		
  	}
 	//wait next startcoldstoragerobot --> transition to moverobottoindoor
-  	Transition t4 whenMsg startrobotservice -> moverobottoindoor
+  	
   	
   	
 }
@@ -192,17 +189,17 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 		printCurrentMessage
 		// request ticket to coldstorageservice actor
 		
-			request coldstorageservice -m createticket : createticket($Mass) 
+			request coldstorageservice -m storefood : storefood($Mass) 
 		
 		
 	} 
-	Transition t1 whenReply acceptticket -> ticketaccepted
-				  whenReply denyticket -> ticketdenied
+	Transition t1 whenReply ticketaccepted -> ticketaccepted
+				  whenReply ticketdenied -> ticketdenied
 		
 	State ticketaccepted {
 		//print ticket
 		[# CommUtils.outgreen("ticket") #]
-		onMsg( acceptticket : acceptticket(TICKETCODE)){
+		onMsg( ticketaccepted : acceptticket(TICKETCODE)){
 			[# 
 				val TicketCode= payloadArg(0)
 				CommUtils.outmagenta("ticket: ${TicketCode}"); 
@@ -214,7 +211,7 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 	State handleticketfromuser{
 		// send sendcamion request to send truck in the indoor area
 	
-			forward coldstorageservice -m sendtruck: sendcamion($Ticket) 
+			request coldstorageservice -m sendticket: sendticket($Ticket) 
 		
 	}
 	Goto waitticketrequest
@@ -257,7 +254,24 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 QActor sonar context ctxsonar{
 	State s0 initial{
 		printCurrentMessage
-		forward transporttrolley -m stoprobot:stoprobot(ARG)		
+			
+		// emit guicmd:guicmd(createticket,10)
+			
+	}
+	//Transition t0 whenEvent ticketaccepted -> sendticket
+	
+	/*State sendticket{
+			[# CommUtils.outmagenta("[state] send ticket"); 
+				val TicketCode  = payloadArg(0);
+			#]
+		emit guicmd:guicmd(insertticket,$TicketCode)
+	}*/
+}
+
+QActor led context ctxsonar{
+	State s0 initial{
+		printCurrentMessage
+			
 		// emit guicmd:guicmd(createticket,10)
 			
 	}
