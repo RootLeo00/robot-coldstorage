@@ -4,15 +4,16 @@
 System /* -msglog */ coldstorageservice 
 
 //Dispatch startcmd   : start( ARG ) 			//sender:serviceaccessgui receiver:appl
-Request createticket : createticket( KG ) 		//sender:serviceaccessgui receiver:coldstorageservice
-Reply acceptticket    : acceptticket( TICKETCODE ) 	//sender:coldstorageservice receiver:serviceaccessgui
-Reply denyticket    : denyticket( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
+Request storefood : storefood( KG ) 		//sender:serviceaccessgui receiver:coldstorageservice
+Reply ticketaccepted    : ticketaccepted( TICKETCODE ) 	//sender:coldstorageservice receiver:serviceaccessgui
+Reply ticketdenied    : ticketdenied( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
 
 				//sender:coldstorage receiver:coldstorageservice
 
 //Dispatch failticket : failticket(ARG) 
-Dispatch sendtruck : sendtruck(ARG) 			//sender:serviceaccessgui receiver:coldstorageservice
-Dispatch chargetaken : chargetaken(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
+Request sendticket: sendticket(TICKETCODE) 			//sender:serviceaccessgui receiver:coldstorageservice
+Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
+Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
 			//emitter:serviceaccessgui listener:coldstorageservice
 	//emitter:serviceaccessgui listener:fakeuser
@@ -22,7 +23,7 @@ Dispatch chargetaken : chargetaken(ARG) 			//sender:coldstorageservice receiver:
 Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
-
+ 
 
 Context ctxserviceaccessgui ip [host="localhost" port=8720]
 Context ctxcoldstorageservice ip [host="localhost" port=8720]
@@ -48,10 +49,10 @@ QActor coldstorageservice context ctxcoldstorageservice{
 		discardMsg Off  //default: discardMsg On
     	println("currentMsg=${currentMsg}")
    	}  
-   	Transition t0 whenRequest createticket -> startticket
+   	Transition t0 whenRequest storefood -> startticket
     
   	State startticket{ 
-  		onMsg(createticket:createticket(MASS)){
+  		onMsg(storefood:createticket(MASS)){
   		[# var Mass = payloadArg(0).toLong() #] //payloadArg(0) == MASS
   		//chiedi a cold room quanto spazio è occupato
   		
@@ -68,22 +69,23 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			if( (Space - Mass ) < 0 ) { #
 		]
 		//send message that ticket is not accepted
-			replyTo createticket with denyticket : denyticket(ok)	 
+			replyTo storefood with ticketdenied : ticketdenied(ok)	 
 		[# } #] 	
 		[#  else  {
 			val TICKETCODE="faketicket" 
 		#] 	
 		//send ticket code to gui
-			replyTo createticket with acceptticket : acceptticket($TICKETCODE)
+			replyTo storefood with ticketaccepted : ticketaccepted($TICKETCODE)
 		[# } #] 
 	}	  
-  	Transition t0 whenMsg sendtruck-> startcoldstoragerobot
+  	Transition t0 whenRequest sendticket-> startcoldstoragerobot
   	
   	State startcoldstoragerobot{
-  		forward serviceaccessgui -m chargetaken : chargetaken(ok)
+  		replyTo  sendticket with chargetaken : chargetaken(ok)
   		//send start command to coldstoragerobot
   		
   	}
+  	
   	
   	
   	State updatecoldstorage {
@@ -91,7 +93,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
   		
   	}
   	
-   	Transition t0 whenRequest createticket -> startticket
+   	Transition t0 whenRequest storefood -> startticket
   		
   	}
   
@@ -187,17 +189,17 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 		printCurrentMessage
 		// request ticket to coldstorageservice actor
 		
-			request coldstorageservice -m createticket : createticket($Mass) 
+			request coldstorageservice -m storefood : storefood($Mass) 
 		
 		
 	} 
-	Transition t1 whenReply acceptticket -> ticketaccepted
-				  whenReply denyticket -> ticketdenied
+	Transition t1 whenReply ticketaccepted -> ticketaccepted
+				  whenReply ticketdenied -> ticketdenied
 		
 	State ticketaccepted {
 		//print ticket
 		[# CommUtils.outgreen("ticket") #]
-		onMsg( acceptticket : acceptticket(TICKETCODE)){
+		onMsg( ticketaccepted : acceptticket(TICKETCODE)){
 			[# 
 				val TicketCode= payloadArg(0)
 				CommUtils.outmagenta("ticket: ${TicketCode}"); 
@@ -209,7 +211,7 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 	State handleticketfromuser{
 		// send sendcamion request to send truck in the indoor area
 	
-			forward coldstorageservice -m sendtruck: sendcamion($Ticket) 
+			request coldstorageservice -m sendticket: sendticket($Ticket) 
 		
 	}
 	Goto waitticketrequest
