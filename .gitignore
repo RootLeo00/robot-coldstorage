@@ -6,6 +6,9 @@ bin/default
 .idea
 build
 logs 
+.gradle/
+.obsidian
+.settings
 
 log4jInfo.log
 
@@ -23,6 +26,3 @@ package-lock.json
 docker/
 /.metadata/
 /src-gen/
-*.class
-*.jar
-.obsidian
