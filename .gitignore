@@ -8,7 +8,7 @@ build
 logs 
 .gradle
 .obsidian
-
+*.class
 log4jInfo.log
 
 #node
