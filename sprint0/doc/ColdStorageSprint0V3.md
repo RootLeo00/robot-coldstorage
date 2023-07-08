@@ -66,10 +66,10 @@ Come si legge nei requisiti, le interazioni tra le entità sono
 | Sender | Receiver | Description | Messaggio | Notes |
 | -------- |--------- | --------- | --------- | --------- |
 | ServiceAccessGui | ColdStorageService| send to the ColdStorageService a request to store new **FW** kg of food | Request storefood : storefood( KG ) | frase letterale dei requisiti |
-| ColdStorageService | ServiceAccessGui| If the request is accepted, the services return a ticket [with the ticket number] | Reply ticketaccepted : ticketaccepted( TICKETCODE ) | frase letterale dei requisiti |
-| ColdStorageService | ServiceAccessGui| Quando la Cold Room ha finito lo spazio disponibile, allora non può essere emesso il ticket | Reply ticketdenied : ticketdenied( ARG ) | il committente ha specificato che l'utente non può rimanere bloccato su questa richeista|
+| ColdStorageService | ServiceAccessGui| **Reply to storefood** If the request is accepted, the services return a ticket [with the ticket number] | Reply ticketaccepted : ticketaccepted( TICKETCODE ) | frase letterale dei requisiti |
+| ColdStorageService | ServiceAccessGui| **Reply to storefood** Quando la Cold Room ha finito lo spazio disponibile, allora non può essere emesso il ticket | Reply ticketdenied : ticketdenied( ARG ) | il committente ha specificato che l'utente non può rimanere bloccato su questa richeista|
 | ServiceAccessGui | ColdStorageService| the driver uses the ServiceAcessGUI to enter the ticket number and waits until the message **charge taken** | Request sendticket: sendticket(TICKETCODE) | frase letterale dei requisiti |
-| ColdStorageService | ServiceAccessGui| messaggio che permette al truck di presentarsi ad INDOOR | Reply chargetaken : chargetaken(ARG) | frase letterale dei requisiti |
+| ColdStorageService | ServiceAccessGui| **Reply to sendticket** messaggio che permette al truck di presentarsi ad INDOOR | Reply chargetaken : chargetaken(ARG) | frase letterale dei requisiti |
 
 
 
