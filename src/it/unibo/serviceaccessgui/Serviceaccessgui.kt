@@ -68,7 +68,7 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("handleticketfromuser") { //this:State
 					action { //it:State
-						request("sendticket", "sendticket($Ticket)" ,"coldstorageservice" )  
+						forward("sendticket", "sendticket($Ticket)" ,"coldstorageservice" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

@@ -30,7 +30,8 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
           led=Custom('led','./qakicons/symActorSmall.png')
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='chargetaken', fontcolor='blue') >> serviceaccessgui
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='moverobot', fontcolor='magenta') >> basicrobot
      serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='storefood', fontcolor='magenta') >> coldstorageservice
-     serviceaccessgui >> Edge(color='magenta', style='solid', xlabel='sendticket', fontcolor='magenta') >> coldstorageservice
+     serviceaccessgui >> Edge(color='blue', style='solid', xlabel='sendticket', fontcolor='blue') >> coldstorageservice
 diag
