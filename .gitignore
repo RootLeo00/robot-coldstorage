@@ -8,6 +8,10 @@ build
 logs 
 .settings
 .gradle
+.gradle/
+.obsidian
+.settings
+
 log4jInfo.log
 
 #node
@@ -24,6 +28,3 @@ package-lock.json
 docker/
 /.metadata/
 /src-gen/
-*.class
-*.jar
-.obsidian
