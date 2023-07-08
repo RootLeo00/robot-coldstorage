@@ -13,7 +13,7 @@ logs
 .settings
 
 log4jInfo.log
-
+*.class
 #node
 nodeCode/*/node_modules/
 *.lck
