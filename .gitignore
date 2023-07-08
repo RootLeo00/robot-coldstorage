@@ -5,7 +5,8 @@ bin/default
 .project
 .idea
 build
-logs 
+logs
+*.class 
 
 log4jInfo.log
 
