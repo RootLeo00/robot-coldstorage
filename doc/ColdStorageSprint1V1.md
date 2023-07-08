@@ -1,3 +1,4 @@
+
 ## Introduzione
 ### Goal conseguiti nello sprint0
 - individuare un architettura logica iniziale che definisca le macro-entità del sistema e le loro interazioni
@@ -62,18 +63,8 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 Dopo opportuni colloqui con il committente, possiano affermare che :
 - le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.
 
-
-
-Dai requisiti possiamo asserire che:
-..................................................................................................................................................
-
-
-- Le macroentità sono:
-	- *ColdStorageService*
-	- *Transport Trolley* (fisico o virtuale)
-	- *ServiceAcessGUI* 
-
-![[macrocomponentsV1.png]]
+### Architettura logica requisiti
+![[coldstorageservicearchV1.png]]
 
 ## Problem Analysis
 
@@ -86,15 +77,18 @@ possibili soluzioni:
 ### Carico del transport trolley
 il transporttrolley potrebbe ammettere un carico massimo trasportabile, dopo opportune discussioni con il committente si è deciso di non prendere in carico questa eventualità
 
-###
-
 ### Il problema delle operazioni parallele
-- dato che i ticket possono essere erogati in maniera parallela è possibile che il sistema eroghi un ticket che non possa essere accettato in fase di scarico merce dato che la dimensione disponibile nella **COLDROOM** è stata ridotta da una operazione di scarico precedente
-- per ovviare a questo problema si predispone uno **STATO GHOST** che consideri la capacita attuale della **COLDROOM** e tutti i ticket emessi in un dato momento che non sono stati portati a termine
-### Mostrare lo stato della serviceaccessGUI
-- per via della introduzione dello **STATO GHOST** la *ServiceAcessGUI* deve mostrare lo stato attuale compreso dei ticket attivi nel sistema
-### Accesso al sistema
-- Il ticket ha al suo interno un "ticket number", e per ragioni di sicurezza due o più Fridge truck driver non devono poter conoscere i ticket degli altri, e non devono poter inserire i ticket degli altri né in maniera malevola né incidentale 
+dato che i ticket possono essere erogati in maniera parallela è possibile che il sistema eroghi un ticket che non possa essere accettato in fase di scarico merce dato che la dimensione disponibile nella **COLDROOM** è stata ridotta da una operazione di scarico precedente
+per ovviare a questo problema si predispone una lista che memorizza i ticket emessi che sono ancora in corso e ne tiene conto alla ricezione di `storefood` 
+
+### Sicurezza del Ticket
+Il ticket ha al suo interno un "ticket number", e per ragioni di sicurezza due o più Fridge truck driver non devono poter conoscere i ticket degli altri, e non devono poter inserire i ticket degli altri né in maniera malevola né incidentale.
+per ovviare al problema si aggiunge alla struttura dati `TICKET` si prevede un campo generato randomicamente 
+
+```java
+String TICKETSECRET 
+``` 
+
 
 ## Architettura logica
 Il sistema è composto da:
