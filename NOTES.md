@@ -34,4 +34,14 @@ R:
 - memorizzare le richieste di charge taken quando il robot è occupato: 
 	- uso discardMsg Off 
 
-D: quanto è lo spazione del frigo? 
+D: quanto è lo spazione del frigo?
+### REQUIREMENTS SPRINT1
+The transport trolley is used to perform a deposit action that consists in the following phases:
+- pick up a food-load from a Fridge truck located on the INDOOR
+- go from the INDOOR to the PORT of the ColdRoom
+- deposit the food-load in the ColdRoom
+### SERVICE USER STORY
+- A Fridge truck driver uses the ServiceAcessGUI to send a request to store its load of FW kg. If the request is accepted, the driver drives its truck to the INDOOR of the service, before the ticket exipration time TICKETTIME.
+- When the truck is at the INDOOR of the service, the driver uses the ServiceAcessGUI to enter the ticket number and waits until the message charge taken (sent by the ColdStorageService) appears on the ServiceAcessGUI. At this  point, the truck should leave the INDOOR.
+- When the service accepts a ticket, the transport trolley reaches the INDOOR, picks up the food, sends the charge taken message and then goes to the ColdRoom to store the food.
+- When the deposit action is terminated, the transport trolley accepts another ticket (if any) or returns to HOME.
