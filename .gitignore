@@ -10,6 +10,7 @@ logs
 .gradle
 .settings
 log4jInfo.log
+.obsidian
 
 #node
 nodeCode/*/node_modules/
