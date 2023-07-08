@@ -45,3 +45,6 @@ The transport trolley is used to perform a deposit action that consists in the f
 - When the truck is at the INDOOR of the service, the driver uses the ServiceAcessGUI to enter the ticket number and waits until the message charge taken (sent by the ColdStorageService) appears on the ServiceAcessGUI. At this  point, the truck should leave the INDOOR.
 - When the service accepts a ticket, the transport trolley reaches the INDOOR, picks up the food, sends the charge taken message and then goes to the ColdRoom to store the food.
 - When the deposit action is terminated, the transport trolley accepts another ticket (if any) or returns to HOME.
+
+## domande sprint1
+il transporttrolley puo muoversi verso la coldroom anche mentre coldstorageservice sta inviando chargetaken
