@@ -6,9 +6,7 @@ bin/default
 .idea
 build
 logs 
-.gradle
-.obsidian
-*.class
+
 log4jInfo.log
 
 #node
@@ -19,7 +17,7 @@ package-lock.json
 # MQTT generated
 *-tcp*
 
-.settings
+
 /ReadMe.html
 .lck/ 
 docker/
