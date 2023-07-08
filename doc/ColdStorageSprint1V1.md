@@ -33,7 +33,7 @@ The transport trolley is used to perform a deposit action that consists in the f
 ### Transport Trolley
  **deposit action**: termine con cui si descrive il seguente ciclo di operazioni del sistema, formalizzate dai seguenti messaggi
  -  `Request moverobot : moverobot(INDOORX, INDOORY)`
- - `Reply chargetaken : chargetaken(ARG)`
+ - `Dispatch chargetaken : chargetaken(ARG)`
  - `Request moverobot : moverobot(PORTX, PORTY)`
 ### Ticket
  struttura dati formulata secondo la seguente struttura
@@ -76,6 +76,18 @@ Dai requisiti possiamo asserire che:
 ![[macrocomponentsV1.png]]
 
 ## Problem Analysis
+
+### Il messaggio chargeTaken
+dai requisiti si evince che il messaggio **chargetaken** deve essere inviato da coldstorageservice nel momento in cui il transporttrolley ha effettuato lo scarico della merce, questo presume che esista un qualche tipo di comunicazione fra i due nel momento in cui questo avviene 
+possibili soluzioni:
+- **transporttrolley emette un evento** che, viene catturato da coldstorageservice, che invia il messaggio chargetaken, in seguito viene comunicato al transporttrolley di spostarsi verso la coldroom
+- **transporttrolley emette un Dispatch/request** verso coldstorageservice, che invia il messaggio chargetaken, in seguito viene comunicato al transporttrolley di spostarsi verso la coldroom
+
+### Carico del transport trolley
+il transporttrolley potrebbe ammettere un carico massimo trasportabile, dopo opportune discussioni con il committente si è deciso di non prendere in carico questa eventualità
+
+###
+
 ### Il problema delle operazioni parallele
 - dato che i ticket possono essere erogati in maniera parallela è possibile che il sistema eroghi un ticket che non possa essere accettato in fase di scarico merce dato che la dimensione disponibile nella **COLDROOM** è stata ridotta da una operazione di scarico precedente
 - per ovviare a questo problema si predispone uno **STATO GHOST** che consideri la capacita attuale della **COLDROOM** e tutti i ticket emessi in un dato momento che non sono stati portati a termine
