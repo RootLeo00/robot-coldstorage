@@ -1,9 +1,10 @@
 ## Introduzione
+### Goal conseguiti nello sprint0
 Nel precedente sprint0 sono stati raggiunti i seguenti goal:
 - individuare un architettura logica iniziale che definisca le macro-entità del sistema e le loro interazioni
 - definire un piano di lavoro iniziale 
 ### Goal dello sprint1
-	a) prototipazione del core business ColdStorageService + TransportTrolley + Col Room
+	a) prototipazione del core business ColdStorageService + TransportTrolley + ColdRoom
 	b) creazione di una infrastruttura containerizzata per facilitare il testing 
 	c) testing
 
@@ -13,6 +14,7 @@ Nel precedente sprint0 sono stati raggiunti i seguenti goal:
 **SELEZIONE DEI REQUISITI DEL CORE BUSINESS**
 
 ## Requirements analysis
+**REQUIREMENT ANALYSIS REQUISITI DEL CORE BUSINESS**
 
 ### Modello della stanza
 - dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**"
