@@ -23,25 +23,25 @@ The transport trolley is used to perform a deposit action that consists in the f
 - When the deposit action is terminated, the transport trolley accepts another ticket (if any) or returns to HOME.
 
 ## Requirements analysis
-**REQUIREMENT ANALYSIS REQUISITI DEL CORE BUSINESS**
 
-### Modello della stanza
+### Modello della service area
 - dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**"
-- Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD
+- Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD numero reale positivo
 - Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. In particolare INDOOR è formalizzata con la cella di coordinate la coordinata **(!!!!!!),** mentre PORT è formalizzata con la cella di coordinate **(!!!!!)**
 ![[modello_stanza.png]]
 
 ### Transport Trolley
- - Il committente ha predisposto il software per modellare il ddr robot. Il ddr robot è modellato tramite l'entità robot astratta BasicRobot. Il ddr robot è modellato come un attore. I comandi che possono essere inviati al ddr robot sono:
-	-  **turnLeft** : il robot ruota a sinistra di 90°
-	-  **turnRight** : il robot ruota a destra di 90°
-	- **moveForward** : il robot si muove in avanti di uno step
-	- **moveBackward** : il robot si muove indietro di uno step
-	- **alarm** : il robot si ferma
-- Il transport trolley è quell'entità della applicazione che ha la responsabilità di controllare il basicrobot, il quale ci è stato già consegnato dal committente.
-
-Dopo opportuni colloqui con il committente, possiano affermare che :
-- E' possibile che il transport trolley non riesca a scaricare un intero truck tutto in un solo viaggio. Il committente ha affermato che non è una casistica da prendere in considerazione.
+ **deposit action**: termine con cui si descrive il seguente ciclo di operazioni del sistema, formalizzate dai seguenti messaggi
+ -  `Request moverobot : moverobot(INDOORX, INDOORY)`
+ - `Reply chargetaken : chargetaken(ARG)`
+ - `Request moverobot : moverobot(PORTX, PORTY)`
+### Ticket
+ struttura dati formulata secondo la seguente struttura
+ ```java
+int TICKETTIME INTEGER
+int TICKETNUMBER INTEGER
+``` 
+ 
 
 ### Cold Storage Service
 - ColdStorageService è l'entità core business del sistema e siccome il sistema è distribuito, allora ColdStorageService è modellata come un attore
