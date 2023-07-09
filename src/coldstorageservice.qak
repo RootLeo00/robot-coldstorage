@@ -20,10 +20,10 @@ Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:
 Dispatch dodepositaction:dodepositaction(ARG)
 //robot events
 Event robotisinindoor:robotisinindoor(ARG)
-Event robotisinhome:robotisinhome(ARG)
+Event robotisinhome:robotisinhome(ARG) 
 Event depositactionended:depositactionended(ARG)
 Dispatch gohome:gohome(ARG)													//emitter:serviceaccessgui listener:coldstorageservice
-													//emitter:serviceaccessgui listener:fakeuser
+										 			//emitter:serviceaccessgui listener:fakeuser
 
  
 //robot pos messages
@@ -37,18 +37,18 @@ Request howmanykgavailable : howmanykgavailable(ARG) //sender:coldstorageservice
 Reply kgavailable : kgavailable(KG) //sender:coldroom receiver:coldstorageservice 
 Dispatch updatekg : updatekg (KG) //sender:coldstorageservice receiver:coldroom
 
-
+ 
 
 
 Request engage : engage(ARG)
-Reply   engagedone    : engagedone(ARG)
+Reply   engagedone    : engagedone(ARG) 
 Reply   engagerefused : engagerefused(ARG)
 
-Context ctxbasicrobot  ip [host= "10.0.0.3"   port= 8020 ]   
-Context ctxcoldstorageservice   ip [host= "localhost"   port= 8038 ]
+Context ctxbasicrobot ip [host="127.0.0.1" port=8020 ]   
+Context ctxcoldstorageservice ip [host="localhost" port=8038 ]
  
 ExternalQActor basicrobot context ctxbasicrobot  
-
+ 
 //Context ctxgui ip [host="127.0.0.1" port=8112]  
 //ExternalQActor serviceaccessgui context ctxgui
  
