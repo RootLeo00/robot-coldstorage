@@ -160,9 +160,7 @@ QActor coldroom context ctxcoldstorageservice{
 */      
 QActor transporttrolley context ctxcoldstorageservice{     
 	//try to engage basicrobot on startup
-	State ss0 initial{
-		//set home,indoor,coldroom positions
-		[#
+	[#
 		var COLDROOMX=3;
 		var COLDROOMY=5;
 		var INDOORX=1;
@@ -170,6 +168,9 @@ QActor transporttrolley context ctxcoldstorageservice{
 		var HOMEX=0;
 		var HOMEY=0;
 			#]
+	State ss0 initial{
+		//set home,indoor,coldroom positions
+		
 			//usefull for keep tracking of coldstorageservice request operations
 			discardMsg Off
     println("$name request engage") color green
@@ -204,7 +205,6 @@ QActor transporttrolley context ctxcoldstorageservice{
 	}
 	Transition t2 whenReply moverobotdone -> depositactionended
  				  whenReply moverobotfailed -> robotmovefailed
-	//when robot has placed kg into storage -> move robot to home
 	
 	State depositactionended{
 		emit depositactionended:depositactionended(ok)
@@ -241,40 +241,6 @@ QActor transporttrolley context ctxcoldstorageservice{
   	
   	
 }
-
-
-/*
---------------------------------------
- serviceaccessgui
---------------------------------------
-*/
-
-/*  
- * ------------------------------------------------------------------
- *  fakeuser
- * ------------------------------------------------------------------
- * utente fake per sprint1, in attesa di creare una console remota 
- */   
-/*QActor fakeuser context ctxall{
-	State s0 initial{
-		printCurrentMessage		
-		 emit guicmd:guicmd(createticket,10)
-			
-	}
-	Transition t0 whenEvent ticketaccepted -> sendticket
-	
-	State sendticket{
-			[# CommUtils.outmagenta("[state] send ticket"); 
-				val TicketCode  = payloadArg(0);
-			#]
-		emit guicmd:guicmd(insertticket,$TicketCode)
-	}
-}
-/*  
- * ------------------------------------------------------------------
- *  sonar
- * ------------------------------------------------------------------
- * attore per l'interfacciamento con il sonar
- */   
+ 
 
  
