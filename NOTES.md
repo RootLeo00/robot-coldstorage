@@ -47,4 +47,7 @@ The transport trolley is used to perform a deposit action that consists in the f
 - When the deposit action is terminated, the transport trolley accepts another ticket (if any) or returns to HOME.
 
 ## domande sprint1
-il transporttrolley puo muoversi verso la coldroom anche mentre coldstorageservice sta inviando chargetaken
+- il transporttrolley puo muoversi verso la coldroom anche mentre coldstorageservice sta inviando chargetaken
+- cosa deve fare il robot in caso di fallimento di esecuzione di una mossa?
+-  cosa deve fare il robot nel caso non sia possibile ingaggiare il robot?
+- implementazione del costrutto else nel qak
