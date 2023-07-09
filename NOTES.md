@@ -51,3 +51,5 @@ The transport trolley is used to perform a deposit action that consists in the f
 - cosa deve fare il robot in caso di fallimento di esecuzione di una mossa?
 -  cosa deve fare il robot nel caso non sia possibile ingaggiare il robot?
 - implementazione del costrutto else nel qak
+-  il movimento del robot verso la coldroom deve essere successivo all'invio di chargetaken?
+- 
