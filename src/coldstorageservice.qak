@@ -5,13 +5,13 @@ System /* -msglog */ coldstorageservice
 
 //Dispatch startcmd   : start( ARG ) 					//sender:serviceaccessgui receiver:appl
 Request storefood : storefood( KG ) 					//sender:serviceaccessgui receiver:coldstorageservice
-Reply ticketaccepted    : ticketaccepted( TICKETCODE ) 	//sender:coldstorageservice receiver:serviceaccessgui
-Reply ticketdenied    : ticketdenied( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
+Reply ticketaccepted : ticketaccepted( TICKETCODE, TICKETSECRET, TIMESTAMP ) 	//sender:coldstorageservice receiver:serviceaccessgui
+Reply ticketdenied  : ticketdenied( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
 
 													//sender:coldstorage receiver:coldstorageservice
 
 //Dispatch failticket : failticket(ARG) 
-Dispatch sendticket: sendticket(TICKETCODE) 			//sender:serviceaccessgui receiver:coldstorageservice
+Dispatch sendticket: sendticket(TICKETCODE, TICKETSECRET, TIMESTAMP) 			//sender:serviceaccessgui receiver:coldstorageservice
 Dispatch chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
@@ -23,24 +23,36 @@ Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:
 Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
+
+
+//-------------------------------------------------------------
+Request howmanykgavailable : howmanykgavailable(ARG) //sender:coldstorageservice receiver:coldroom
+Reply kgavailable : kgavailable(KG) //sender:coldroom receiver:coldstorageservice 
+Dispatch updatekg : updatekg (KG) //sender:coldstorageservice receiver:coldroom
+
+
+
+
+Request engage : engage(ARG)
  
 
+Context ctxbasicrobot  ip [host= "127.0.0.1"   port= 8020 ]   
+Context ctxcoldstorageservice   ip [host= "localhost"   port= 8038 ]
+ 
+ExternalQActor basicrobot context ctxbasicrobot  
 
-Context ctxcoldstorageservice ip [host="localhost" port=8720]
-
-Context ctxbasicrobot ip [host="10.0.0.3" port=8020]  
 //Context ctxgui ip [host="127.0.0.1" port=8112]  
-
-ExternalQActor basicrobot context ctxbasicrobot
 //ExternalQActor serviceaccessgui context ctxgui
-
+ 
 /*  
  * ------------------------------------------------------------------
  *  coldstorageservice 
  * ------------------------------------------------------------------
 */      
 QActor coldstorageservice context ctxcoldstorageservice{  
-	[# var Mass = 0 #]       
+	
+	//*********** INTERAZIONE CON SERVICE ACCESS GUI
+	[# var Kgtoload : Long = 0; #]
 	State s0 initial {	 
 		println("&&&  appl coldstorageservice is now ACTIVE ...") 
 		//tutti i messaggi che arrivano quando sono in uno degli stati successivi
@@ -48,38 +60,37 @@ QActor coldstorageservice context ctxcoldstorageservice{
 		//quando si andrà in uno stato che potrà processarli
 		discardMsg Off  //default: discardMsg On
     	println("currentMsg=${currentMsg}")
+    	println("trying to connect to basicrobot")
+    	request basicrobot -m engage : engage( coldstorageservice )
    	}  
-   	Transition t0 whenRequest storefood -> startticket
+   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
     
-  	State startticket{ 
-  		onMsg(storefood:createticket(MASS)){
-  		[# var Mass = payloadArg(0).toLong() #] //payloadArg(0) == MASS
-  		//chiedi a cold room quanto spazio è occupato
-  		
-  		} 	
+  	State askhowmanykgoccupied{ 
+  		onMsg(storefood:storefood(KG)){
+  		[# Kgtoload = payloadArg(0).toLong(); #] //payloadArg(0) == KG
+  		//chiedi a cold room quanto spazio è disponibile
+  		request coldroom -m howmanykgavailable : howmanykgavailable
+  		} 
 	}
+	Transition t0 whenReply kgavailable -> checkifthereisenoughspace
 	
-	 		 
-	State answerticketrequest{
-		//recupera parametro della richiesta
-		//check if there is enough spacectxserviceaccessgui
-		//#TODO fare controllo vero con Mass
-		[#  
-			var Space= payloadArg(0).toLong()
-			if( (Space - Mass ) < 0 ) { #
-		]
-		//send message that ticket is not accepted
-			replyTo storefood with ticketdenied : ticketdenied(ok)	 
-		[# } #] 	
-		[#  else  {
-			val TICKETCODE="faketicket" 
-		#] 	
-		//send ticket code to gui
-			replyTo storefood with ticketaccepted : ticketaccepted($TICKETCODE)
-		[# } #] 
-	}	  
+	State checkifthereisenoughspace {
+		[# var Kgavailable = payloadArg(0).toLong(); 
+		   var TICKETCODE = 100;
+		   var TICKETSECRET= "000";
+		   var TIMESTAMP = "ciao"; 
+		#]
+		if [# Kgtoload <= Kgavailable#] { 
+			replyTo storefood with ticketaccepted : ticketaccepted($TICKETCODE, $TICKETSECRET, $TIMESTAMP)
+		}
+		else{
+			replyTo storefood with ticketdenied : ticketdenied
+		}
+	}   
   	Transition t0 whenMsg sendticket-> startcoldstoragerobot
   	
+  	
+  	//*********** INTERAZIONE CON ROBOT
   	State startcoldstoragerobot{
   		//forward serviceaccessgui -m chargetaken : chargetaken(ok)
   		//send start command to coldstoragerobot
@@ -93,7 +104,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
   		
   	}
   	
-   	Transition t0 whenRequest storefood -> startticket
+   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
   		
   	}
   
@@ -104,31 +115,39 @@ QActor coldstorageservice context ctxcoldstorageservice{
  * ------------------------------------------------------------------
 */     
 QActor coldroom context ctxcoldstorageservice{  
-	[# var SpaceKg = 100 #]   //TODO
-		State s0 initial {	 
+	[# var Kgstored : Long = 100 #]   //TODO
+	
+	State s0 initial {	 
 		println("&&&  appl coldroom is now ACTIVE ...") 
+		printCurrentMessage
    	}  
 	//wait request on info kg
+	Transition t0 whenRequest howmanykgavailable -> replywithcoldroomspacestate
+				  whenMsg updatekg -> handleupdateKg
 	
 	
-	State getcoldroomspacestate{ 
+	State replywithcoldroomspacestate{ 
 		//send the actual state of the space
-		
+		replyTo howmanykgavailable with kgavailable : kgavailable($Kgstored)
 	}
-	//requesto to update kg
-		//wait request on info kg
+	//wait request on info kg
+	Transition t0 whenRequest howmanykgavailable -> replywithcoldroomspacestate
+				  whenMsg updatekg -> handleupdateKg
 	
-	
-		State updateKg{
+	//request to update kg
+	State handleupdateKg{
 		//update storage
+		[# 
+			var insertkg = payloadArg(0).toLong();
+			Kgstored += insertkg;
+		#]
 	}
-	
 }
 
 
 /*  
  * ------------------------------------------------------------------
- *  coldstoragerobot
+ *  transporttrolley
  * ------------------------------------------------------------------
 */      
 QActor transporttrolley context ctxcoldstorageservice{     
@@ -196,7 +215,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 			#]
 		emit guicmd:guicmd(insertticket,$TicketCode)
 	}
-}*/
+}
 /*  
  * ------------------------------------------------------------------
  *  sonar

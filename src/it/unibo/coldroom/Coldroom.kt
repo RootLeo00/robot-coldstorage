@@ -18,36 +18,42 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-		 var SpaceKg = 100  
+		 var Kgstored : Long = 100  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outblack("&&&  appl coldroom is now ACTIVE ...")
+						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t05",targetState="getcoldroomspacestate",cond=whenRequest("getcoldroomspace"))
+					 transition(edgeName="t04",targetState="replywithcoldroomspacestate",cond=whenRequest("howmanykgavailable"))
+					transition(edgeName="t05",targetState="handleupdateKg",cond=whenDispatch("updatekg"))
 				}	 
-				state("getcoldroomspacestate") { //this:State
+				state("replywithcoldroomspacestate") { //this:State
 					action { //it:State
-						answer("getcoldroomspace", "coldroomspace", "coldroomspace($SpaceKg)"   )  
+						answer("howmanykgavailable", "kgavailable", "kgavailable($Kgstored)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t06",targetState="updateKg",cond=whenDispatch("updatestorage"))
+					 transition(edgeName="t06",targetState="replywithcoldroomspacestate",cond=whenRequest("howmanykgavailable"))
+					transition(edgeName="t07",targetState="handleupdateKg",cond=whenDispatch("updatekg"))
 				}	 
-				state("updateKg") { //this:State
+				state("handleupdateKg") { //this:State
 					action { //it:State
+						 
+									var insertkg = payloadArg(0).toLong();
+									Kgstored += insertkg;
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t07",targetState="getcoldroomspacestate",cond=whenRequest("getcoldroomspace"))
 				}	 
 			}
 		}

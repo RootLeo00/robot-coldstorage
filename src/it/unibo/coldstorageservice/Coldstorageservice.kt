@@ -18,72 +18,71 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-		 var Mass = 0  
+		 var Kgtoload : Long = 0;  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outblack("&&&  appl coldstorageservice is now ACTIVE ...")
 						discardMessages = false
 						CommUtils.outblack("currentMsg=${currentMsg}")
+						CommUtils.outblack("trying to connect to basicrobot")
+						request("engage", "engage(coldstorageservice)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t00",targetState="startticket",cond=whenRequest("createticket"))
+					 transition(edgeName="t00",targetState="askhowmanykgoccupied",cond=whenRequest("storefood"))
 				}	 
-				state("startticket") { //this:State
+				state("askhowmanykgoccupied") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("createticket(KG)"), Term.createTerm("createticket(MASS)"), 
+						if( checkMsgContent( Term.createTerm("storefood(KG)"), Term.createTerm("storefood(KG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 var Mass = payloadArg(0).toLong()  
-								request("getcoldroomspace", "getcoldroomspace(ok)" ,"coldroom" )  
+								 Kgtoload = payloadArg(0).toLong();  
+								request("howmanykgavailable", "howmanykgavailable" ,"coldroom" )  
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t01",targetState="answerticketrequest",cond=whenReply("coldroomspace"))
+					 transition(edgeName="t01",targetState="checkifthereisenoughspace",cond=whenReply("kgavailable"))
 				}	 
-				state("answerticketrequest") { //this:State
+				state("checkifthereisenoughspace") { //this:State
 					action { //it:State
-						  
-									var Space= payloadArg(0).toLong()
-									if( (Space - Mass ) < 0 ) {  
-						answer("createticket", "denyticket", "denyticket(ok)"   )  
-						 }  
-						  else  {
-									val TICKETCODE="faketicket" 
-						answer("createticket", "acceptticket", "acceptticket($TICKETCODE)"   )  
-						 }  
+						 var Kgavailable = payloadArg(0).toLong(); 
+								   var TICKETCODE = 100;
+								   var TICKETSECRET= "000";
+								   var TIMESTAMP = "ciao"; 
+						if(  Kgtoload <= Kgavailable 
+						 ){answer("storefood", "ticketaccepted", "ticketaccepted($TICKETCODE,$TICKETSECRET,$TIMESTAMP)"   )  
+						}
+						else
+						 {answer("storefood", "ticketdenied", "ticketdenied"   )  
+						 }
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="startcoldstoragerobot",cond=whenRequest("sendcamion"))
+					 transition(edgeName="t02",targetState="startcoldstoragerobot",cond=whenDispatch("sendticket"))
 				}	 
 				state("startcoldstoragerobot") { //this:State
 					action { //it:State
-						answer("sendcamion", "chargetaken", "chargetaken(ok)"   )  
-						forward("startrobotservice", "startrobotservice(ok)" ,"coldstoragerobot" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t13",targetState="updatecoldstorage",cond=whenEvent("robotincoldstorage"))
 				}	 
 				state("updatecoldstorage") { //this:State
 					action { //it:State
-						forward("updatestorage", "updatestorage($Mass)" ,"coldroom" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="startticket",cond=whenRequest("createticket"))
+					 transition(edgeName="t03",targetState="askhowmanykgoccupied",cond=whenRequest("storefood"))
 				}	 
 			}
 		}
