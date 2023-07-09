@@ -61,15 +61,13 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	 
 	//*********** INTERAZIONE CON SERVICE ACCESS GUI
 	[# var Kgtoload : Long = 0; #]
-	State s0 initial {	 
+	State s0 initial {	  
 		println("&&&  appl coldstorageservice is now ACTIVE ...") 
 		//tutti i messaggi che arrivano quando sono in uno degli stati successivi
 		//se non considerati, non vengono scartati, ma vengono memorizzati in coda e presi in carico successivamente
 		//quando si andrà in uno stato che potrà processarli
 		discardMsg Off  //default: discardMsg On
     	println("currentMsg=${currentMsg}")
-    	println("trying to connect to basicrobot")
-    	request basicrobot -m engage : engage( coldstorageservice )
    	}  
    	Transition t0 whenRequest storefood -> askhowmanykgoccupied
     
