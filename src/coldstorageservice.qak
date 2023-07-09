@@ -15,7 +15,14 @@ Dispatch sendticket: sendticket(TICKETCODE, TICKETSECRET, TIMESTAMP) 			//sender
 Dispatch chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
-													//emitter:serviceaccessgui listener:coldstorageservice
+
+//start depositaction
+Dispatch dodepositaction:dodepositaction(ARG)
+//robot events
+Event robotisinindoor:robotisinindoor(ARG)
+Event robotisinhome:robotisinhome(ARG)
+Event depositactionended:depositactionended(ARG)
+Dispatch gohome:gohome(ARG)													//emitter:serviceaccessgui listener:coldstorageservice
 													//emitter:serviceaccessgui listener:fakeuser
 
  
@@ -34,9 +41,10 @@ Dispatch updatekg : updatekg (KG) //sender:coldstorageservice receiver:coldroom
 
 
 Request engage : engage(ARG)
- 
+Reply   engagedone    : engagedone(ARG)
+Reply   engagerefused : engagerefused(ARG)
 
-Context ctxbasicrobot  ip [host= "127.0.0.1"   port= 8020 ]   
+Context ctxbasicrobot  ip [host= "10.0.0.3"   port= 8020 ]   
 Context ctxcoldstorageservice   ip [host= "localhost"   port= 8038 ]
  
 ExternalQActor basicrobot context ctxbasicrobot  
@@ -50,7 +58,7 @@ ExternalQActor basicrobot context ctxbasicrobot
  * ------------------------------------------------------------------
 */      
 QActor coldstorageservice context ctxcoldstorageservice{  
-	
+	 
 	//*********** INTERAZIONE CON SERVICE ACCESS GUI
 	[# var Kgtoload : Long = 0; #]
 	State s0 initial {	 
@@ -151,37 +159,83 @@ QActor coldroom context ctxcoldstorageservice{
  * ------------------------------------------------------------------
 */      
 QActor transporttrolley context ctxcoldstorageservice{     
-	
-	State s0 initial{
-		println("&&&  appl coldstoragerobot is now ACTIVE ...") 
-	}
-	//when coldstorageservice sends start command --> start moving robot
-	
-	State moverobottoindoor{
+	//try to engage basicrobot on startup
+	State ss0 initial{
+		//set home,indoor,coldroom positions
+		[#
+		var COLDROOMX=3;
+		var COLDROOMY=5;
+		var INDOORX=1;
+		var INDOORY=6;
+		var HOMEX=0;
+		var HOMEY=0;
+			#]
+			//usefull for keep tracking of coldstorageservice request operations
+			discardMsg Off
+    println("$name request engage") color green
+    request basicrobot -m engage : engage( robotposclient )
+  }
+   Transition t0 whenReply engagedone    -> waitforcommands
+                whenReply engagerefused -> waitrobotfree
+   
+   //what to do if robot alredy engaged?
+   State waitrobotfree{
+    println("$name | Sorry, the robot is already engaged.")  color green
+  }
+  State waitforcommands{
+  	println("$name | waiting for commands.")  color green
+  }
+ 	Transition t4 whenMsg dodepositaction -> moverobottoindoor
+ 	
+ 	//move robot to indoor, then send chargetaken message and go to coldroom
+ 	State moverobottoindoor {
+ 		//move robot to indoor
+ 		request basicrobot -m moverobot:moverobot($INDOORX,$INDOORY)
+ 		}
+ 	Transition t5 whenReply moverobotdone -> moverobottocoldroom
+ 				  whenReply moverobotfailed -> robotmovefailed 
+
+
+	//when robot has taken kg from camion -> move robot to coldroom
+	State moverobottocoldroom{
 		//send event "robot is in indoor"
-		request basicrobot -m moverobot:moverobot(1,6)
+		emit robotisinindoor:robotisindoor(ok)
+		request basicrobot -m moverobot:moverobot($COLDROOMX,$COLDROOMY)
 	}
-	Transition t1 whenReply moverobotdone -> moverobottostorage
- 				  whenReply moverobotfailed -> moverobottohome
-	//when robot has taken kg from camion -> move robot to coldstorage
-	State moverobottostorage{
-		//send event "robot is in indoor"
-		
-		request basicrobot -m moverobot:moverobot(3,5)
-	}
-	Transition t2 whenReply moverobotdone -> moverobottohome
- 				  whenReply moverobotfailed -> moverobottohome
+	Transition t2 whenReply moverobotdone -> depositactionended
+ 				  whenReply moverobotfailed -> robotmovefailed
 	//when robot has placed kg into storage -> move robot to home
+	
+	State depositactionended{
+		emit depositactionended:depositactionended(ok)
+		println("$name | waiting for next move" )
+		
+	}
+	Transition t6 whenMsg dodepositaction -> moverobottoindoor
+	 whenMsg gohome-> moverobottohome
+				
+	
+	
+	
 	State moverobottohome{
 		//send event "robot is in home"
 		
-		request basicrobot -m moverobot:moverobot(1,1)
+		request basicrobot -m moverobot:moverobot($HOMEX,$HOMEY)
 	}
 	Transition t3 whenReply moverobotdone -> emitrobotisinhome
- 				  whenReply moverobotfailed -> moverobottohome
+ 				  whenReply moverobotfailed -> robotmovefailed
+ 
  	State emitrobotisinhome{
+ 		emit robotisinhome: robotisinhome(ok)
+ 		println("$name | robot failed to move") color red
+ 		
+ 	}Goto waitforcommands
+ 	//control failed robot moves
+ 	State robotmovefailed{
+ 		println("$name | robot failed to move") color red
  		
  	}
+ 	
 	//wait next startcoldstoragerobot --> transition to moverobottoindoor
   	
   	
