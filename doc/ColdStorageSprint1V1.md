@@ -106,6 +106,13 @@ Il sistema è composto da:
 si prevede di testare le seguenti funzionalità del sistema
 - i movimenti del transport trolley all'interno della mappa secondo i requisiti
 - la correttezza dello stato della  **COLDROOM** durante le fasi di richiesta del ticket e di scarico merce
+
+### Test effettuati in Junit
+creare un attore che funge da fake user e nel codice Kotlin inseriamo delle Assert
+- fake user manda il messaggio **storefood**, mi aspetto di ricevere il ticket
+- fake user inserisce il ticket e si aspetta un dispatch di chargetaken
+- dopo un chargetaken, controllare la cold room che abbia diminuito lo storage
+
 ### realizzazione mediante eventi 
 per implementare i test si prevede di sfruttare la generazione degli eventi da parte del transport trolley e della cooldroom in modo da essere il meno invasivi possibile sul sistema.
 
