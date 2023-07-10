@@ -59,58 +59,59 @@ ExternalQActor basicrobot context ctxbasicrobot
 */      
 QActor coldstorageservice context ctxcoldstorageservice{  
 	 
-	//*********** INTERAZIONE CON SERVICE ACCESS GUI
-	[# var Kgtoload : Long = 0; #]
-	State s0 initial {	  
-		println("&&&  appl coldstorageservice is now ACTIVE ...") 
-		//tutti i messaggi che arrivano quando sono in uno degli stati successivi
-		//se non considerati, non vengono scartati, ma vengono memorizzati in coda e presi in carico successivamente
-		//quando si andrà in uno stato che potrà processarli
-		discardMsg Off  //default: discardMsg On
-    	println("currentMsg=${currentMsg}")
-   	}  
-   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
-    
-  	State askhowmanykgoccupied{ 
-  		onMsg(storefood:storefood(KG)){
-  		[# Kgtoload = payloadArg(0).toLong(); #] //payloadArg(0) == KG
-  		//chiedi a cold room quanto spazio è disponibile
-  		request coldroom -m howmanykgavailable : howmanykgavailable
-  		} 
-	}
-	Transition t0 whenReply kgavailable -> checkifthereisenoughspace
-	
-	State checkifthereisenoughspace {
-		[# var Kgavailable = payloadArg(0).toLong(); 
-		   var TICKETCODE = 100;
-		   var TICKETSECRET= "000";
-		   var TIMESTAMP = "ciao"; 
-		#]
-		if [# Kgtoload <= Kgavailable#] { 
-			replyTo storefood with ticketaccepted : ticketaccepted($TICKETCODE, $TICKETSECRET, $TIMESTAMP)
+		//*********** INTERAZIONE CON SERVICE ACCESS GUI
+		[# var Kgtoload : Long = 0; #]
+		State s0 initial {	  
+			println("&&&  appl coldstorageservice is now ACTIVE ...") 
+			//tutti i messaggi che arrivano quando sono in uno degli stati successivi
+			//se non considerati, non vengono scartati, ma vengono memorizzati in coda e presi in carico successivamente
+			//quando si andrà in uno stato che potrà processarli
+			discardMsg Off  //default: discardMsg On
+	    	println("currentMsg=${currentMsg}")
+	   	}  
+	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
+	    
+	  	State askhowmanykgoccupied{ 
+	  		onMsg(storefood:storefood(KG)){
+	  		[# Kgtoload = payloadArg(0).toLong(); #] //payloadArg(0) == KG
+	  		//chiedi a cold room quanto spazio è disponibile
+	  		request coldroom -m howmanykgavailable : howmanykgavailable
+	  		} 
 		}
-		else{
-			replyTo storefood with ticketdenied : ticketdenied
-		}
-	}   
-  	Transition t0 whenMsg sendticket-> startcoldstoragerobot
-  	
-  	
-  	//*********** INTERAZIONE CON ROBOT
-  	State startcoldstoragerobot{
-  		//forward serviceaccessgui -m chargetaken : chargetaken(ok)
-  		//send start command to coldstoragerobot
-  		
-  	}
-  	
-  	
-  	
-  	State updatecoldstorage {
-  		//add kg already arrived to cold storage
-  		
-  	}
-  	
-   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
+		Transition t0 whenReply kgavailable -> checkifthereisenoughspace
+		
+		State checkifthereisenoughspace {
+			[# var Kgavailable = payloadArg(0).toLong(); 
+			   var TICKETCODE = 100;
+			   var TICKETSECRET= "000";
+			   var TIMESTAMP = "ciao"; 
+			#]
+			if [# Kgtoload <= Kgavailable#] { 
+				replyTo storefood with ticketaccepted : ticketaccepted($TICKETCODE, $TICKETSECRET, $TIMESTAMP)
+			}
+			else{
+				replyTo storefood with ticketdenied : ticketdenied
+			}
+		}   
+	  	Transition t0 whenMsg sendticket-> startcoldstoragerobot
+	  	
+	  	
+	  	//*********** INTERAZIONE CON ROBOT
+	  	State startcoldstoragerobot{
+	  		//forward serviceaccessgui -m chargetaken : chargetaken(ok)
+	  		
+	  		//send start command to transporttrolley
+	  		forward transporttrolley -m dodepositaction : dodepositaction
+	  	} Goto updatecoldstorage
+	  	
+	  	
+	  	
+	  	State updatecoldstorage {
+	  		//add kg already arrived to cold storage
+	  		forward coldroom -m updatekg : updatekg($Kgtoload)
+	  		
+	  	}
+	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
   		
   	}
   
@@ -165,32 +166,32 @@ QActor transporttrolley context ctxcoldstorageservice{
 		var INDOORY=6;
 		var HOMEX=0;
 		var HOMEY=0;
-			#]
+	#]
 	State ss0 initial{
 		//set home,indoor,coldroom positions
 		
 			//usefull for keep tracking of coldstorageservice request operations
-			discardMsg Off
+	discardMsg Off
     println("$name request engage") color green
     request basicrobot -m engage : engage( robotposclient )
-  }
-   Transition t0 whenReply engagedone    -> waitforcommands
+  	}
+   	Transition t0 whenReply engagedone    -> waitforcommands
                 whenReply engagerefused -> waitrobotfree
    
    //what to do if robot alredy engaged?
-   State waitrobotfree{
+   	State waitrobotfree{
     println("$name | Sorry, the robot is already engaged.")  color green
-  }
-  State waitforcommands{
+  	}
+  	State waitforcommands{
   	println("$name | waiting for commands.")  color green
-  }
+  	}
  	Transition t4 whenMsg dodepositaction -> moverobottoindoor
  	
  	//move robot to indoor, then send chargetaken message and go to coldroom
  	State moverobottoindoor {
  		//move robot to indoor
  		request basicrobot -m moverobot:moverobot($INDOORX,$INDOORY)
- 		}
+ 	}
  	Transition t5 whenReply moverobotdone -> moverobottocoldroom
  				  whenReply moverobotfailed -> robotmovefailed 
 
@@ -208,16 +209,15 @@ QActor transporttrolley context ctxcoldstorageservice{
 		emit depositactionended:depositactionended(ok)
 		println("$name | waiting for next move" )
 		
-	}
+	} 
 	Transition t6 whenMsg dodepositaction -> moverobottoindoor
-	 whenMsg gohome-> moverobottohome
+	 			  whenMsg gohome-> moverobottohome
 				
 	
 	
 	
 	State moverobottohome{
 		//send event "robot is in home"
-		
 		request basicrobot -m moverobot:moverobot($HOMEX,$HOMEY)
 	}
 	Transition t3 whenReply moverobotdone -> emitrobotisinhome

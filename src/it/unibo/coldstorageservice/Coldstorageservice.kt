@@ -25,8 +25,6 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 						CommUtils.outblack("&&&  appl coldstorageservice is now ACTIVE ...")
 						discardMessages = false
 						CommUtils.outblack("currentMsg=${currentMsg}")
-						CommUtils.outblack("trying to connect to basicrobot")
-						request("engage", "engage(coldstorageservice)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -51,9 +49,9 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				state("checkifthereisenoughspace") { //this:State
 					action { //it:State
 						 var Kgavailable = payloadArg(0).toLong(); 
-								   var TICKETCODE = 100;
-								   var TICKETSECRET= "000";
-								   var TIMESTAMP = "ciao"; 
+									   var TICKETCODE = 100;
+									   var TICKETSECRET= "000";
+									   var TIMESTAMP = "ciao"; 
 						if(  Kgtoload <= Kgavailable 
 						 ){answer("storefood", "ticketaccepted", "ticketaccepted($TICKETCODE,$TICKETSECRET,$TIMESTAMP)"   )  
 						}
@@ -69,14 +67,17 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				}	 
 				state("startcoldstoragerobot") { //this:State
 					action { //it:State
+						forward("dodepositaction", "dodepositaction" ,"transporttrolley" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="updatecoldstorage", cond=doswitch() )
 				}	 
 				state("updatecoldstorage") { //this:State
 					action { //it:State
+						forward("updatekg", "updatekg($Kgtoload)" ,"coldroom" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

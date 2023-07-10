@@ -64,7 +64,7 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 - le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.
 
 ### Architettura logica requisiti
-![[coldstorageservicearchV1.png]]
+
 
 ## Problem Analysis
 
@@ -90,7 +90,7 @@ String TICKETSECRET
 ``` 
 
 
-## Architettura logica
+## Architettura logica dopo analisi del problema
 Il sistema è composto da:
   - *ColdStorageService*: prende in carico richieste di generazione ticket e richieste di invio di un camion; si interfaccia con la ColdRoom per saperne lo stato; fa partire le deposit action;
   - *Transport Trolley*: invia al Basic Robot la sequenza di comandi necessari per effettuare una deposit action
@@ -98,7 +98,7 @@ Il sistema è composto da:
   - *ServiceAccessGui*: si interfaccia con ColdStorageService per la richiesa di ticket
   - *Cold Room*: aggiorna lo stato della quantità di kg
   - *Scarico*: entità esterna che effettua una operazione di scarico della Cold Room, diminuendo i kg presenti in essa
-  
+  ![[coldstorageservicearch.png]]
 ### la struttura containerizzata
 - la software house possiede degli strumenti per l'interazione con il robot ddr sotto forma di progetti qak, per facilitare lo sviluppo si prevede di containerizzare questi componenti in modo da avere una infrastruttura system independent per lo sviluppo e il testing della logica applicativa.
 
