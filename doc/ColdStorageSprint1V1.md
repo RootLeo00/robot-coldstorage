@@ -112,6 +112,37 @@ creare un attore che funge da fake user e nel codice Kotlin inseriamo delle Asse
 - fake user manda il messaggio **storefood**, mi aspetto di ricevere il ticket
 - fake user inserisce il ticket e si aspetta un dispatch di chargetaken
 - dopo un chargetaken, controllare la cold room che abbia diminuito lo storage
+```Java
+public class CtxColdStorageServiceTest{
+
+    @Test
+    public void mainUseCaseTest(){
+        //connect to port
+        try{
+        Socket client= new Socket("localhost", 8038);
+        PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+        //send message
+        out.write("msg(storefood,Request,tester,coldstorageservice,storefood( 10 ),1)");
+        //wait for response
+        String response= in.readLine();
+        //aspected ticketaccepted reply
+        assertTrue(response.contains("ticketaccepted"));
+        //some string manipulation to get parameters from response
+        String ticket= response.split(",")[4].split("(")[1];
+        String secret= response.split(",")[5];
+        out.write("msg(sendticket,Dispatch,tester,coldstorageservice,sendticket( "+ticket+","+secret+" ),2)");
+        response= in.readLine();
+        //aspected chargetaken dispatch
+        assertTrue(response.contains("chargetaken"));
+        }catch(Exception e){
+            System.out.println(e.getStackTrace());
+        }
+    }
+}
+
+```
 
 ### realizzazione mediante eventi 
 per implementare i test si prevede di sfruttare la generazione degli eventi da parte del transport trolley e della cooldroom in modo da essere il meno invasivi possibile sul sistema.
