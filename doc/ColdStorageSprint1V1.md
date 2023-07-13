@@ -98,7 +98,7 @@ Il sistema è composto da:
   - *ServiceAccessGui*: si interfaccia con ColdStorageService per la richiesa di ticket
   - *Cold Room*: aggiorna lo stato della quantità di kg
   - *Scarico*: entità esterna che effettua una operazione di scarico della Cold Room, diminuendo i kg presenti in essa
-  ![[coldstorageservicearch.png]]
+  ![[coldstorageservicearchsprint1.png]]
 ### la struttura containerizzata
 - la software house possiede degli strumenti per l'interazione con il robot ddr sotto forma di progetti qak, per facilitare lo sviluppo si prevede di containerizzare questi componenti in modo da avere una infrastruttura system independent per lo sviluppo e il testing della logica applicativa.
 
