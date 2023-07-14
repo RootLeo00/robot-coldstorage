@@ -43,4 +43,12 @@ public class TicketList {
         }
     }
 
+    public int getTotalKgToStore() {
+        int result=0;
+        for (Ticket ticket : tickets) {
+            result+=ticket.getKgToStore();
+        }
+        return result;
+    }
+
 }
