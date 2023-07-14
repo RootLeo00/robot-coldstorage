@@ -77,5 +77,12 @@ public class TicketList {
     public synchronized boolean isExpired(Ticket ticket) {
         return Instant.now().toEpochMilli() - ticket.getTimestamp() >= expirationTime;
     }
+    public String toString(){
+        String result="";
+        for(Ticket ticket: tickets){
+            result+="ticketNumber:"+ticket.getTicketNumber()+"ticketSecret:"+ticket.getTicketSecret()+"kgToStore:"+ticket.getKgToStore()+"timestamp:"+ticket.getTimestamp()+"\n";
+        }
+        return result;
+    }
 
 }
