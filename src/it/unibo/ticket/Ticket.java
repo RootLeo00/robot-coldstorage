@@ -37,7 +37,8 @@ public class Ticket{
     }
     public boolean equals(Object o){
         if(o instanceof Ticket){
-            return (Ticket)o.getTicketNumber()==this.getTicketNumber();
+            Ticket object=(Ticket)o; 
+            return (object.getTicketNumber() == this.getTicketNumber());
         }
         return false;
     }

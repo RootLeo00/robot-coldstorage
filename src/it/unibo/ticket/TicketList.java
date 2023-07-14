@@ -1,6 +1,8 @@
+import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class TicketList {
     private List<Ticket> tickets;
@@ -33,7 +35,7 @@ public class TicketList {
         return null;
     }
 
-    public removeTicket(int ticketNumber) {
+    public void removeTicket(int ticketNumber) {
         for (Ticket ticket : tickets) {
             if (ticket.getTicketNumber() == ticketNumber) {
                 tickets.remove(ticket);
