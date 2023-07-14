@@ -4,11 +4,9 @@
 - individuare un architettura logica iniziale che definisca le macro-entità del sistema e le loro interazioni
 - definire un piano di lavoro iniziale 
 ### architettura logica sprint0
-![[coldstorageservicearchV3.png]]
+![[coldstorageservicearchV4.png]]
 ### Goal dello sprint1
-- prototipazione del core business ColdStorageService + TransportTrolley + ColdRoom
-- creazione di una infrastruttura containerizzata per facilitare il testing e lo sviluppo
-
+- prototipazione del core business ColdStorageService + TransportTrolley
 
 
 ## Requirements
@@ -28,14 +26,11 @@ The transport trolley is used to perform a deposit action that consists in the f
 ### Modello della service area
 - dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**"
 - Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD numero reale positivo
-- Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. In particolare INDOOR è formalizzata con la cella di coordinate la coordinata **(!!!!!!),** mentre PORT è formalizzata con la cella di coordinate **(!!!!!)**
-![[modello_stanza.png]]
+- Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. In particolare INDOOR è formalizzata con la cella di coordinate la coordinata **(5,0)** oppure **(5,1),**  mentre PORT è formalizzata con la cella di coordinate **(2,4)** oppure **(2,5)**
+![[modello_stanza2.png]]
 
 ### Transport Trolley
- **deposit action**: termine con cui si descrive il seguente ciclo di operazioni del sistema, formalizzate dai seguenti messaggi
- -  `Request moverobot : moverobot(INDOORX, INDOORY)`
- - `Dispatch chargetaken : chargetaken(ARG)`
- - `Request moverobot : moverobot(PORTX, PORTY)`
+ **deposit action**: termine con cui si descrive il seguente ciclo di operazioni del sistema, formalizzate dai messaggi presenti in questa documentazione: [BasicRobot23.html](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/BasicRobot23.html#basicrobot23-messaggi)
 ### Ticket
  struttura dati formulata secondo la seguente struttura
  ```java
@@ -53,13 +48,6 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 - la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti
 
 
-### Cold Room
-- Cold Room viene modellata come un attore di modo da interagire con ColdStorageService. 
-- KEYPOINT: essa potrebbe essere modellata come un POJO all'interno di ColdStorageService stesso, ma riteniamo che modellando Cold Room come un attore porti ai seguenti vantaggi:
-	- si alleggerisce ColdStorageService di un altro compito, dato che ColdStorageService è l'entità core business
-	- si segue il principio di singola responsabilità
-	- se verranno previste in futuro una entità di "Scarico della Cold Room", allora questa entità potrà interagire direttamente con la Cold Room, senza dover interagire con ColdStorageService
-	
 Dopo opportuni colloqui con il committente, possiano affermare che :
 - le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.
 
@@ -68,6 +56,13 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 
 ## Problem Analysis
 
+### Cold Room
+- Cold Room viene modellata come un attore di modo da interagire con ColdStorageService. 
+- KEYPOINT: essa potrebbe essere modellata come un POJO all'interno di ColdStorageService stesso, ma riteniamo che modellando Cold Room come un attore porti ai seguenti vantaggi:
+	- si alleggerisce ColdStorageService di un altro compito, dato che ColdStorageService è l'entità core business
+	- si segue il principio di singola responsabilità
+	- se verranno previste in futuro una entità di "Scarico della Cold Room", allora questa entità potrà interagire direttamente con la Cold Room, senza dover interagire con ColdStorageService
+	
 ### Il messaggio chargeTaken
 dai requisiti si evince che il messaggio **chargetaken** deve essere inviato da coldstorageservice nel momento in cui il transporttrolley ha effettuato lo scarico della merce, questo presume che esista un qualche tipo di comunicazione fra i due nel momento in cui questo avviene 
 possibili soluzioni:
