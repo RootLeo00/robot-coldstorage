@@ -1,3 +1,4 @@
+package it.unibo.ticket;
 public class Ticket{
     private int ticketNumber;
     private String ticketSecret;
@@ -42,4 +43,5 @@ public class Ticket{
         }
         return false;
     }
+
 }

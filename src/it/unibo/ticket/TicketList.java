@@ -1,3 +1,5 @@
+package it.unibo.ticket;
+
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -7,26 +9,47 @@ import java.util.Random;
 public class TicketList {
     private List<Ticket> tickets;
     private int lastNumber;
+    private long expirationTime;
 
-    public TicketList() {
+    public TicketList(long expirationTime) {
         tickets = new ArrayList<>();
-        lastNumber = 1;
+        lastNumber = 0;
+        this.expirationTime = expirationTime;
     }
 
-    public Ticket createTicket(int kgToStore) {
+    public synchronized Ticket createTicket(int kgToStore) {
         Ticket ticket = new Ticket();
         ticket.setKgToStore(kgToStore);
         lastNumber++;
         ticket.setTicketNumber(lastNumber);
-        byte[] array = new byte[7];
-        new Random().nextBytes(array);
-        ticket.setTicketSecret(new String(array, Charset.forName("UTF-8")));
+        ticket.setTicketSecret(generateSecret(7));
         ticket.setTimestamp(Instant.now().toEpochMilli());
         tickets.add(ticket);
         return ticket;
     }
 
-    public Ticket getTicket(int ticketNumber) {
+    private String generateSecret(int n) {
+        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder sb = new StringBuilder(n);
+
+        for (int i = 0; i < n; i++) {
+
+            // generate a random number between
+            // 0 to AlphaNumericString variable length
+            int index
+                    = (int) (letters.length()
+                    * Math.random());
+
+            // add Character one by one in end of sb
+            sb.append(letters
+                    .charAt(index));
+        }
+
+        return sb.toString();
+
+    }
+
+    public synchronized Ticket getTicket(int ticketNumber) {
         for (Ticket ticket : tickets) {
             if (ticket.getTicketNumber() == ticketNumber) {
                 return ticket;
@@ -35,7 +58,7 @@ public class TicketList {
         return null;
     }
 
-    public void removeTicket(int ticketNumber) {
+    public synchronized void  removeTicket(int ticketNumber) {
         for (Ticket ticket : tickets) {
             if (ticket.getTicketNumber() == ticketNumber) {
                 tickets.remove(ticket);
@@ -43,12 +66,16 @@ public class TicketList {
         }
     }
 
-    public int getTotalKgToStore() {
-        int result=0;
+    public synchronized int getTotalKgToStore() {
+        int result = 0;
         for (Ticket ticket : tickets) {
-            result+=ticket.getKgToStore();
+            result += ticket.getKgToStore();
         }
         return result;
+    }
+
+    public synchronized boolean isExpired(Ticket ticket) {
+        return Instant.now().toEpochMilli() - ticket.getTimestamp() >= expirationTime;
     }
 
 }
