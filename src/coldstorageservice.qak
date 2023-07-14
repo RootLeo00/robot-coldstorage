@@ -13,7 +13,7 @@ Reply ticketdenied  : ticketdenied( ARG ) 		//sender:coldstorageservice receiver
 //Dispatch failticket : failticket(ARG) 
 Dispatch sendticket: sendticket(TICKETCODE, TICKETSECRET, TIMESTAMP) 			//sender:serviceaccessgui receiver:coldstorageservice
 Dispatch chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
-Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
+Dispatch ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
 
 //start depositaction
@@ -62,18 +62,24 @@ QActor coldstorageservice context ctxcoldstorageservice{
 		//*********** INTERAZIONE CON SERVICE ACCESS GUI
 		[# var Kgtoload : Long = 0; #]
 		State s0 initial {	  
-			println("&&&  appl coldstorageservice is now ACTIVE ...") 
+			println("$name | wait for messages") color green
 			//tutti i messaggi che arrivano quando sono in uno degli stati successivi
 			//se non considerati, non vengono scartati, ma vengono memorizzati in coda e presi in carico successivamente
 			//quando si andrà in uno stato che potrà processarli
 			discardMsg Off  //default: discardMsg On
-	    	println("currentMsg=${currentMsg}")
+	    	
 	   	}  
 	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
-	    
+	    			whenMsg sendticket-> checkforticketexpired
+	    			whenEvent robotisinindoor-> sendchargetaken
+	    			whenEvent depositactionended -> updatecoldstorage
+	  	
+	  	///STOREFOOD REQUEST MANAGEMENT/////////////////
 	  	State askhowmanykgoccupied{ 
 	  		onMsg(storefood:storefood(KG)){
-	  		[# Kgtoload = payloadArg(0).toLong(); #] //payloadArg(0) == KG
+	  		[# Kgtoload = payloadArg(0).toLong(); #] 
+	  		println("$name | chilograms to load $Kgtoload ") color green
+	  		
 	  		//chiedi a cold room quanto spazio è disponibile
 	  		request coldroom -m howmanykgavailable : howmanykgavailable
 	  		} 
@@ -81,38 +87,56 @@ QActor coldstorageservice context ctxcoldstorageservice{
 		Transition t0 whenReply kgavailable -> checkifthereisenoughspace
 		
 		State checkifthereisenoughspace {
+			onMsg(kgavailable:kgavailable(KG)){
 			[# var Kgavailable = payloadArg(0).toLong(); 
 			   var TICKETCODE = 100;
 			   var TICKETSECRET= "000";
 			   var TIMESTAMP = "ciao"; 
 			#]
 			if [# Kgtoload <= Kgavailable#] { 
+
+				println("$name | ticket accepted") color green
 				replyTo storefood with ticketaccepted : ticketaccepted($TICKETCODE, $TICKETSECRET, $TIMESTAMP)
 			}
 			else{
+				println("$name | ticket denied") color green
 				replyTo storefood with ticketdenied : ticketdenied
 			}
-		}   
-	  	Transition t0 whenMsg sendticket-> startcoldstoragerobot
+				
+			}
+					}   
+	  	Goto s0
+	  	///////////////////////////////////////////////////////////
 	  	
-	  	
-	  	//*********** INTERAZIONE CON ROBOT
+	  	///////////////// SENDTICKET DISPATCH MANAGEMENT /////////////////
+	  	State checkforticketexpired{
+	  		//TODO
+	  	}
+	  	Goto startcoldstoragerobot
 	  	State startcoldstoragerobot{
 	  		//forward serviceaccessgui -m chargetaken : chargetaken(ok)
-	  		
+	  		// check if ticket has expired
 	  		//send start command to transporttrolley
 	  		forward transporttrolley -m dodepositaction : dodepositaction
-	  	} Goto updatecoldstorage
+	  	} Goto  s0
+	  	////////////////////////////////////////////////////
 	  	
+	  	//////////////// SEND CHARGETAKEN/////////////////
+	  	State sendchargetaken{
+	  		forward guimok -m chargetaken:chargetaken(ok)
+	  	}
+	  	Goto s0
+	  	///////////////////////////////////////////////
 	  	
-	  	
+	  	//////////////////////// COLDROOM STATUS UPDATE///////////////////////////////
 	  	State updatecoldstorage {
+	  		println("$name | updating coldroom status" ) color green
 	  		//add kg already arrived to cold storage
 	  		forward coldroom -m updatekg : updatekg($Kgtoload)
 	  		
 	  	}
-	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
-  		
+	   	Goto s0
+  		/////////////////////////////////////////////////////////////////
   	}
   
 
@@ -122,11 +146,15 @@ QActor coldstorageservice context ctxcoldstorageservice{
  * ------------------------------------------------------------------
 */     
 QActor coldroom context ctxcoldstorageservice{  
-	[# var Kgstored : Long = 100 #]   //TODO
+	[# var Kgstored : Long = 0 ;
+		var MAXW : Long = 100;
+		var Kgavailable=MAXW; #
+	]   //TODO
 	
-	State s0 initial {	 
-		println("&&&  appl coldroom is now ACTIVE ...") 
-		printCurrentMessage
+	State s0 initial {	
+		discardMsg Off 
+		println("$name | active") color yellow
+		
    	}  
 	//wait request on info kg
 	Transition t0 whenRequest howmanykgavailable -> replywithcoldroomspacestate
@@ -135,20 +163,26 @@ QActor coldroom context ctxcoldstorageservice{
 	
 	State replywithcoldroomspacestate{ 
 		//send the actual state of the space
-		replyTo howmanykgavailable with kgavailable : kgavailable($Kgstored)
+		println("$name | kg available $Kgavailable") color yellow
+		replyTo howmanykgavailable with kgavailable : kgavailable($Kgavailable)
 	}
 	//wait request on info kg
-	Transition t0 whenRequest howmanykgavailable -> replywithcoldroomspacestate
-				  whenMsg updatekg -> handleupdateKg
+	Goto s0
 	
 	//request to update kg
 	State handleupdateKg{
 		//update storage
+		onMsg(updatekg:updatekg(KG)){
 		[# 
 			var insertkg = payloadArg(0).toLong();
 			Kgstored += insertkg;
-		#]
+			Kgavailable-=insertkg;
+		#]	
+		println("$name | updated storage Kgavailable:$Kgavailable Kgstored:$Kgstored") color yellow
+		}
+		
 	}
+	Goto s0
 }
 
 
@@ -158,87 +192,130 @@ QActor coldroom context ctxcoldstorageservice{
  * ------------------------------------------------------------------
 */      
 QActor transporttrolley context ctxcoldstorageservice{     
-	//try to engage basicrobot on startup
+	
 	[#
-		var COLDROOMX=3;
-		var COLDROOMY=5;
-		var INDOORX=1;
-		var INDOORY=6;
+		var COLDROOMX=4;
+		var COLDROOMY=3;
+		var INDOORX=0;
+		var INDOORY=4;
 		var HOMEX=0;
 		var HOMEY=0;
 	#]
 	State ss0 initial{
 		//set home,indoor,coldroom positions
 		
-			//usefull for keep tracking of coldstorageservice request operations
+	//usefull for keep tracking of coldstorageservice request operations
 	discardMsg Off
-    println("$name request engage") color green
-    request basicrobot -m engage : engage( robotposclient )
+	//try to engage basicrobot on startup
+    println("$name |  request engage") color red
+    request basicrobot -m engage : engage( transporttrolley )
   	}
    	Transition t0 whenReply engagedone    -> waitforcommands
                 whenReply engagerefused -> waitrobotfree
    
    //what to do if robot alredy engaged?
    	State waitrobotfree{
-    println("$name | Sorry, the robot is already engaged.")  color green
+    println("$name | Sorry, the robot is already engaged.")  color red
   	}
   	State waitforcommands{
-  	println("$name | waiting for commands.")  color green
+  	println("$name | waiting for commands.") color red
   	}
- 	Transition t4 whenMsg dodepositaction -> moverobottoindoor
+ 	Transition t1 whenMsg dodepositaction -> moverobottoindoor
  	
  	//move robot to indoor, then send chargetaken message and go to coldroom
  	State moverobottoindoor {
  		//move robot to indoor
+ 		println("$name | moving robot to indoor.") color red
  		request basicrobot -m moverobot:moverobot($INDOORX,$INDOORY)
+ 		
  	}
- 	Transition t5 whenReply moverobotdone -> moverobottocoldroom
+ 	Transition t2 whenReply moverobotdone -> moverobottocoldroom
  				  whenReply moverobotfailed -> robotmovefailed 
 
 
 	//when robot has taken kg from camion -> move robot to coldroom
 	State moverobottocoldroom{
 		//send event "robot is in indoor"
+		println("$name | robot is in indoor") color red
+		println("$name | moving robot to coldroom") color red
 		emit robotisinindoor:robotisindoor(ok)
 		request basicrobot -m moverobot:moverobot($COLDROOMX,$COLDROOMY)
 	}
-	Transition t2 whenReply moverobotdone -> depositactionended
+	Transition t3 whenReply moverobotdone -> depositactionended
  				  whenReply moverobotfailed -> robotmovefailed
 	
 	State depositactionended{
+		
 		emit depositactionended:depositactionended(ok)
-		println("$name | waiting for next move" )
+		println("$name | robot is in coldroom") color red
+		println("$name | depositaction ended") color red
+		println("$name | waiting for next move" ) color red
 		
 	} 
-	Transition t6 whenMsg dodepositaction -> moverobottoindoor
-	 			  whenMsg gohome-> moverobottohome
+	Transition t4 whenTime 100    -> moverobottohome
+	whenMsg dodepositaction -> moverobottoindoor
+	 			  
 				
 	
 	
-	
+	 
 	State moverobottohome{
 		//send event "robot is in home"
 		request basicrobot -m moverobot:moverobot($HOMEX,$HOMEY)
 	}
-	Transition t3 whenReply moverobotdone -> emitrobotisinhome
+	Transition t5 whenReply moverobotdone -> emitrobotisinhome
  				  whenReply moverobotfailed -> robotmovefailed
  
  	State emitrobotisinhome{
  		emit robotisinhome: robotisinhome(ok)
- 		println("$name | robot failed to move") color red
+ 		println("$name | robot is in home") color red
  		
  	}Goto waitforcommands
  	//control failed robot moves
  	State robotmovefailed{
+ 		
  		println("$name | robot failed to move") color red
  		
  	}
+ 	
+ 	//fake gui
+ 
  	
 	//wait next startcoldstoragerobot --> transition to moverobottoindoor
   	
   	
   	
 }
+	 QActor guimok context ctxcoldstorageservice{
+	 	State s0 initial{
+	 		discardMsg Off
+	 		println("$name | start request") color magenta
+	 		request coldstorageservice -m storefood:storefood(10)
+	 	}
+ 		Transition t1 whenReply ticketaccepted -> sendticket
+ 		
+ 		State sendticket {
+ 			
+ 		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET, TIMESTAMP)){		
+ 			[# 
+			var Ticketcode= payloadArg(0);
+			var Timestamp= payloadArg(2);
+			var Ticketsecret= payloadArg(1);
+		#]
+		println("$name | sneding ticket to coldstorageservice") color magenta
+		forward coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret,$Timestamp)
+		
+ 		}
+ 		
+		
+ 		}
+ 		Transition t2 whenMsg chargetaken-> end
+ 		State end{
+ 			println("$name | robot has taken the load") color magenta
+ 		}
+ 		Goto s0
+ 		
+ 	}
  
 
  
