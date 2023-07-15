@@ -25,7 +25,14 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
           coldstorageservice=Custom('coldstorageservice','./qakicons/symActorSmall.png')
           coldroom=Custom('coldroom','./qakicons/symActorSmall.png')
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
-     coldstorageservice >> Edge(color='magenta', style='solid', xlabel='engage', fontcolor='magenta') >> basicrobot
+     sys >> Edge(color='red', style='dashed', xlabel='robotisinindoor', fontcolor='red') >> coldstorageservice
+     sys >> Edge(color='red', style='dashed', xlabel='depositactionended', fontcolor='red') >> coldstorageservice
      coldstorageservice >> Edge(color='magenta', style='solid', xlabel='howmanykgavailable', fontcolor='magenta') >> coldroom
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='dodepositaction', fontcolor='blue') >> transporttrolley
+     coldstorageservice >> Edge(color='blue', style='solid', xlabel='updatekg', fontcolor='blue') >> coldroom
+     transporttrolley >> Edge(color='magenta', style='solid', xlabel='engage', fontcolor='magenta') >> basicrobot
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='moverobot', fontcolor='magenta') >> basicrobot
+     transporttrolley >> Edge( xlabel='robotisinindoor', **eventedgeattr, fontcolor='red') >> sys
+     transporttrolley >> Edge( xlabel='depositactionended', **eventedgeattr, fontcolor='red') >> sys
+     transporttrolley >> Edge( xlabel='robotisinhome', **eventedgeattr, fontcolor='red') >> sys
 diag
