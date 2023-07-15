@@ -59,7 +59,9 @@ public class TicketList {
     }
 
     public synchronized void  removeTicket(int ticketNumber) {
-        for (Ticket ticket : tickets) {
+        //cycle this way to avoid concurrent oeration exception on the last element
+        for (int i=0; i<tickets.size();i++) {
+            Ticket ticket=tickets.get(i);
             if (ticket.getTicketNumber() == ticketNumber) {
                 tickets.remove(ticket);
             }
