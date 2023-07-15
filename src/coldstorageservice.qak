@@ -11,10 +11,10 @@ Reply ticketdenied  : ticketdenied( ARG ) 		//sender:coldstorageservice receiver
 													//sender:coldstorage receiver:coldstorageservice
 
 //Dispatch failticket : failticket(ARG) 
-Dispatch sendticket: sendticket(TICKETCODE, TICKETSECRET) 			//sender:serviceaccessgui receiver:coldstorageservice
-Dispatch chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
-Dispatch ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
-Dispatch ticketrejected: ticketrejected(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
+Request sendticket: sendticket(TICKETCODE, TICKETSECRET) 			//sender:serviceaccessgui receiver:coldstorageservice
+Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
+Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
+Reply ticketrejected: ticketrejected(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
 
 //start depositaction
@@ -76,7 +76,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	    	
 	   	}  
 	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
-	    			whenMsg sendticket-> checkforticketexpired
+	    			whenRequest sendticket-> checkforticketexpired
 	    			whenEvent robotisinindoor-> sendchargetaken
 	    			whenEvent depositactionended -> updatecoldstorage
 	  	
@@ -128,10 +128,10 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			   var Ticket=ticketList.getTicket(TICKETCODE);
 			   #]
 			   if[#ticketList.isExpired(Ticket) #]{
-			   	forward  guimok -m ticketexpired: ticketexpired(ARG)
+			   	replyTo sendticket with ticketexpired: ticketexpired(ARG)
 			   }else{
 			   		if[#!Ticket.getTicketSecret().equals(TICKETSECRET) #]{
-			   			forward  guimok -m ticketrejected: ticketrejected(ARG)
+			   			replyTo sendticket with  ticketrejected: ticketrejected(ARG)
 			   		}else{
 						forward transporttrolley -m dodepositaction : dodepositaction($TICKETCODE)  	
 			   		}	
@@ -144,7 +144,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	  	
 	  	//////////////// SEND CHARGETAKEN/////////////////
 	  	State sendchargetaken{
-	  		forward guimok -m chargetaken:chargetaken(ok)
+	  		replyTo sendticket with chargetaken:chargetaken(ok)
 	  	}
 	  	Goto s0
 	  	///////////////////////////////////////////////
@@ -160,12 +160,16 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	  				[#
 	  				var Ticket=ticketList.getTicket(Ticketcode);
 	  				var Kg=Ticket.getKgToStore();
+	  				var L=ticketList.toString();
 	  				#
 	  			]
 	  			forward coldroom -m updatekg : updatekg($Kg)
+	  			println("$L") color green
 	  		[#
-	  			ticketList.removeTicket(Ticketcode)#
+	  			ticketList.removeTicket(Ticketcode);
+	  			L=ticketList.toString();#
 	  		]
+	  			println("$L") color green
 	  		}
 	  		
 	  		
@@ -327,7 +331,8 @@ QActor transporttrolley context ctxcoldstorageservice{
   	
   	
 }
-	 QActor guimok context ctxcoldstorageservice{
+
+/*	 QActor guimok context ctxcoldstorageservice{
 	 	State s0 initial{
 	 		discardMsg Off
 	 		println("$name | start request") color magenta
@@ -343,19 +348,19 @@ QActor transporttrolley context ctxcoldstorageservice{
 			var Ticketsecret= payloadArg(1);
 		#]
 		println("$name | sneding ticket to coldstorageservice") color magenta
-		forward coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
+		request coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
 		
  		}
  		
 		
  		}
- 		Transition t2 whenMsg chargetaken-> end
+ 		Transition t2 whenReply chargetaken-> end
  		State end{
  			println("$name | robot has taken the load") color magenta
  		}
  		Goto s0
  		
- 	}
+ 	} */
  
 
  
