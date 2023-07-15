@@ -14,34 +14,35 @@ import kotlinx.coroutines.runBlocking
 class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
-		return "ss0"
+		return "s0"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		
-				var COLDROOMX=3;
-				var COLDROOMY=5;
-				var INDOORX=1;
-				var INDOORY=6;
+				var COLDROOMX=4;
+				var COLDROOMY=3;
+				var INDOORX=0;
+				var INDOORY=4;
 				var HOMEX=0;
 				var HOMEY=0;
+				var TICKETCODE=-1;
 		return { //this:ActionBasciFsm
-				state("ss0") { //this:State
+				state("s0") { //this:State
 					action { //it:State
 						discardMessages = false
-						CommUtils.outgreen("$name request engage")
-						request("engage", "engage(robotposclient)" ,"basicrobot" )  
+						CommUtils.outred("$name |  request engage")
+						request("engage", "engage(transporttrolley)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t08",targetState="waitforcommands",cond=whenReply("engagedone"))
-					transition(edgeName="t09",targetState="waitrobotfree",cond=whenReply("engagerefused"))
+					 transition(edgeName="t07",targetState="waitforcommands",cond=whenReply("engagedone"))
+					transition(edgeName="t08",targetState="waitrobotfree",cond=whenReply("engagerefused"))
 				}	 
 				state("waitrobotfree") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | Sorry, the robot is already engaged.")
+						CommUtils.outred("$name | Sorry, the robot is already engaged.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -50,27 +51,35 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("waitforcommands") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | waiting for commands.")
+						CommUtils.outred("$name | waiting for commands.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t410",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
+					 transition(edgeName="t19",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
 				}	 
 				state("moverobottoindoor") { //this:State
 					action { //it:State
+						if( checkMsgContent( Term.createTerm("dodepositaction(TICKETCODE)"), Term.createTerm("dodepositaction(TICKETCODE)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+								 				TICKETCODE=payloadArg(0).toInt(); 
+						}
+						CommUtils.outred("$name | moving robot to indoor.")
 						request("moverobot", "moverobot($INDOORX,$INDOORY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t511",targetState="moverobottocoldroom",cond=whenReply("moverobotdone"))
-					transition(edgeName="t512",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t210",targetState="moverobottocoldroom",cond=whenReply("moverobotdone"))
+					transition(edgeName="t211",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
 				state("moverobottocoldroom") { //this:State
 					action { //it:State
+						CommUtils.outred("$name | robot is in indoor")
+						CommUtils.outred("$name | moving robot to coldroom")
 						emit("robotisinindoor", "robotisindoor(ok)" ) 
 						request("moverobot", "moverobot($COLDROOMX,$COLDROOMY)" ,"basicrobot" )  
 						//genTimer( actor, state )
@@ -78,20 +87,24 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t213",targetState="depositactionended",cond=whenReply("moverobotdone"))
-					transition(edgeName="t214",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t312",targetState="depositactionended",cond=whenReply("moverobotdone"))
+					transition(edgeName="t313",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
 				state("depositactionended") { //this:State
 					action { //it:State
-						emit("depositactionended", "depositactionended(ok)" ) 
-						CommUtils.outblack("$name | waiting for next move")
+						emit("depositactionended", "depositactionended($TICKETCODE)" ) 
+						CommUtils.outred("$name | robot is in coldroom")
+						CommUtils.outred("$name | depositaction ended")
+						CommUtils.outred("$name | waiting for next move")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
+				 	 		stateTimer = TimerActor("timer_depositactionended", 
+				 	 					  scope, context!!, "local_tout_transporttrolley_depositactionended", 100.toLong() )
 					}	 	 
-					 transition(edgeName="t615",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
-					transition(edgeName="t616",targetState="moverobottohome",cond=whenDispatch("gohome"))
+					 transition(edgeName="t414",targetState="moverobottohome",cond=whenTimeout("local_tout_transporttrolley_depositactionended"))   
+					transition(edgeName="t415",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
 				}	 
 				state("moverobottohome") { //this:State
 					action { //it:State
@@ -101,13 +114,13 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t317",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
-					transition(edgeName="t318",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t516",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
+					transition(edgeName="t517",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
 				state("emitrobotisinhome") { //this:State
 					action { //it:State
 						emit("robotisinhome", "robotisinhome(ok)" ) 
-						CommUtils.outred("$name | robot failed to move")
+						CommUtils.outred("$name | robot is in home")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

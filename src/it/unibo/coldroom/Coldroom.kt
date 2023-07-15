@@ -18,42 +18,49 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-		 var Kgstored : Long = 100  
+		 var Kgstored : Long = 0 ;
+				var MAXW : Long = 100;
+				var Kgavailable=MAXW;  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outblack("&&&  appl coldroom is now ACTIVE ...")
-						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
-						 	   
+						discardMessages = false
+						CommUtils.outyellow("$name | active")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="replywithcoldroomspacestate",cond=whenRequest("howmanykgavailable"))
-					transition(edgeName="t05",targetState="handleupdateKg",cond=whenDispatch("updatekg"))
+					 transition(edgeName="t05",targetState="replywithcoldroomspacestate",cond=whenRequest("howmanykgavailable"))
+					transition(edgeName="t06",targetState="handleupdateKg",cond=whenDispatch("updatekg"))
 				}	 
 				state("replywithcoldroomspacestate") { //this:State
 					action { //it:State
-						answer("howmanykgavailable", "kgavailable", "kgavailable($Kgstored)"   )  
+						CommUtils.outyellow("$name | kg available $Kgavailable")
+						answer("howmanykgavailable", "kgavailable", "kgavailable($Kgavailable)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t06",targetState="replywithcoldroomspacestate",cond=whenRequest("howmanykgavailable"))
-					transition(edgeName="t07",targetState="handleupdateKg",cond=whenDispatch("updatekg"))
+					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
 				}	 
 				state("handleupdateKg") { //this:State
 					action { //it:State
-						 
-									var insertkg = payloadArg(0).toLong();
-									Kgstored += insertkg;
+						if( checkMsgContent( Term.createTerm("updatekg(KG)"), Term.createTerm("updatekg(KG)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 
+											var insertkg = payloadArg(0).toLong();
+											Kgstored += insertkg;
+											Kgavailable-=insertkg;
+								CommUtils.outyellow("$name | updated storage Kgavailable:$Kgavailable Kgstored:$Kgstored")
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
 				}	 
 			}
 		}
