@@ -148,9 +148,6 @@ per implementare i test si prevede di sfruttare la generazione degli eventi da p
 
 Tutto il codice della parte di progettazione è consultabile al seguente link [github](https://github.com/RootLeo00/robot-coldstorage/tree/main/sprint0)
 
-### l'attore GUIMOK 
-- si prevede di aggiungere all'architettura logica predisposta in analisi del problema un attore **GUIMOK** per simulare il comportamento di un utente che interagisce con la main logic di sistema
-
 ### Il messaggio chargetaken
 si prevede di implementare la comunicazione del messaggio chargetaken tramite un evento per le seguenti motivazioni
 - rendere più facile il testing dell'applicazione tramite la cattura degli eventi generati  
@@ -200,9 +197,16 @@ L'implementazione dell'attore COLDROOM segue lo stesso principio con i seguenti 
 - `Request howmanykgavailable : howmanykgavailable(ARG)`
 - `Dispatch updatekg : updatekg(KG)`
 
+## Implementazione TRANSPORTTROLLEY
+
+il transport trolley viene concepito come entità in grado di eseguire le sue responsabilità in maniera indipentente, al termine degli spostamenti genera degli eventi per notificare il suo stato a coldstorageservice
+
 ### Il problema della perdita di contesto
 
 una problematica sorta in fase di progettazione, è stata fare in modo che alla cattura di un evento `depositactionended` , generato da transporttrolley nel momento in cui avviene lo scarico della merce presso la coldroom, coldstorageservice fosse in grado di risalire all'identità del ticket che la ha generata in modo da aggiornare la lista di ticket attivi, per fare ciò viene fornito al trolley l'identificativo del ticket come payload del messaggio `dodepositaction`
+
+### l'attore GUIMOK 
+si prevede di aggiungere all'architettura logica predisposta in analisi del problema un attore **GUIMOK** per simulare il comportamento di un utente che interagisce con la main logic di sistema
 
 ### Architettura finale progettazione
 ![[coldstorageservicearchprogettazione.png]]
