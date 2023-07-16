@@ -4,7 +4,7 @@
 - individuare un architettura logica iniziale che definisca le macro-entità del sistema e le loro interazioni
 - definire un piano di lavoro iniziale 
 ### architettura logica sprint0
-![[coldstorageservicearchV3.png]]
+![[coldstorageservicearchV4.png]]
 ### Goal dello sprint1
 - prototipazione del core business ColdStorageService + TransportTrolley
 
@@ -16,8 +16,8 @@ The transport trolley is used to perform a deposit action that consists in the f
 - go from the INDOOR to the PORT of the ColdRoom
 - deposit the food-load in the ColdRoom
 ### SERVICE USER STORY
-- A Fridge truck driver uses the ServiceAcessGUI to send a request to store its load of FW kg. If the request is accepted, the driver drives its truck to the INDOOR of the service, before the ticket exipration time TICKETTIME.
-- When the truck is at the INDOOR of the service, the driver uses the ServiceAcessGUI to enter the ticket number and waits until the message charge taken (sent by the ColdStorageService) appears on the ServiceAcessGUI. At this  point, the truck should leave the INDOOR.
+- A Fridge truck driver uses the ServiceAccessGUI to send a request to store its load of FW kg. If the request is accepted, the driver drives its truck to the INDOOR of the service, before the ticket expiration time TICKETTIME.
+- When the truck is at the INDOOR of the service, the driver uses the ServiceAccessGUI to enter the ticket number and waits until the message charge taken (sent by the ColdStorageService) appears on the ServiceAccessGUI. At this  point, the truck should leave the INDOOR.
 - When the service accepts a ticket, the transport trolley reaches the INDOOR, picks up the food, sends the charge taken message and then goes to the ColdRoom to store the food.
 - When the deposit action is terminated, the transport trolley accepts another ticket (if any) or returns to HOME.
 
@@ -145,6 +145,8 @@ public class CtxColdStorageServiceTest{
 per implementare i test si prevede di sfruttare la generazione degli eventi da parte del transport trolley e della cooldroom in modo da essere il meno invasivi possibile sul sistema.
 
 ## PROGETTAZIONE
+
+Tutto il codice della parte di progettazione è consultabile al seguente link [github](https://github.com/RootLeo00/robot-coldstorage/tree/main/sprint0)
 
 ### l'attore GUIMOK 
 - si prevede di aggiungere all'architettura logica predisposta in analisi del problema un attore **GUIMOK** per simulare il comportamento di un utente che interagisce con la main logic di sistema
