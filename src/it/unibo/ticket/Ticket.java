@@ -4,9 +4,17 @@ public class Ticket{
     private String ticketSecret;
     private long timestamp;
     private int kgToStore;
+    //legend 
+    //0=emitted but not reinserted
+    //1=emitted and reinserted
+    private int status;
+    
 
     public int getTicketNumber() {
         return ticketNumber;
+    }
+    public int getStatus() {
+        return status;
     }
 
     public int getKgToStore() {
@@ -23,6 +31,10 @@ public class Ticket{
 
     public void setTicketNumber(int ticketNumber) {
         this.ticketNumber = ticketNumber;
+    }
+    
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public void setKgToStore(int kgToStore) {

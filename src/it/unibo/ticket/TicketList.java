@@ -22,6 +22,7 @@ public class TicketList {
         ticket.setKgToStore(kgToStore);
         lastNumber++;
         ticket.setTicketNumber(lastNumber);
+        ticket.setStatus(0);
         ticket.setTicketSecret(generateSecret(7));
         ticket.setTimestamp(Instant.now().toEpochMilli());
         tickets.add(ticket);
@@ -71,7 +72,7 @@ public class TicketList {
     public synchronized int getTotalKgToStore() {
         int result = 0;
         for (Ticket ticket : tickets) {
-            if(!this.isExpired(ticket)){
+            if((!this.isExpired(ticket) && ticket.getStatus()==0)||ticket.getStatus()==1){
                 result += ticket.getKgToStore();
 
             }
@@ -80,7 +81,7 @@ public class TicketList {
     }
 
     public synchronized boolean isExpired(Ticket ticket) {
-        return Instant.now().toEpochMilli() - ticket.getTimestamp() >= expirationTime;
+        return Instant.now().toEpochMilli() - ticket.getTimestamp() >= this.expirationTime;
     }
     public String toString(){
         String result="";
