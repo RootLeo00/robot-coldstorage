@@ -71,7 +71,10 @@ public class TicketList {
     public synchronized int getTotalKgToStore() {
         int result = 0;
         for (Ticket ticket : tickets) {
-            result += ticket.getKgToStore();
+            if(!this.isExpired(ticket)){
+                result += ticket.getKgToStore();
+
+            }
         }
         return result;
     }
