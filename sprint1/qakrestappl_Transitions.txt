@@ -1,6 +1,0 @@
-{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"checkifthereisenoughspace", "nextstate":"startcoldstoragerobot", "msgId":"sendticket"}
-{"actor":"coldroom", "msgType":"dispatch", "curstate":"s0", "nextstate":"handleupdateKg", "msgId":"updatekg"}
-{"actor":"coldroom", "msgType":"dispatch", "curstate":"replywithcoldroomspacestate", "nextstate":"handleupdateKg", "msgId":"updatekg"}
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waitforcommands", "nextstate":"moverobottoindoor", "msgId":"dodepositaction"}
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"depositactionended", "nextstate":"moverobottoindoor", "msgId":"dodepositaction"}
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"depositactionended", "nextstate":"moverobottohome", "msgId":"gohome"}
