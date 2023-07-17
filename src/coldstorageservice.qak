@@ -43,7 +43,11 @@ Dispatch updatekg : updatekg (KG) //sender:coldstorageservice receiver:coldroom
 
 Request engage : engage(ARG)
 Reply   engagedone    : engagedone(ARG) 
-Reply   engagerefused : engagerefused(ARG)
+Reply   engagerefused : engagerefused(ARG) 
+
+//serviceaccessgui messages
+Dispatch dostorefood:dostorefood(SESSIONNUMBER,KG)
+Dispatch doinsertticket:doinsertticket(SESSIONNUMBER,KG)
 
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020 ]   
 Context ctxcoldstorageservice ip [host="localhost" port=8038 ]
@@ -361,6 +365,59 @@ QActor transporttrolley context ctxcoldstorageservice{
  		Goto s0
  		
  	} */
+ 	
+ 	
+ 	QActor serviceaccessgui context ctxcoldstorageservice{
+	 	State s0 initial{
+	 		discardMsg Off
+	 		//launch webgui
+	 		println("$name | start request") color magenta
+	 		
+	 	}
+ 		Transition t1 whenMsg dostorefood-> dostorefood
+ 						whenMsg doinsertticket-> doinsertticket
+ 		
+ 		
+ 		State doinsertticket {
+ 			
+ 		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
+ 			[# 
+			var Ticketcode= payloadArg(0);
+			var Ticketsecret= payloadArg(1);
+		#]
+		println("$name | sneding ticket to coldstorageservice") color magenta
+		request coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
+		
+ 		}
+ 		
+		
+ 		}
+ 		//do storefood request to coldstorageservice
+ 		State dostorefood{
+ 			onMsg(dostorefood:dostorefood(KG)){
+ 				[# 
+			var Kg= payloadArg(0);
+			
+		#]
+ 			}
+ 			request coldstorageservice -m storefood:storefood($Kg)
+ 		}
+ 		
+ 		Transition t2 whenReply ticketaccepted-> handlestorefoodresponse
+ 						whenReply ticketdenied-> handlestorefoodresponse
+ 		State handlestorefoodresponse{
+ 			//handle response
+ 			onMsg(ticketaccepted:ticketaccepted(TICKETCODE,TICKETSECRET,TIMESTAMP)){
+						
+ 			}
+ 			onMsg(ticketdenied:ticketdenied(ok)){
+ 				
+ 			}
+ 			//println("$name | robot has taken the load") color magenta
+ 		}
+ 		Goto s0
+ 		
+ 	}
  
 
  
