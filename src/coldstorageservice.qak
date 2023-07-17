@@ -137,6 +137,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			   		if[#!Ticket.getTicketSecret().equals(TICKETSECRET) #]{
 			   			replyTo sendticket with  ticketrejected: ticketrejected(ARG)
 			   		}else{
+			   			[#Ticket.setStatus(1);#]
 						forward transporttrolley -m dodepositaction : dodepositaction($TICKETCODE)  	
 			   		}	
 			   }
@@ -188,7 +189,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
  *  coldroom
  * ------------------------------------------------------------------
 */     
-QActor coldroom context ctxcoldstorageservice{  
+QActor coldroom context ctxcoldstorageservice{   
 	[# var Kgstored : Long = 0 ;
 		var MAXW : Long = 100;
 		var Kgavailable=MAXW; #
@@ -366,19 +367,15 @@ QActor transporttrolley context ctxcoldstorageservice{
  		
  	} */
  	
- 	
- 	QActor serviceaccessgui context ctxcoldstorageservice{
+ 	QActor guimok context ctxcoldstorageservice{
 	 	State s0 initial{
 	 		discardMsg Off
-	 		//launch webgui
 	 		println("$name | start request") color magenta
-	 		
+	 		request coldstorageservice -m storefood:storefood(25)
 	 	}
- 		Transition t1 whenMsg dostorefood-> dostorefood
- 						whenMsg doinsertticket-> doinsertticket
+ 		Transition t1 whenReply ticketaccepted -> sendticket
  		
- 		
- 		State doinsertticket {
+ 		State sendticket {
  			
  		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
  			[# 
@@ -392,32 +389,13 @@ QActor transporttrolley context ctxcoldstorageservice{
  		
 		
  		}
- 		//do storefood request to coldstorageservice
- 		State dostorefood{
- 			onMsg(dostorefood:dostorefood(KG)){
- 				[# 
-			var Kg= payloadArg(0);
-			
-		#]
- 			}
- 			request coldstorageservice -m storefood:storefood($Kg)
- 		}
- 		
- 		Transition t2 whenReply ticketaccepted-> handlestorefoodresponse
- 						whenReply ticketdenied-> handlestorefoodresponse
- 		State handlestorefoodresponse{
- 			//handle response
- 			onMsg(ticketaccepted:ticketaccepted(TICKETCODE,TICKETSECRET,TIMESTAMP)){
-						
- 			}
- 			onMsg(ticketdenied:ticketdenied(ok)){
- 				
- 			}
- 			//println("$name | robot has taken the load") color magenta
+ 		Transition t2 whenReply chargetaken-> end
+ 		State end{
+ 			println("$name | robot has taken the load") color magenta
  		}
  		Goto s0
  		
- 	}
+ 		}
  
 
  
