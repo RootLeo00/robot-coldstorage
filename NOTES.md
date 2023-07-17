@@ -52,4 +52,11 @@ The transport trolley is used to perform a deposit action that consists in the f
 -  cosa deve fare il robot nel caso non sia possibile ingaggiare il robot?
 - implementazione del costrutto else nel qak
 -  il movimento del robot verso la coldroom deve essere successivo all'invio di chargetaken?
-- 
+## ragionamenti sprint3
+- comunicazione tra webgui e serviceaccessgui
+	- gestione delle notifiche evento 
+	- gestione delle sessioni, comprendere a quale sessione appartiene la risposta a un determinato messaggio 
+	- comunicazione con alieno 
+	- recuperare requisiti per serviceaccessgui
+	- serviceaccessgui come proxy per girare i messaggi di webgui a coldstorageservice
+	- 
