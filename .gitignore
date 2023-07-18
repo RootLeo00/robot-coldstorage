@@ -26,3 +26,4 @@ package-lock.json
 docker/
 /.metadata/
 /src-gen/
+node_modules
