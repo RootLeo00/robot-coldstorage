@@ -27,6 +27,7 @@ SERVICE USER STORY
 - per RaspberryPi si intende la versione 4 B
 - Per Sonar si intende ...
 - Per Led si intende ...
+- Il calcolo del delay di MINT parte da quando parte la resume dello stop precedente
 Da chiedere al committente: 
 - dov'è il sonar?
 - il transport trolley è in home qualsiasi sia la direzione del muso del robot ?
