@@ -3,7 +3,7 @@
 ### Goal conseguiti nello sprint1
 - prototipazione del core business ColdStorageService + TransportTrolley
 ### architettura logica sprint1
-![[coldstorageservicearchsprint0V4.png]]
+![[coldstorageservicearch-progettazione-sprint1.png]]
 ### Goal dello sprint2
 - introduzione della la GUI nel sistema ottenuto nello sprint1 e testing
 **Si noti che lo sviluppo del progetto dello sprint2 è da intendersi come estensione del progetto dello sprint1**
