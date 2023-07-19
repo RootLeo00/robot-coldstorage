@@ -37,11 +37,14 @@ Reply moverobotfailed:  moverobotfailed(ARG)
 Request howmanykgavailable : howmanykgavailable(ARG) //sender:coldstorageservice receiver:coldroom
 Reply kgavailable : kgavailable(KG) //sender:coldroom receiver:coldstorageservice 
 Dispatch updatekg : updatekg (KG) //sender:coldstorageservice receiver:coldroom
-
+Event updatedcoldroom:updatedcoldroom (AVAILABLEKG)
  
  //serviceaccessgui messages
 Request dostorefood:dostorefood(KG)
 Request doinsertticket:doinsertticket(TICKETNUMBER,TIMESTAMP)
+Request getcoldroomstatus:getcoldroomstatus(ARG)
+Reply coldroomstatus:coldroomstatus(KG)
+
 
 Request engage : engage(ARG)
 Reply   engagedone    : engagedone(ARG) 
@@ -221,6 +224,7 @@ QActor coldroom context ctxcoldstorageservice{
 			Kgavailable-=insertkg;
 		#]	
 		println("$name | updated storage Kgavailable:$Kgavailable Kgstored:$Kgstored") color yellow
+		emit updatedcoldroom:updatedcoldroom($Kgavailable)
 		}
 		
 	}
@@ -336,21 +340,45 @@ QActor transporttrolley context ctxcoldstorageservice{
 }
 
  	 QActor serviceaccessgui context ctxcoldstorageservice{  
-	 	
+	 	[#
+	 		var SPACELEFT:Long=100;#
+	 	]
 	 	//initial state waiting for requests
 	 	State s0 initial{
 	 		discardMsg Off
-	 		//run webgui
-	 		println("$name | waiting request") color magenta
 	 		
+	 		println("$name | waiting request") color magenta
+	 	
 	 	}
  		Transition t1 whenRequest dostorefood-> storefood
  		whenRequest doinsertticket-> insertticket
- 		/////////////DO STORE FOOD REQUEST/////////////////////////
+ 		whenRequest getcoldroomstatus-> sendcoldroomstatus 
+ 		whenEvent updatedcoldroom->notifygui
+ 		
+ 		State notifygui{
+ 			
+ 			onMsg(updatedcoldroom:updatedcoldroom(KG)){
+ 				println("$name | updating coldroom status") color magenta
+ 				[#
+ 					
+ 					SPACELEFT=payloadArg(0).toLong();#
+ 				]
+ 			}	
+ 		}
+ 		Goto s0
+ 		/////////////GETCOLDROOMSTATUS REQUEST/////////////
+ 		State sendcoldroomstatus{
+ 			replyTo getcoldroomstatus with coldroomstatus:coldroomstatus($SPACELEFT)
+ 		}
+ 		Goto s0
+ 		
+ 		////////////////////////////////////////////////
+ 		
+ 		/////////////DOSTOREFOOD REQUEST/////////////////////////
  		State storefood{
  			
  			onMsg(dostorefood:dostorefood(KG)){
- 				printCurrentMessage
+ 				
  				[#
  					
  					var Kg=payloadArg(0);#
