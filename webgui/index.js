@@ -18,7 +18,21 @@ client.connect(QAKPORT, QAKADDRESS, function () {
 //home route
 app.get("/", (req, res) => {
   res.status(200);
-  res.sendFile(path.join(__dirname, "webgui.html"));
+  var message =
+    "msg(getcoldroomstatus,request,webgui,serviceaccessgui,getcoldroomstatus(ARG),1)\n";
+  console.log(message);
+  client.write(message, "utf-8", function () {
+    var msg = "";
+    client.on("data", function (buffer = Buffer.alloc(93)) {
+      msg += buffer.toString();
+      if (msg.length >= 70) {
+        console.log(msg);
+        res.status(200);
+        res.render("webgui.pug",{spaceleft:getParameters(msg)[0]});
+        client.removeAllListeners("data");
+      }
+    });
+  });
 });
 
 //storefood route
