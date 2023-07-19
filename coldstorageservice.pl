@@ -7,3 +7,4 @@ context(ctxcoldstorageservice, "localhost",  "TCP", "8038").
   qactor( coldstorageservice, ctxcoldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
   qactor( coldroom, ctxcoldstorageservice, "it.unibo.coldroom.Coldroom").
   qactor( transporttrolley, ctxcoldstorageservice, "it.unibo.transporttrolley.Transporttrolley").
+  qactor( serviceaccessgui, ctxcoldstorageservice, "it.unibo.serviceaccessgui.Serviceaccessgui").

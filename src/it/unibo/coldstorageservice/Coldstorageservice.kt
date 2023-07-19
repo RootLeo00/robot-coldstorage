@@ -20,7 +20,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		 
 					var Kgtoload : Int = 0; 
-					var Expirationtime:Long = 100;
+					var Expirationtime:Long = 60000;
 					var ticketList=it.unibo.ticket.TicketList(Expirationtime);
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
@@ -95,7 +95,8 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 								  ){answer("sendticket", "ticketrejected", "ticketrejected(ARG)"   )  
 								 }
 								 else
-								  {forward("dodepositaction", "dodepositaction($TICKETCODE)" ,"transporttrolley" ) 
+								  {Ticket.setStatus(1); 
+								  forward("dodepositaction", "dodepositaction($TICKETCODE)" ,"transporttrolley" ) 
 								  }
 								 }
 						}
