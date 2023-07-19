@@ -26,12 +26,18 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var HOMEX=0;
 				var HOMEY=0;
 				var TICKETCODE=-1;
+				
+				var lastmove="";
+				var startInstant:Long = 0;
+				var endInstant : Long= 0;
+				var deltatime: Long =0;
+				val MINT=4000;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						discardMessages = false
 						CommUtils.outred("$name |  request engage")
-						request("engage", "engage(transporttrolley)" ,"basicrobot" )  
+						request("engage", "engage(transporttrolley,330)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -61,10 +67,11 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("moverobottoindoor") { //this:State
 					action { //it:State
+						 lastmove = "moverobottoindoor"  
 						if( checkMsgContent( Term.createTerm("dodepositaction(TICKETCODE)"), Term.createTerm("dodepositaction(TICKETCODE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
-								 				TICKETCODE=payloadArg(0).toInt(); 
+								 				TICKETCODE=payloadArg(0).toInt();
 						}
 						CommUtils.outred("$name | moving robot to indoor.")
 						request("moverobot", "moverobot($INDOORX,$INDOORY)" ,"basicrobot" )  
@@ -78,6 +85,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("moverobottocoldroom") { //this:State
 					action { //it:State
+						 lastmove = "moverobottocoldroom"  
 						CommUtils.outred("$name | robot is in indoor")
 						CommUtils.outred("$name | moving robot to coldroom")
 						emit("robotisinindoor", "robotisindoor(ok)" ) 
@@ -108,6 +116,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("moverobottohome") { //this:State
 					action { //it:State
+						 lastmove = "moverobottohome"  
 						request("moverobot", "moverobot($HOMEX,$HOMEY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
@@ -119,6 +128,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("emitrobotisinhome") { //this:State
 					action { //it:State
+						 lastmove = ""  
 						emit("robotisinhome", "robotisinhome(ok)" ) 
 						CommUtils.outred("$name | robot is in home")
 						//genTimer( actor, state )
@@ -130,12 +140,101 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("robotmovefailed") { //this:State
 					action { //it:State
-						CommUtils.outred("$name | robot failed to move")
+						CommUtils.outred("$name | robot failed to move $lastmove")
+						 endInstant=  System.currentTimeMillis();   
+						 	 	deltatime= (endInstant - startInstant);
+						CommUtils.outred("$name | end-start= $deltatime <=> MINT=$MINT")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="ignorealarm", cond=doswitchGuarded({ deltatime <= MINT 
+					}) )
+					transition( edgeName="goto",targetState="alarmconsidered", cond=doswitchGuarded({! ( deltatime <= MINT 
+					) }) )
+				}	 
+				state("ignorealarm") { //this:State
+					action { //it:State
+						CommUtils.outred("$name | alarm ignored")
+						CommUtils.outred("$name | resume to $lastmove")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="moverobottoindoor", cond=doswitchGuarded({ lastmove == "moverobottoindoor"  
+					}) )
+					transition( edgeName="goto",targetState="option2", cond=doswitchGuarded({! ( lastmove == "moverobottoindoor"  
+					) }) )
+				}	 
+				state("option2") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="moverobottohome", cond=doswitchGuarded({ lastmove == "moverobottohome"  
+					}) )
+					transition( edgeName="goto",targetState="option3", cond=doswitchGuarded({! ( lastmove == "moverobottohome"  
+					) }) )
+				}	 
+				state("option3") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="moverobottocoldroom", cond=doswitch() )
+				}	 
+				state("alarmconsidered") { //this:State
+					action { //it:State
+						CommUtils.outred("$name | alarm considered!!!")
+						CommUtils.outred("$name | wait for moverobotdone or endalarm")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t018",targetState="endalarmstate",cond=whenReply("moverobotdone"))
+					transition(edgeName="t019",targetState="endalarmstate",cond=whenEvent("endalarm"))
+				}	 
+				state("endalarmstate") { //this:State
+					action { //it:State
+						CommUtils.outred("$name | resume to $lastmove")
+						 startInstant=  System.currentTimeMillis();    
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="moverobottoindoor", cond=doswitchGuarded({ lastmove == "moverobottoindoor"  
+					}) )
+					transition( edgeName="goto",targetState="option2", cond=doswitchGuarded({! ( lastmove == "moverobottoindoor"  
+					) }) )
+				}	 
+				state("option2") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="moverobottohome", cond=doswitchGuarded({ lastmove == "moverobottohome"  
+					}) )
+					transition( edgeName="goto",targetState="option3", cond=doswitchGuarded({! ( lastmove == "moverobottohome"  
+					) }) )
+				}	 
+				state("option3") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="moverobottocoldroom", cond=doswitch() )
 				}	 
 			}
 		}

@@ -95,7 +95,8 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 								  ){answer("sendticket", "ticketrejected", "ticketrejected(ARG)"   )  
 								 }
 								 else
-								  {forward("dodepositaction", "dodepositaction($TICKETCODE)" ,"transporttrolley" ) 
+								  {Ticket.setStatus(1); 
+								  forward("dodepositaction", "dodepositaction($TICKETCODE)" ,"transporttrolley" ) 
 								  }
 								 }
 						}

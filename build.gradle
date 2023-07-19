@@ -99,9 +99,6 @@ testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.7'
     // https://mvnrepository.com/artifact/com.googlecode.aima-java/aima-core
     implementation group: 'com.googlecode.aima-java', name: 'aima-core', version: '3.0.0'
 
-    // Use JUnit test framework.
-    testImplementation 'junit:junit:4.13.2'
-
 }
 
 sourceSets {

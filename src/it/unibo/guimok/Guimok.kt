@@ -29,16 +29,16 @@ class Guimok ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t118",targetState="sendticket",cond=whenReply("ticketaccepted"))
+					 transition(edgeName="t125",targetState="sendticket",cond=whenReply("ticketaccepted"))
 				}	 
 				state("sendticket") { //this:State
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("ticketaccepted(TICKETCODE,TICKETSECRET,TIMESTAMP)"), Term.createTerm("ticketaccepted(TICKETCODE,TICKETSECRET,TIMESTAMP)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
-											var Ticketcode= payloadArg(0);
-											var Ticketsecret= payloadArg(1);
-								CommUtils.outmagenta("$name | sneding ticket to coldstorageservice")
+												var Ticketcode= payloadArg(0);
+												var Ticketsecret= payloadArg(1);
+								CommUtils.outmagenta("$name | sending ticket to coldstorageservice")
 								request("sendticket", "sendticket($Ticketcode,$Ticketsecret)" ,"coldstorageservice" )  
 						}
 						//genTimer( actor, state )
@@ -46,7 +46,7 @@ class Guimok ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t219",targetState="end",cond=whenReply("chargetaken"))
+					 transition(edgeName="t226",targetState="end",cond=whenReply("chargetaken"))
 				}	 
 				state("end") { //this:State
 					action { //it:State

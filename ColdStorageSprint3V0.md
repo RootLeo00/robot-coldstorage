@@ -11,7 +11,7 @@
 ## Requirements
 
 The system includes a Sonar and a Led connected to a RaspberryPi.
-The Sonar is used as an ‘alarm device’: when it measures a distance less that a prefixed value **DLIMT**, the transport trolley must be stopped; it will be resumed when Sonar detects again a distance higher than **DLIMT**.
+The Sonar is used as an ‘alarm device’: when it measures a distance less than a prefixed value **DLIMT**, the transport trolley must be stopped; it will be resumed when Sonar detects again a distance higher than **DLIMT**.
 
 The Led is used as a _warning devices_, according to the following scheme:
 > - the Led is **off** when the transport trolley is at HOME
@@ -27,10 +27,11 @@ SERVICE USER STORY
 - per RaspberryPi si intende la versione 4 B
 - Per Sonar si intende ...
 - Per Led si intende ...
-- Il calcolo del delay di MINT parte da quando parte la resume dello stop precedente
-Da chiedere al committente: 
-- dov'è il sonar?
-- il transport trolley è in home qualsiasi sia la direzione del muso del robot ?
+
+
+
+Dopo opportuni colloqui con il committente, possiano affermare che :
+- il sonar e il led sono su un raspberry che non dipende dalla service area
 
 
 ### Architettura logica requisiti
@@ -42,14 +43,15 @@ Da chiedere al committente:
 
 ### Misurazione continua Sonar
 
-### Alarm Transport Trolley
+### Alarm Basic Robot
 per fermare il robot si fa affidamento al comando "alarm", già formalizzato dai messaggi presenti in questa documentazione: [BasicRobot23.html](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/BasicRobot23.html#basicrobot23-messaggi)
 
 ### Responsabilità del ColdStorageService
 Nessuna
 
 ### Timer MINT
-
+Il calcolo del delay di MINT parte da quando parte la resume dello stop precedente
+IMMAGINE
 
 
 
