@@ -65,7 +65,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 		//*********** INTERAZIONE CON SERVICE ACCESS GUI
 		[# 
 			var Kgtoload : Int = 0; 
-			var Expirationtime:Long = 100;
+			var Expirationtime:Long = 60000;
 			var ticketList=it.unibo.ticket.TicketList(Expirationtime);
 			#
 		]
@@ -115,7 +115,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 				println("$name | ticket denied") color green
 				replyTo storefood with ticketdenied : ticketdenied(ARG)
 			}
-				
+				 
 			}
 					}   
 	  	Goto s0
@@ -335,7 +335,7 @@ QActor transporttrolley context ctxcoldstorageservice{
   	
 }
 
- 	 QActor serviceaccessgui context ctxcoldstorageservice{ 
+ 	 QActor serviceaccessgui context ctxcoldstorageservice{  
 	 	
 	 	//initial state waiting for requests
 	 	State s0 initial{
@@ -346,14 +346,16 @@ QActor transporttrolley context ctxcoldstorageservice{
 	 	}
  		Transition t1 whenRequest dostorefood-> storefood
  		whenRequest doinsertticket-> insertticket
- 		
+ 		/////////////DO STORE FOOD REQUEST/////////////////////////
  		State storefood{
- 			onMsg(dostorefood:dostorefood(kg)){
+ 			
+ 			onMsg(dostorefood:dostorefood(KG)){
+ 				printCurrentMessage
  				[#
  					
  					var Kg=payloadArg(0);#
  				]
- 				println("$name | handling request") color magenta
+ 				println("$name | handling dostorefood request") color magenta
  				request coldstorageservice -m storefood:storefood($Kg)
  			}
  			
@@ -362,24 +364,30 @@ QActor transporttrolley context ctxcoldstorageservice{
  						whenReply ticketdenied-> handlestorefoodreply
  		
  		State handlestorefoodreply{
- 			onMsg(ticketaccepted:ticketaccepted(TICKETNUMBER,TICKETSECRET)){
+ 			onMsg(ticketaccepted:ticketaccepted(TICKETNUMBER,TICKETSECRET,TIMESTAMP)){
  				[#
  					var Ticketcode= payloadArg(0);
-			var Ticketsecret= payloadArg(1);#
+			var Ticketsecret= payloadArg(1);
+			var Timestamp= payloadArg(2);#
  				]
- 				replyTo dostorefood with ticketaccepted:ticketaccepted($Ticketcode,$Ticketsecret)
+ 				println("$name | replying to client with ticketaccepted") color magenta
+ 				replyTo dostorefood with ticketaccepted:ticketaccepted($Ticketcode,$Ticketsecret,$Timestamp)
  			}
  			onMsg(ticketdenied:ticketdenied(RESPONSE)){
  				[#
  					var Msg= payloadArg(0);
 			#
  				]
+ 				println("$name | replying to client with ticketdenied") color magenta
 			 replyTo dostorefood with ticketdenied:ticketdenied($Msg)	
  			}
  		}
  		Goto s0
+ 		/////////////////////////////////////////
+ 		
+ 		///////////////////// DOINSERTTICKET REQUEST////////////////////////////
  		State insertticket {
- 			
+ 			printCurrentMessage
  		onMsg(doinsertticket:doinsertticket(TICKETCODE, TICKETSECRET)){		
  			[# 
 			var Ticketcode= payloadArg(0);
@@ -398,27 +406,57 @@ QActor transporttrolley context ctxcoldstorageservice{
  		State handleinsertticketreply{
  			onMsg(chargetaken:chargetaken(ARG)){
  				[#
- 					var Ticketcode= payloadArg(0);
-			var Ticketsecret= payloadArg(1);#
+ 					var Response= payloadArg(0);
+			#
  				]
- 				replyTo doinsertticket with chargetaken:chargetaken(ARG)
+ 				replyTo doinsertticket with chargetaken:chargetaken($Response)
  				println("$name | robot has taken the load") color magenta
  			}
  			onMsg(ticketexpired:ticketexpired(ARG)){
  				[#
- 					var Ticketcode= payloadArg(0);
-			var Ticketsecret= payloadArg(1);#
+ 					var Response= payloadArg(0);
+			#
  				]
- 				replyTo doinsertticket with ticketexpired:ticketexpired(ARG)
+ 				replyTo doinsertticket with ticketexpired:ticketexpired($Response)
  			}
  			onMsg(ticketrejected:ticketrejected(ARG)){
  				[#
- 					var Ticketcode= payloadArg(0);
-			var Ticketsecret= payloadArg(1);#
+ 					var Response= payloadArg(0);
+			#
  				]
- 				replyTo doinsertticket with ticketrejected:ticketrejected(ARG)
+ 				replyTo doinsertticket with ticketrejected:ticketrejected($Response)
  			}
  			
+ 		}
+ 		Goto s0
+ 		////////////////////////////////////////////////////////////
+ 		}
+ 		
+ 	 	/*QActor guitester context ctxcoldstorageservice{
+	 	State s0 initial{
+	 		discardMsg Off
+	 		println("$name | start request") color magenta
+	 		request serviceaccessgui -m dostorefood:dostorefood(25)
+	 	}
+ 		Transition t1 whenReply ticketaccepted -> sendticket
+ 		
+ 		State sendticket {
+ 			println("$name | sono arrrivato in sendticket") color magenta
+ 		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
+ 			[# 
+			var Ticketcode= payloadArg(0);
+			var Ticketsecret= payloadArg(1);
+		#]
+		println("$name | sneding ticket to coldstorageservice") color magenta
+		request serviceaccessgui -m doinsertticket:doinsertticket($Ticketcode,$Ticketsecret)
+		
+ 		}
+ 		
+		
+ 		}
+ 		Transition t2 whenReply chargetaken-> end
+ 		State end{
+ 			println("$name | robot has taken the load") color magenta
  		}
  		Goto s0
  		

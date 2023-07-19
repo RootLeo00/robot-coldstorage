@@ -362,7 +362,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  		Goto s0
  		
  	} */
- 	
+ 	 
  	QActor guimok context ctxcoldstorageservice{
 	 	State s0 initial{
 	 		discardMsg Off
