@@ -82,7 +82,7 @@ da requisiti si ha che la comunicazione del messaggio CHARGETAKEN deve essere un
 	- in questa seconda versione dell'implementazione si ha che **SERVICEACCESSGUI** dopo aver inviato una richiesta a **COLDSTORAGESERVICE** non attende la risposta ma si mette in attesa di altre richieste
 	- questo porta un problema legato alla gestione della sessione in quanto **non si è piu in grado di determinare a quale richiesta fa riferimento una determinata risposta** quando questa giunge a **SERVICEACCESSGUI**
 
-di seguito si presenta l'architettura di progettazione realizzata per testare le problematiche sopra riportate
+di seguito si presenta l'architettura di progettazione realizzata per testare le problematiche sopra riportate, per il codice fare riferimento al file [coldstorageservice-progettazione.qak](../src/coldstorageservice-progettazione.qak)
 
 ### Architettura finale progettazione
 ![[coldstorageservicearch-progettazione.png]]
