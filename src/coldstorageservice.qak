@@ -1,70 +1,76 @@
 /*
+ * SPRINT3 --version 0
+ * author Caterina Leonelli, Matteo Longhi
+ * project repository: https://github.com/RootLeo00/robot-coldstorage
+ */
 
- */      
 System /* -msglog */ coldstorageservice 
 
-//Dispatch startcmd   : start( ARG ) 					//sender:serviceaccessgui receiver:appl
+//--------Coldstorage e ServiceAccessGui Fase 1 -----------------------------------
 Request storefood : storefood( KG ) 					//sender:serviceaccessgui receiver:coldstorageservice
 Reply ticketaccepted : ticketaccepted( TICKETCODE, TICKETSECRET, TIMESTAMP ) 	//sender:coldstorageservice receiver:serviceaccessgui
 Reply ticketdenied  : ticketdenied( ARG ) 		//sender:coldstorageservice receiver:serviceaccessgui
+//-------------------------------------------------------------
 
-													//sender:coldstorage receiver:coldstorageservice
 
-//Dispatch failticket : failticket(ARG) 
-Request sendticket: sendticket(TICKETCODE, TICKETSECRET) 			//sender:serviceaccessgui receiver:coldstorageservice
+//--------Coldstorage e ServiceAccessGui Fase 2 -----------------------------------
+Request sendticket: sendticket(TICKETCODE, TICKETSECRET) //sender:serviceaccessgui receiver:coldstorageservice
 Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketrejected: ticketrejected(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
+//-------------------------------------------------------------
 
  
-//start depositaction
-Dispatch dodepositaction:dodepositaction(TICKETCODE)
-//robot events
-Event robotisinindoor:robotisinindoor(ARG)
-Event robotisinhome:robotisinhome(ARG) 
-Event depositactionended:depositactionended(ARG)
-Event robotismoving: robotismoving(ARG)
-Event robotisstopped:robotisstopped(ARG)
-Dispatch gohome:gohome(ARG)													//emitter:serviceaccessgui listener:coldstorageservice
-										 			//emitter:serviceaccessgui listener:fakeuser
- 
+//--------Transport trolley section-----------------------------------
+Dispatch dodepositaction:dodepositaction(TICKETCODE) //sender:coldstorageservice receiver:transporttrolley
+Event robotisinindoor:robotisinindoor(ARG) //emitted  by transporttrolley
+Event robotisinhome:robotisinhome(ARG) //emitted  by transporttrolley
+Event depositactionended:depositactionended(ARG) //emitted  by transporttrolley
+Event robotismoving: robotismoving(ARG) //emitted  by transporttrolley
+Event robotisstopped:robotisstopped(ARG) //emitted  by transporttrolley
+
+//-------------------------------------------------------------
+
  
 //--------From basicrobot-----------------------------------
 Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(PLANDONE, PLANTODO)
 Event alarm           : alarm(X)
-Event  endalarm          : endalarm(X)
-//-------------------------------------------------------------
-
-
-
-Request howmanykgavailable : howmanykgavailable(ARG) //sender:coldstorageservice receiver:coldroom
-Reply kgavailable : kgavailable(KG) //sender:coldroom receiver:coldstorageservice 
-Dispatch updatekg : updatekg (KG) //sender:coldstorageservice receiver:coldroom
-
- 
-//---------------SONAR----------------------------------------------
-Event sonardata : distance(D)   //emitted  by distancefilter
-Event obstacle  : obstacle(D)   //emitted as stream by distancefilter
-//Dispatch coapUpdate: coapUpdate(RESOURCE, VALUE)
-//Dispatch sonaractivate   : info(ARG)  //
-//Dispatch sonardeactivate : info(ARG)
-Dispatch ledCmd          : ledCmd(ONOFFBLINK)
-//-------------------------------------------------------------------
-
 Request engage : engage(ARG)
 Reply   engagedone    : engagedone(ARG) 
 Reply   engagerefused : engagerefused(ARG) 
+//-------------------------------------------------------------
 
-//serviceaccessgui messages
+
+//--------Coldstorage e ColdRoom interaction -----------------------------------
+Request howmanykgavailable : howmanykgavailable(ARG) //sender:coldstorageservice receiver:coldroom
+Reply kgavailable : kgavailable(KG) //sender:coldroom receiver:coldstorageservice 
+Dispatch updatekg : updatekg (KG) //sender:coldstorageservice receiver:coldroom
+//-------------------------------------------------------------
+
+
+ 
+//---------------Sonar e Led----------------------------------------------
+Event sonardata : distance(D)   //emitted  by distancefilter
+Event obstacle  : obstacle(D)   //emitted as stream by distancefilter
+Dispatch ledCmd          : ledCmd(ONOFFBLINK) //sender:controllerled receiver:led
+Event  endalarm          : endalarm(X) //emitted by sonar
+//-------------------------------------------------------------------
+
+
+//---------------ServiceAccessGui e Alieno interaction----------------------------------------------
 Dispatch dostorefood:dostorefood(SESSIONNUMBER,KG)
 Dispatch doinsertticket:doinsertticket(SESSIONNUMBER,KG)
+//-------------------------------------------------------------------
+
 
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020 ]   
-Context ctxcoldstorageservice ip [host="localhost" port=8038 ]
- 
+Context ctxcoldstorageservice ip [host="localhost" port=8038 ] 
 ExternalQActor basicrobot context ctxbasicrobot  
+ 
+ 
+ 
  
 /*  
  * ------------------------------------------------------------------
@@ -387,7 +393,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  *  sonar
  * ------------------------------------------------------------------
 */ 
-CodedQActor sonar  context ctxcoldstorageservice className "sonarSimulator"           //IN LOCALE
+CodedQActor sonar  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
     //CodedQActor sonar  context ctxsonarqak23 className "sonarHCSR04Support23"   //SU RASP
 //CodedQActor datalogger     context ctxsonarqak23 className "rx.dataLogger"
 CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataCleaner"
@@ -476,9 +482,6 @@ QActor led context ctxcoldstorageservice{
  * ------------------------------------------------------------------
 */ 
 QActor controllerled context ctxcoldstorageservice{
-	[# val DLIMIT = 70 ;
-	   var stopped=false;
-	#]
 	
 	State s0 initial{
 		println("${name} | START") color yellow

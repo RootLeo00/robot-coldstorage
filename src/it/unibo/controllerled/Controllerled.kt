@@ -18,8 +18,6 @@ class Controllerled ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-		 val DLIMIT = 70 ;
-			   var stopped=false;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
