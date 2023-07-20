@@ -16,7 +16,7 @@ Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:ser
 Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketrejected: ticketrejected(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
-
+ 
 //start depositaction
 Dispatch dodepositaction:dodepositaction(TICKETCODE)
 //robot events
@@ -26,7 +26,7 @@ Event depositactionended:depositactionended(ARG)
 Event robotismoving: robotismoving(ARG)
 Dispatch gohome:gohome(ARG)													//emitter:serviceaccessgui listener:coldstorageservice
 										 			//emitter:serviceaccessgui listener:fakeuser
-
+ 
  
 //--------From basicrobot-----------------------------------
 Request moverobot    :  moverobot(TARGETX, TARGETY)
@@ -257,7 +257,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 		var startInstant:Long = 0;
 		var endInstant : Long= 0;
 		var deltatime: Long =0;
-		val MINT: Long=1000;
+		val MINT: Long=4000;
 	#]
 	State s0 initial{
 		//set home,indoor,coldroom positions
