@@ -18,3 +18,4 @@ log
 build
 bin
 node_modules
+.settings
