@@ -327,7 +327,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  	State robotmovefailed{
  		
  		println("$name | robot failed to move") color red
- 		
+ 		 
  	}
  	
  	//fake gui

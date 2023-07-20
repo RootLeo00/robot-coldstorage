@@ -335,7 +335,7 @@ QActor transporttrolley context ctxcoldstorageservice{
   	
 }
 
- 	 QActor serviceaccessgui context ctxgui{ 
+ 	 QActor serviceaccessgui context ctxcoldstorageservice{ 
 	 	
 	 	//initial state waiting for requests
 	 	State s0 initial{
