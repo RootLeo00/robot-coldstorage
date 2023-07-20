@@ -17,3 +17,4 @@ gradle
 log
 build
 bin
+node_modules
