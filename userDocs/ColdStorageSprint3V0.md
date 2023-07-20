@@ -2,8 +2,8 @@
 ## Introduzione
 ### Goal conseguiti nello sprint1
 - prototipazione del core business ColdStorageService + TransportTrolley
-### architettura logica sprint0
-![[coldstorageservicearchsprint0V4.png]]
+### architettura logica sprint1
+![[coldstorageservicesprint1final.jpg]]
 ### Goal dello sprint3
 - introduzione del alarm requirement nel prototipo sviluppato allo sprint1
 
@@ -24,60 +24,113 @@ SERVICE USER STORY
 5) While the transport trolley is moving, the [Alarm requirements](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/TemaFinale23.html#alarm-requirements) should be satisfied. However, the transport trolley should not be stopped if some prefixed amount of time (**MINT** msecs) is not passed from the previous stop.
 
 ## Requirements analysis
-- per RaspberryPi si intende la versione 4 B
-- Per Sonar si intende ...
-- Per Led si intende ...
+- Per Sonar si intende il dispositivo a ultrasuoni HCSR04 e viene formalizzato a livello logico con l'entità Sonar.
+- Per Led si intende un dispositivo che emette energia sotto forma di luce e viene formalizzato a livello logico dall'entità Led.
 
 
+Dopo opportuni colloqui con il committente, possiamo affermare che :
+- il Sonar e il Led sono su un raspberry che non dipende dalla service area.
+- Il calcolo del delay di MINT parte da quando parte la endalarm dello stop precedente
 
-Dopo opportuni colloqui con il committente, possiano affermare che :
-- il sonar e il led sono su un raspberry che non dipende dalla service area
+![[mint.png]]
 
-
-### Architettura logica requisiti
 
 
 ## Problem Analysis
 
-### Controller Sonar-Led
-
 ### Misurazione continua Sonar
+Il dispositivo fisico Sonar HCSR04 potrebbe emettere dati spuri.
 
 ### Alarm Basic Robot
-per fermare il robot si fa affidamento al comando "alarm", già formalizzato dai messaggi presenti in questa documentazione: [BasicRobot23.html](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/BasicRobot23.html#basicrobot23-messaggi)
+Per fermare il robot si fa affidamento al comando "alarm", già formalizzato dai messaggi presenti in questa documentazione: [BasicRobot23.html](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/BasicRobot23.html#basicrobot23-messaggi)
 
-### Responsabilità del ColdStorageService
-Nessuna
-
-### Timer MINT
-Il calcolo del delay di MINT parte da quando parte la resume dello stop precedente
-IMMAGINE
-
+## L'evento endalarm
+Quando il Transport Trolley riceve un evento di alarm, il Basic Robot poi gli invia **moverobotfailed** come risposta finale dell'ultimo comando. Dunque si deve tener traccia dell'ultima mossa finale del Transport Trolley, dovendo così estendere il Transport Trolley sviluppato allo sprint1.
 
 
 ## Architettura logica dopo analisi del problema
-Il sistema è composto da:
-  - *ColdStorageService*: prende in carico richieste di generazione ticket e richieste di invio di un camion; si interfaccia con la ColdRoom per saperne lo stato; fa partire le deposit action;
-  - *Transport Trolley*: invia al Basic Robot la sequenza di comandi necessari per effettuare una deposit action
-  - *Basic Robot*: esegue i comandi del Transport Trolley
-  - *ServiceAccessGui*: si interfaccia con ColdStorageService per la richiesa di ticket
-  - *Cold Room*: aggiorna lo stato della quantità di kg
-  - *Sonar* : effettua la misurazione e emette eventi. E' inserito in un contesto diverso perchè è specificato nei requisiti che è presente un Raspberry alla quale sarà collegato.
-  - *Led*: viene inserito nello stesso contesto di Sonar
-  - *ControllerSonarLed*: entità che comunica con Led, Sonar e Transport Trolley
-  
-  ![[coldstorageservicearchsprint1.png]]
-
-## Test plan
-si prevede di testare le seguenti funzionalità del sistema
-
-
-### Test effettuati in Junit
-
 
 ## Progettazione
 
-![[coldstorageservicearch_progettazione_sprint3V0.png]]
+## Misurazioni corrette Sonar
+Si predispongono due CodedQActor usabili per costruire una pipe che ha sonar come sorgente-dati e che provvede a eliminare dati spuri ([dataCleaner]()) e a generare ([distancefilter]()) eventi significativi per il livello applicativo.
+
+## L'evento endalarm
+Il Transport Trolley deve gestire i casi di fallimento dovuti alla risposta **moverobotfailed** data dal basic robot quando viene emesso un evento **alarm**.
+Quando entra nello stato di robotfailed, bisogna aspettare 
+1) un comando/evento di fine dell'alarm (endalarm). In questo caso, sarà il Sonar a dover emettere l'evento endalarm. Una volta ricevuto l'endalarm, il Transport Trolley deve ripristinare lo stato dell'ultimo comando al basicrobot. Per fare ciò il Tranport Trolley deve tenere traccia dello stato dell'ultimo comando inviato al basic robot. 
+2) una risposta di fine della mossa precedente (moverobotdone). In questo caso, Transport Trolley è già fermo, dunque l'evento di alarm viene ignorato si attende il comando successivo.
+
+``` Java
+
+State robotmovefailed{
+println("$name | robot failed to move $lastmove") color red
+[# endInstant= System.currentTimeMillis();
+deltatime= (endInstant - startInstant);
+#]
+println("$name | end-start= $deltatime >/< MINT=$MINT") color red
+}
+Goto ignorealarm if [# deltatime <= MINT#] else alarmconsidered
+
+
+State ignorealarm{
+println("$name | alarm ignored --> resume to $lastmove") color red
+}Goto moverobottoindoor if [# lastmove == "moverobottoindoor" #] else option2
+State option2{} Goto moverobottohome if [# lastmove == "moverobottohome" #] else option3
+State option3{} Goto moverobottocoldroom
+
+
+State alarmconsidered{
+println("$name | alarm considered!!! --> wait for moverobotdone or endalarm") color red
+emit robotisstopped: robotisstopped //serve per led
+} Transition t0 whenReply moverobotdone -> endalarmstate
+whenEvent endalarm -> endalarmstate
+
+  
+
+State endalarmstate{
+println("$name | resume to $lastmove") color red
+[# startInstant= System.currentTimeMillis(); #]
+}Goto moverobottoindoor if [# lastmove == "moverobottoindoor" #] else option2
+State option2{} Goto moverobottohome if [# lastmove == "moverobottohome" #] else option3
+State option3{} Goto moverobottocoldroom
+
+```
+
+## Il timer 
+Dai requisiti si deve predisporre un timer che parte dall'ultima endalarm effettuata. Per fare ciò si adopera la classe Java System con il metodo:
+
+``` Java
+System.currentTimeMillis()
+```
+
+
+## Controllo del Led tramite Stato del Transport Trolley
+Dai requisiti il Led deve modificare il proprio stato a seconda dello stato del robot (se in movimento oppure se è in home oppure se è in stato di allarme). Questo è possibile se il Transport Trolley emette degli eventi sullo stato del robot ricevuti dal ControllerLed.
+
+``` Java
+QActor controllerled context ctxcoldstorageservice{
+
+State s0 initial{
+println("${name} | START")
+forward led -m ledCmd : ledCmd(off) //robot nasce in home
+}
+
+Transition t0 whenEvent robotismoving -> ledblink
+			  whenEvent robotisinhome -> ledoff
+		      whenEvent robotisstopped -> ledon
+...
+}
+```
+
+
+Il sistema è composto da:
+  - *Sonar* : effettua la misurazione e emette eventi. E' inserito in un contesto diverso perchè è specificato nei requisiti che è presente un Raspberry alla quale sarà collegato.
+  - *Led*: viene inserito nello stesso contesto di Sonar
+  - *ControllerLed*: entità che legge gli eventi del Transport Trolley per comandare il Led
+
+![[coldstorageservice_progettazione_sprint3V0.png]]
+
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
         By Caterina Leonelli email: caterina.leonelli2@studio.unibo.it,
