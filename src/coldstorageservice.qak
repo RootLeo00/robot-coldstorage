@@ -23,6 +23,7 @@ Dispatch dodepositaction:dodepositaction(TICKETCODE)
 Event robotisinindoor:robotisinindoor(ARG)
 Event robotisinhome:robotisinhome(ARG) 
 Event depositactionended:depositactionended(ARG)
+Event robotismoving: robotismoving(ARG)
 Dispatch gohome:gohome(ARG)													//emitter:serviceaccessgui listener:coldstorageservice
 										 			//emitter:serviceaccessgui listener:fakeuser
 
@@ -183,8 +184,6 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	  		]
 	  			println("$L") color green
 	  		}
-	  		
-	  		
 	  	}
 	   	Goto s0
   		/////////////////////////////////////////////////////////////////
@@ -253,11 +252,12 @@ QActor transporttrolley context ctxcoldstorageservice{
 		var HOMEY=0;
 		var TICKETCODE=-1;
 		
+		//var per gestire la alarm/endalarm
 		var lastmove="";
 		var startInstant:Long = 0;
 		var endInstant : Long= 0;
 		var deltatime: Long =0;
-		val MINT=4000;
+		val MINT: Long=1000;
 	#]
 	State s0 initial{
 		//set home,indoor,coldroom positions
@@ -284,6 +284,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  	
  	//move robot to indoor, then send chargetaken message and go to coldroom
  	State moverobottoindoor {
+ 		emit robotismoving : robotismoving //per gestire led!!!!!
  		[# lastmove = "moverobottoindoor" #]
  		//move robot to indoor
  		onMsg(dodepositaction :dodepositaction(TICKETCODE)){
@@ -342,29 +343,23 @@ QActor transporttrolley context ctxcoldstorageservice{
  	*/
  	State robotmovefailed{
  		println("$name | robot failed to move $lastmove") color red
- 	 //eseguire doPlan con piano restante
- 	 //	ricorda di aggiornare la mappa a mano!!!
- 	 //end alarm che arriva dal sonar
- 	 //per ricominciare non serve tenere traccia del piano ma basta fare move(cella) di nuovo
  	 
  	 //attenzione se arriva allarme *dopo* resume e prima di MINT
  	 [# endInstant=  System.currentTimeMillis();   
  	 	deltatime= (endInstant - startInstant);
  	 	#
  	 ]
- 	 println("$name | end-start= $deltatime <=> MINT=$MINT") color red
+ 	 println("$name | end-start= $deltatime >/< MINT=$MINT") color red
  	}Goto ignorealarm if [# deltatime <= MINT#] else alarmconsidered
  	
  	State ignorealarm{
- 		println("$name | alarm ignored") color red
- 		println("$name | resume to $lastmove") color red
+ 		println("$name | alarm ignored --> resume to $lastmove") color red
  	}Goto moverobottoindoor if [# lastmove == "moverobottoindoor" #] else option2
 	State option2{} Goto moverobottohome if [# lastmove == "moverobottohome" #] else option3
 	State option3{} Goto moverobottocoldroom
  	
  	State alarmconsidered{
- 		println("$name | alarm considered!!!") color red
- 		println("$name | wait for moverobotdone or endalarm") color red
+ 		println("$name | alarm considered!!! --> wait for moverobotdone or endalarm") color red
  	} Transition t0  whenReply moverobotdone -> endalarmstate
 					 whenEvent endalarm -> endalarmstate
 
@@ -394,9 +389,8 @@ CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataClean
 CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
 
 QActor sonar23 context ctxcoldstorageservice{ 
-	[# var  ApplAlso = sysUtil.getActor("appl") != null #]
 	State s0 initial{  
-		println("sonar23 | start with appl: $ApplAlso") 
+		println("sonar23 | start") 
 		[# subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonar") #]
 	}
 	Goto work
@@ -421,11 +415,8 @@ QActor sonar23 context ctxcoldstorageservice{
 		}
 		
 	}
-	Goto sonar23 if [# ApplAlso == true #]  else work  
+	Goto work  
 	
-	State sonar23{
-		println("$name BYE")
-	}
 }   
 
 
@@ -439,19 +430,20 @@ QActor sonar23 context ctxcoldstorageservice{
 */ 
 QActor led context ctxcoldstorageservice{ //ctxrasp{ 
 	State s0 initial{
-		println("${name} START")
+		println("${name} | START") color magenta
 	}  
 	Transition t0 whenMsg ledCmd -> doCmd
 	
 	State doCmd{
-		//printCurrentMessage
 		onMsg( ledCmd : ledCmd(V) ){
 			[# var Cmd = payloadArg(0) #]
 			if [# Cmd=="on" #]{
-				//[# CommUtils.outyellow( "${name} - on") #]		
 				println("${name} - on") color magenta	 		
-			}else{
-				//[# CommUtils.outyellow( "${name} - off")#]
+			}
+			if [# Cmd=="blink" #]{
+				println("${name} - blink") color magenta
+			}
+			if [# Cmd=="off" #]{
 				println("${name} - off") color magenta
 			}
 		}	 
@@ -471,11 +463,11 @@ QActor controllersonarled context ctxcoldstorageservice{
 	#]
 	
 	State s0 initial{
-		println("${name} START")
+		println("${name} | START") color yellow
 //		forward sonar23 -m sonaractivate : info(ok)
-		 
 	} 
 	Transition t0 whenEvent sonardata -> doBusinessWork
+				  whenEvent robotisinhome -> ledoff
 	
 	State doBusinessWork{
 		//printCurrentMessage
@@ -484,20 +476,28 @@ QActor controllersonarled context ctxcoldstorageservice{
 			//Interact with the Led
 			if [# D < DLIMIT #]{
 				[# stopped = true #]
- 				println("${name} - Turn the Led on")
+ 				println("${name} | Turn the Led on") color yellow
 				forward led -m ledCmd : ledCmd(on)
-			}else{ //TODO in the project: if Led is on ....
+			}else{ // robot si muove oppure è in home
 				if [# stopped == true #] {
 					println("$name | resume transport trolley") color yellow
 					emit endalarm : endalarm	
+					println("${name} - Blink Led") color yellow
+				    forward led -m ledCmd : ledCmd(blink) // forse un po' brutto farlo qui, sarebbe meglio fare check robotmoving
+				} 
+				else{
+					println("${name} - Blink Led") color yellow
+				    forward led -m ledCmd : ledCmd(blink)
 				}
- 				println("${name} - Turn the Led off")
-				forward led -m ledCmd : ledCmd(off)				
 			}
 		}
-		
-		
-	}
+	}Transition t0 whenEvent sonardata -> doBusinessWork
+				   whenEvent robotisinhome -> ledoff
+	
+	State ledoff{
+		 println("${name} - Turn the Led off") color yellow
+		 forward led -m ledCmd : ledCmd(off)
+	}Transition t1 whenEvent robotismoving -> doBusinessWork
 }
 
 

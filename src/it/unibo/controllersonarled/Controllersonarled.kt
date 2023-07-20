@@ -23,13 +23,14 @@ class Controllersonarled ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outblack("${name} START")
+						CommUtils.outyellow("${name} | START")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t024",targetState="doBusinessWork",cond=whenEvent("sonardata"))
+					transition(edgeName="t025",targetState="ledoff",cond=whenEvent("robotisinhome"))
 				}	 
 				state("doBusinessWork") { //this:State
 					action { //it:State
@@ -38,16 +39,20 @@ class Controllersonarled ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 								 var D = payloadArg(0).toInt()  
 								if(  D < DLIMIT  
 								 ){ stopped = true  
-								CommUtils.outblack("${name} - Turn the Led on")
+								CommUtils.outyellow("${name} | Turn the Led on")
 								forward("ledCmd", "ledCmd(on)" ,"led" ) 
 								}
 								else
 								 {if(  stopped == true  
 								  ){CommUtils.outyellow("$name | resume transport trolley")
 								 emit("endalarm", "endalarm" ) 
+								 CommUtils.outyellow("${name} - Blink Led")
+								 forward("ledCmd", "ledCmd(blink)" ,"led" ) 
 								 }
-								 CommUtils.outblack("${name} - Turn the Led off")
-								 forward("ledCmd", "ledCmd(off)" ,"led" ) 
+								 else
+								  {CommUtils.outyellow("${name} - Blink Led")
+								  forward("ledCmd", "ledCmd(blink)" ,"led" ) 
+								  }
 								 }
 						}
 						//genTimer( actor, state )
@@ -55,6 +60,19 @@ class Controllersonarled ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition(edgeName="t026",targetState="doBusinessWork",cond=whenEvent("sonardata"))
+					transition(edgeName="t027",targetState="ledoff",cond=whenEvent("robotisinhome"))
+				}	 
+				state("ledoff") { //this:State
+					action { //it:State
+						CommUtils.outyellow("${name} - Turn the Led off")
+						forward("ledCmd", "ledCmd(off)" ,"led" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t128",targetState="doBusinessWork",cond=whenEvent("robotismoving"))
 				}	 
 			}
 		}

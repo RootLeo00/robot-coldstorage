@@ -27,11 +27,12 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var HOMEY=0;
 				var TICKETCODE=-1;
 				
+				//var per gestire la alarm/endalarm
 				var lastmove="";
 				var startInstant:Long = 0;
 				var endInstant : Long= 0;
 				var deltatime: Long =0;
-				val MINT=4000;
+				val MINT: Long=1000;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -67,6 +68,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("moverobottoindoor") { //this:State
 					action { //it:State
+						emit("robotismoving", "robotismoving" ) 
 						 lastmove = "moverobottoindoor"  
 						if( checkMsgContent( Term.createTerm("dodepositaction(TICKETCODE)"), Term.createTerm("dodepositaction(TICKETCODE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
@@ -143,7 +145,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						CommUtils.outred("$name | robot failed to move $lastmove")
 						 endInstant=  System.currentTimeMillis();   
 						 	 	deltatime= (endInstant - startInstant);
-						CommUtils.outred("$name | end-start= $deltatime <=> MINT=$MINT")
+						CommUtils.outred("$name | end-start= $deltatime >/< MINT=$MINT")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -156,8 +158,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("ignorealarm") { //this:State
 					action { //it:State
-						CommUtils.outred("$name | alarm ignored")
-						CommUtils.outred("$name | resume to $lastmove")
+						CommUtils.outred("$name | alarm ignored --> resume to $lastmove")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -191,8 +192,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("alarmconsidered") { //this:State
 					action { //it:State
-						CommUtils.outred("$name | alarm considered!!!")
-						CommUtils.outred("$name | wait for moverobotdone or endalarm")
+						CommUtils.outred("$name | alarm considered!!! --> wait for moverobotdone or endalarm")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
