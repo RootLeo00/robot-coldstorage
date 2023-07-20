@@ -129,7 +129,7 @@ Il sistema è composto da:
   - *Led*: viene inserito nello stesso contesto di Sonar
   - *ControllerLed*: entità che legge gli eventi del Transport Trolley per comandare il Led
 
-Codice dell'architettura:  https://github.com/RootLeo00/robot-coldstorage/tree/main/sprint3
+Codice dell'architettura:  https://github.com/RootLeo00/robot-coldstorage/tree/main/sprint3/src/coldstorageservice.qak
 ![[coldstorageservice_progettazione_sprint3V0.png]]
 
 
