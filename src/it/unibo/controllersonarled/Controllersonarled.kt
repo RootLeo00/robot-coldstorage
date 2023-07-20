@@ -29,8 +29,8 @@ class Controllersonarled ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t024",targetState="doBusinessWork",cond=whenEvent("sonardata"))
-					transition(edgeName="t025",targetState="ledoff",cond=whenEvent("robotisinhome"))
+					 transition(edgeName="t034",targetState="doBusinessWork",cond=whenEvent("sonardata"))
+					transition(edgeName="t035",targetState="ledoff",cond=whenEvent("robotisinhome"))
 				}	 
 				state("doBusinessWork") { //this:State
 					action { //it:State
@@ -60,8 +60,8 @@ class Controllersonarled ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t026",targetState="doBusinessWork",cond=whenEvent("sonardata"))
-					transition(edgeName="t027",targetState="ledoff",cond=whenEvent("robotisinhome"))
+					 transition(edgeName="t036",targetState="doBusinessWork",cond=whenEvent("sonardata"))
+					transition(edgeName="t037",targetState="ledoff",cond=whenEvent("robotisinhome"))
 				}	 
 				state("ledoff") { //this:State
 					action { //it:State
@@ -72,7 +72,7 @@ class Controllersonarled ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t128",targetState="doBusinessWork",cond=whenEvent("robotismoving"))
+					 transition(edgeName="t138",targetState="doBusinessWork",cond=whenEvent("robotismoving"))
 				}	 
 			}
 		}

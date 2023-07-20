@@ -18,6 +18,8 @@ class Sonar23 ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		 val DLIMIT = 70 ;
+			   var stopped=false;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -48,6 +50,15 @@ class Sonar23 ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						 	   
 						updateResourceRep( "sonar23 handles $currentMsg"  
 						)
+						if( checkMsgContent( Term.createTerm("distance(D)"), Term.createTerm("distance(D)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var D = payloadArg(0).toInt()  
+								if(  D >= DLIMIT && stopped == true  
+								 ){CommUtils.outyellow("$name | resume transport trolley")
+								emit("endalarm", "endalarm" ) 
+								 stopped = false  
+								}
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -61,6 +72,7 @@ class Sonar23 ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								CommUtils.outmagenta("$name handleobstacle ALARM ${payloadArg(0)}")
 								emit("alarm", "alarm(obstacle)" ) 
+								 stopped = true  
 						}
 						//genTimer( actor, state )
 					}

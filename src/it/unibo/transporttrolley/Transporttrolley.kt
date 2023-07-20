@@ -32,7 +32,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var startInstant:Long = 0;
 				var endInstant : Long= 0;
 				var deltatime: Long =0;
-				val MINT: Long=1000;
+				val MINT: Long=4000;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -87,6 +87,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("moverobottocoldroom") { //this:State
 					action { //it:State
+						emit("robotismoving", "robotismoving" ) 
 						 lastmove = "moverobottocoldroom"  
 						CommUtils.outred("$name | robot is in indoor")
 						CommUtils.outred("$name | moving robot to coldroom")
@@ -118,6 +119,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("moverobottohome") { //this:State
 					action { //it:State
+						emit("robotismoving", "robotismoving" ) 
 						 lastmove = "moverobottohome"  
 						request("moverobot", "moverobot($HOMEX,$HOMEY)" ,"basicrobot" )  
 						//genTimer( actor, state )
@@ -193,6 +195,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("alarmconsidered") { //this:State
 					action { //it:State
 						CommUtils.outred("$name | alarm considered!!! --> wait for moverobotdone or endalarm")
+						emit("robotisstopped", "robotisstopped" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

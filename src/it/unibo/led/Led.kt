@@ -31,7 +31,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				}	 
 				state("doCmd") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("ledCmd(ONOFF)"), Term.createTerm("ledCmd(V)"), 
+						if( checkMsgContent( Term.createTerm("ledCmd(ONOFFBLINK)"), Term.createTerm("ledCmd(V)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 var Cmd = payloadArg(0)  
 								if(  Cmd=="on"  
