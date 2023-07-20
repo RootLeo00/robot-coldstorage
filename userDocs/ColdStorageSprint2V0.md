@@ -1,11 +1,11 @@
 
 ## Introduzione
 ### Goal conseguiti nello sprint1
-- prototipazione del core business ColdStorageService + TransportTrolley
+- sviluppo del core business ColdStorageService + TransportTrolley
 ### architettura logica sprint1
 ![[coldstorageservicearch-progettazione-sprint1.png]]
 ### Goal dello sprint2
-- introduzione della la GUI nel sistema ottenuto nello sprint1 e testing
+- introduzione della  GUI nel sistema ottenuto nello sprint1 e testing
 **Si noti che lo sviluppo del progetto dello sprint2 è da intendersi come estensione del progetto dello sprint1**
 
 ## Requirements
@@ -17,67 +17,75 @@ a ServiceAccessGUI that allows an human being to see the current weight of the m
 - When the service accepts a ticket, the transport trolley reaches the INDOOR, picks up the food, sends the charge taken message and then goes to the ColdRoom to store the food.
 - When the deposit action is terminated, the transport trolley accepts another ticket (if any) or returns to HOME.
 
+
+
 ## Requirements analysis
 
 - Per **current weight** si intende il numero di kg contenuti nella ColdRoom effettivi. Viene quindi formalizzato con un numero intero positivo.
 - Dal punto 1 della service user story, si evince che ci sarà un campo in input dove l'utente può inserire il numero di kg FW per richiedere il ticket.
-- Una volta che l'utente ha inserito il ticket number, non deve essere possibile per lui inserire un altro ticket prima che otttenga alcuna risposta dalla ServiceAccessGui
-- Deve essere possibile per l'utente poter richiedere più ticket anche se ha inserito il ticketruck driver mandando il camion con un altro ticket. Infatti, il camionista ddeve prima guidare il camion fino a indoor e poi può inserire il ticket number nella ServiceAccessGui e non potrebbe fisicamente guidare due camion in contemporanea.
+- Una volta che l'utente ha inserito il ticket number, non deve essere possibile per lui inserire un altro ticket prima che ottenga alcuna risposta dalla ServiceAccessGui
+- In qualunque momento deve essere possibile richiedere ticket.
 
 Dal precedente sprint si ricorda che:
-- Non deve succedere che un camion, ricevuto il proprio ticket si veda rifiutata l'operazione di scarico una volta arrivato in INDOOR.
+- Non deve succedere che un camion, ricevuto il proprio ticket si veda rifiutata l'operazione di scarico una volta arrivato in INDOOR a patto che il ticket non sia scaduto.
 - la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti
-
-
-### Ticket
- Il ticket è stato formalizzato nello sprint1 secondo la seguente struttura
- ```java
-private String ticketSecret;  
-private long timestamp;  
-private int kgToStore;    
-``` 
  
-
-
 ## Problem Analysis
+
+### comunicazione con il sistema 
+da requisiti si prevede la comunicazione tramite i seguenti messaggi:
+- Request storefood : storefood( KG )
+- Reply ticketaccepted : ticketaccepted( TICKETCODE, TICKETSECRET, TIMESTAMP ) 
+- Reply ticketdenied : ticketdenied( ARG ) 
+
+- Request sendticket: sendticket(TICKETCODE, TICKETSECRET)
+- Reply chargetaken : chargetaken(ARG)
+- Reply ticketexpired: ticketexpired(ARG)
+- Reply ticketrejected: ticketrejected(ARG)
+
+### Il problema della disponibilità della GUI
+da requisiti si evince che la gui deve essere sempre disponibile ad accettare richieste, le comunicazioni intraprese devono essere di natura **NON BLOCCANTE**
+
+### Trasparenza della gui
+per il principio di clean architecture la GUI deve operare in maniera trasparente al sistema 
+
+### L'attore service ACCESSGUI
+come introdotto nella architettura dello sprint0 si aggiunge al sistema un attore in grado di comunicare con coldstorageservice.
+
+#### La scelta del contesto
+data l'assenza di particolari requisiti che richiedano di inserire la serviceaccessgui in un contesto diverso si decide di inserirla nello stesso contesto del sistema
 
 
 ## Architettura logica dopo analisi del problema
-Il sistema è composto da:
-  - *ColdStorageService*: prende in carico richieste di generazione ticket e richieste di invio di un camion; si interfaccia con la ColdRoom per saperne lo stato; fa partire le deposit action;
-  - *Transport Trolley*: invia al Basic Robot la sequenza di comandi necessari per effettuare una deposit action
-  - *Basic Robot*: esegue i comandi del Transport Trolley
-  - *ServiceAccessGui*: si interfaccia con ColdStorageService per la richiesa di ticket
-  - *Cold Room*: aggiorna lo stato della quantità di kg
+Al sistema precedente si aggiunge un attore  *ServiceAccessGui* che si interfaccia con ColdStorageService per la richiesa di ticket
 
-  ![[coldstorageservicearchsprint1.png]]
+  ![[coldstorageservicearch-analisi.png]]
 
-
-## Test plan
-si prevede di testare le seguenti funzionalità del sistema
-
-
-### Test effettuati in Junit
-creare un attore che funge da fake user e nel codice Kotlin inseriamo delle Assert
-- fake user manda il messaggio **storefood**, mi aspetto di ricevere il ticket
-- fake user inserisce il ticket e si aspetta un dispatch di chargetaken
-
-```Java
-
-
-```
-
-### realizzazione mediante eventi 
-per implementare i test si prevede di sfruttare la generazione degli eventi da parte del transport trolley e della cooldroom in modo da essere il meno invasivi possibile sul sistema.
 
 ## PROGETTAZIONE
 
-Tutto il codice della parte di progettazione è consultabile al seguente link [github](https://github.com/RootLeo00/robot-coldstorage/tree/main/sprint2)
-### l'attore GUIMOK 
-si prevede di aggiungere all'architettura logica predisposta in analisi del problema un attore **GUIMOK** per simulare il comportamento di un utente che interagisce con la main logic di sistema
+Tutto il codice della parte di progettazione è consultabile al seguente link [github](https://github.com/RootLeo00/robot-coldstorage/tree/sprint2)
+
+### L'alieno WEBGUI
+si decide di implementare un sistema alieno in grado di fornire una interfaccia web per consentire l'interazione utente, dopo una breve analisi dei tool disponibili si presentano le seguenti possibilità di implementazione:
+- **NODEJS** 
+- **SPRING**
+per rapidita di implementazione si decide di sviluppare un primo prototipo con NODEJS e il framework EXPRESS per andare alla ricerca di problemi di natura implementativa
+
+### Il problema delle chiamate bloccanti e della gestione della sessione 
+
+da requisiti si ha che la comunicazione del messaggio CHARGETAKEN deve essere una reply a una request precedentemente fatta dalla SERVICEACCESSGUI, da requisiti si ha che la gui deve essere sempre disponibile, questo porta a due soluzioni implementative:
+- #### chiamate bloccanti
+	- l'attore **SERVICEACCESSGUI**, ricevuta una richiesta da parte della **WEBGUI** esegue a sua volta la richiesta a **COLDSTORAGESERVICE** e si mette in attesa della risposta che poi fornirà alla **WEBGUI**
+	- questo approccio però non soddisfa il requisito che la **WEBGUI** sia sempre disponibile in quanto anche se la **WEBGUI** fosse in grado di inviare piu richieste alla **SERVICEACCESSGUI** questa **richiesta non sarebbe servita fino al termine del servizio delle richieste precedenti**
+- #### chiamate non bloccanti con gestione della sessione 
+	- in questa seconda versione dell'implementazione si ha che **SERVICEACCESSGUI** dopo aver inviato una richiesta a **COLDSTORAGESERVICE** non attende la risposta ma si mette in attesa di altre richieste
+	- questo porta un problema legato alla gestione della sessione in quanto **non si è piu in grado di determinare a quale richiesta fa riferimento una determinata risposta** quando questa giunge a **SERVICEACCESSGUI**
+
+di seguito si presenta l'architettura di progettazione realizzata per testare le problematiche sopra riportate
 
 ### Architettura finale progettazione
-![[coldstorageservicearchprogettazione.png]]
+![[coldstorageservicearch-progettazione.png]]
 
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
