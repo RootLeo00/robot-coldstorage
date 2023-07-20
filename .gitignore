@@ -11,6 +11,7 @@ logs
 .settings
 log4jInfo.log
 .obsidian
+Arch_coldstorageservice.py
 
 #node
 nodeCode/*/node_modules/
