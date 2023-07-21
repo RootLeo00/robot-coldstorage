@@ -3,18 +3,20 @@
 ## ----------------------------------------------------------
 
 FROM openjdk:12.0.2
-EXPOSE 8020
+EXPOSE 8038
 ## ADD extracts the tar
-ADD ./build/distributions/robot-coldstorage-1.0.tar /
-WORKDIR /robot-coldstorage-1.0/bin
+ADD ./build/distributions/unibo.coldstorageservice-1.0.tar /
+WORKDIR /unibo.coldstorageservice-1.0/bin
 COPY ./*.pl ./
-COPY ./*.txt ./
+#COPY ./*.json ./
+#COPY ./*.bin ./
+#COPY ./*.txt ./
 
 ## RUN apt-get update -y
 ## RUN apt-get install -y wiringpi
 ## RUN sudo apt-get install -y python
 
-CMD ["bash", "robot-coldstorage"]
+CMD ["bash", "unibo.coldstorageservice"]
 
 ## 1) gradlew build -> distTar
 ## 2) docker build -t basicrobot23:2.0 .

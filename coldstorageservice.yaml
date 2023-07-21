@@ -1,0 +1,9 @@
+version: '3'
+services:
+  coldstorageservice:
+    image: coldstorageservice:1.0
+    ports:
+      - 8038:8038
+
+## docker-compose -f coldstorageservice.yaml up
+## docker-compose down
