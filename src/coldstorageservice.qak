@@ -65,7 +65,7 @@ Dispatch doinsertticket:doinsertticket(SESSIONNUMBER,KG)
 //-------------------------------------------------------------------
 
 
-Context ctxbasicrobot ip [host="127.0.0.1" port=8020 ]   
+Context ctxbasicrobot ip [host="192.168.47.64" port=8020 ]   
 Context ctxcoldstorageservice ip [host="localhost" port=8038 ] 
 ExternalQActor basicrobot context ctxbasicrobot  
  

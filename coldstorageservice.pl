@@ -1,7 +1,7 @@
 %====================================================================================
 % coldstorageservice description   
 %====================================================================================
-context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
+context(ctxbasicrobot, "192.168.47.64",  "TCP", "8020").
 context(ctxcoldstorageservice, "localhost",  "TCP", "8038").
  qactor( basicrobot, ctxbasicrobot, "external").
   qactor( coldstorageservice, ctxcoldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
