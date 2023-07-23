@@ -32,8 +32,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var startInstant:Long = 0;
 				var endInstant : Long= 0;
 				var deltatime: Long =0;
-				val MINT: Long=40000;
-				val DLIMIT = 70 ;
+				val MINT: Long=4000;
+				val DLIMIT = 30 ;
 				var D = 0;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
