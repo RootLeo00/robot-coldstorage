@@ -373,17 +373,42 @@ QActor transporttrolley context ctxcoldstorageservice{
 	Transition t6 whenReply moverobotfailed -> alarmconsidered //allarme considerato e basicrobot ci dice che ha stoppato il robot dopi l'evento alarm
 				  whenReply moverobotdone -> restorelastmove //allarme ignorato dato che il robot si è fermato perchè ha finito la mossa
 
+//	State alarmconsidered{
+//		println("$name reading sonardata") color red
+//		onMsg( sonardata : distance(D)){
+//			[# var D = payloadArg(0).toInt() #]
+//			//Interact with the Led
+//			if [# D >= DLIMIT #]{
+//				println("$name | resume transport trolley") color red
+//			}
+//		}
+//	}Transition t0 whenEvent sonardata and [# D >= DLIMIT #]-> restorelastmove
+//	               whenEvent sonardata  -> alarmconsidered
+//	
+	
+		 
 	State alarmconsidered{
-		println("$name reading sonardata") color red
+		//println("sonar | waits ... ") 		 
+		updateResource [# "sonar waiting ..." #]
+	}
+	Transition t0 whenEvent sonardata -> handlesonardata
+//	              whenEvent obstacle  -> handleobstacle
+	
+	State handlesonardata{
+		printCurrentMessage
+		updateResource [# "sonar handles $currentMsg" #]
 		onMsg( sonardata : distance(D)){
-			[# var D = payloadArg(0).toInt() #]
+			[# D = payloadArg(0).toInt() #]
 			//Interact with the Led
 			if [# D >= DLIMIT #]{
 				println("$name | resume transport trolley") color red
+//				emit endalarm : endalarm	
+//				[# stopped = false #]
 			}
 		}
-	}Transition t0 whenEvent sonardata and [# D >= DLIMIT #]-> restorelastmove
-	               whenEvent sonardata  -> alarmconsidered
+	}
+	Goto restorelastmove if [# D >= DLIMIT #] else alarmconsidered
+	
 	
 	State restorelastmove{
  		println("$name | restore to $lastmove") color red
@@ -396,7 +421,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  
 
 
-
+ 
 /*  
  * ------------------------------------------------------------------
  *  sonar

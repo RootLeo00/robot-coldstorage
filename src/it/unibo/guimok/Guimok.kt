@@ -29,7 +29,7 @@ class Guimok ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t139",targetState="sendticket",cond=whenReply("ticketaccepted"))
+					 transition(edgeName="t138",targetState="sendticket",cond=whenReply("ticketaccepted"))
 				}	 
 				state("sendticket") { //this:State
 					action { //it:State
@@ -46,7 +46,7 @@ class Guimok ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t240",targetState="end",cond=whenReply("chargetaken"))
+					 transition(edgeName="t239",targetState="end",cond=whenReply("chargetaken"))
 				}	 
 				state("end") { //this:State
 					action { //it:State
