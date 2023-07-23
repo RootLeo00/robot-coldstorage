@@ -28,9 +28,9 @@ class Controllerled ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t027",targetState="ledblink",cond=whenEvent("robotismoving"))
-					transition(edgeName="t028",targetState="ledoff",cond=whenEvent("robotisinhome"))
-					transition(edgeName="t029",targetState="ledon",cond=whenEvent("robotisstopped"))
+					 transition(edgeName="t028",targetState="ledblink",cond=whenEvent("robotismoving"))
+					transition(edgeName="t029",targetState="ledoff",cond=whenEvent("robotisinhome"))
+					transition(edgeName="t030",targetState="ledon",cond=whenEvent("robotisstopped"))
 				}	 
 				state("ledblink") { //this:State
 					action { //it:State
@@ -41,9 +41,9 @@ class Controllerled ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t030",targetState="ledblink",cond=whenEvent("robotismoving"))
-					transition(edgeName="t031",targetState="ledoff",cond=whenEvent("robotisinhome"))
-					transition(edgeName="t032",targetState="ledon",cond=whenEvent("robotisstopped"))
+					 transition(edgeName="t031",targetState="ledblink",cond=whenEvent("robotismoving"))
+					transition(edgeName="t032",targetState="ledoff",cond=whenEvent("robotisinhome"))
+					transition(edgeName="t033",targetState="ledon",cond=whenEvent("robotisstopped"))
 				}	 
 				state("ledon") { //this:State
 					action { //it:State
@@ -54,8 +54,8 @@ class Controllerled ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t033",targetState="ledblink",cond=whenEvent("robotismoving"))
-					transition(edgeName="t034",targetState="ledon",cond=whenEvent("robotisstopped"))
+					 transition(edgeName="t034",targetState="ledblink",cond=whenEvent("robotismoving"))
+					transition(edgeName="t035",targetState="ledon",cond=whenEvent("robotisstopped"))
 				}	 
 				state("ledoff") { //this:State
 					action { //it:State
@@ -66,8 +66,8 @@ class Controllerled ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t035",targetState="ledblink",cond=whenEvent("robotismoving"))
-					transition(edgeName="t036",targetState="ledoff",cond=whenEvent("robotisinhome"))
+					 transition(edgeName="t036",targetState="ledblink",cond=whenEvent("robotismoving"))
+					transition(edgeName="t037",targetState="ledoff",cond=whenEvent("robotisinhome"))
 				}	 
 			}
 		}

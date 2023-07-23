@@ -265,8 +265,8 @@ QActor transporttrolley context ctxcoldstorageservice{
 		var startInstant:Long = 0;
 		var endInstant : Long= 0;
 		var deltatime: Long =0;
-		val MINT: Long=4000;
-		val DLIMIT = 20 ;
+		val MINT: Long=40000;
+		val DLIMIT = 70 ;
 		var D = 0;
 	#]
 	State s0 initial{
@@ -282,7 +282,7 @@ QActor transporttrolley context ctxcoldstorageservice{
                 whenReply engagerefused -> waitrobotfree
    
    //what to do if robot alredy engaged?
-   	State waitrobotfree{
+   	State waitrobotfree{ 
     println("$name | Sorry, the robot is already engaged.")  color magenta
   	}
   	State waitforcommands{
@@ -363,22 +363,19 @@ QActor transporttrolley context ctxcoldstorageservice{
  	State handleobstacle{
  	 //attenzione se arriva allarme *dopo* resume e prima di MINT
  	 [# endInstant=  System.currentTimeMillis();   
- 	 	deltatime= (endInstant - startInstant);
+ 	 	deltatime= (endInstant - startInstant); //tempo trascorso dall'ultima resume
  	 #]
  	 println("$name | end-start= $deltatime >/< MINT=$MINT") color red
 			println("$name handleobstacle ALARM") color red
-			if [# deltatime >= MINT#] {emit alarm : alarm(obstacle)} //ricevuto da basicrobot
+			if [# startInstant==0L || deltatime >= MINT#] {emit alarm : alarm(obstacle)} //ricevuto da basicrobot
 			else{println("$name alarm IGNORED") color magenta}
 	}
 	Transition t6 whenReply moverobotfailed -> alarmconsidered //allarme considerato e basicrobot ci dice che ha stoppato il robot dopi l'evento alarm
 				  whenReply moverobotdone -> restorelastmove //allarme ignorato dato che il robot si è fermato perchè ha finito la mossa
 
 	State alarmconsidered{
-		onMsg( sonardata : distance(D)){
-			[# D = payloadArg(0).toInt() #]
-			println("$name sonardata $D") color red
-		}
-	}Goto restorelastmove if [# D >= DLIMIT #] else alarmconsidered
+		println("$name waiting for endalarm...") color red
+	}Transition t7 whenEvent endalarm -> restorelastmove
 	
 	State restorelastmove{
  		println("$name | restore to $lastmove") color red
@@ -391,29 +388,30 @@ QActor transporttrolley context ctxcoldstorageservice{
  
 
 
+
 /*  
  * ------------------------------------------------------------------
  *  sonar
  * ------------------------------------------------------------------
 */ 
-//CodedQActor sonar  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
+//CodedQActor sonarfisico  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
 CodedQActor sonar  context ctxcoldstorageservice className "sonarHCSR04Support23"   //SU RASP
-//CodedQActor datalogger     context ctxcoldstorageservice className "rx.dataLogger"
+//CodedQActor datalogger     context ctxsonarqak23 className "rx.dataLogger"
 CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataCleaner"
 CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
 
 QActor sonar context ctxcoldstorageservice{ 
-	[# val DLIMIT = 70 ;
+	[# val DLIMIT = 70 ; 
 	   var stopped=false;
 	#]
 	State s0 initial{  
 		println("sonar | start") 
-		[# subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonar") #]
+		[# subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonarfisico") #]
 	}
 	Goto work
 	 
 	State work{
-		//println("sonar | waits ... ") 		
+		//println("sonar | waits ... ") 		 
 		updateResource [# "sonar waiting ..." #]
 	}
 	Transition t0 whenEvent sonardata -> handlesonardata
@@ -426,9 +424,9 @@ QActor sonar context ctxcoldstorageservice{
 			[# var D = payloadArg(0).toInt() #]
 			//Interact with the Led
 			if [# D >= DLIMIT && stopped == true #]{
-//				println("$name | resume transport trolley") color yellow
-//				emit endalarm : endalarm	
-//				[# stopped = false #]
+				println("$name | resume transport trolley") color red
+				emit endalarm : endalarm	
+				[# stopped = false #]
 			}
 		}
 	}
@@ -436,7 +434,7 @@ QActor sonar context ctxcoldstorageservice{
 	
 	State handleobstacle{
 		onMsg( obstacle : obstacle(D)){			
-			println("$name handleobstacle ALARM ${payloadArg(0)}") color magenta
+			println("$name handleobstacle ALARM ${payloadArg(0)}") color red
 			emit stopobstacle : stopobstacle
 			[# stopped = true #]			
 		}
@@ -446,8 +444,6 @@ QActor sonar context ctxcoldstorageservice{
 	
 }   
 
-
- 
 
 
 /*  
@@ -541,6 +537,11 @@ QActor controllerled context ctxcoldstorageservice{
 			#]
 		println("$name | sending ticket to coldstorageservice") color magenta
 		request coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
+//		delay 4000
+//		emit stopobstacle: stopobstacle(10)
+//		delay 4000
+//		emit endalarm: endalarm
+// 		
  		}
  		 
 		

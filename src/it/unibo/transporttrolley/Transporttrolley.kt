@@ -32,8 +32,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var startInstant:Long = 0;
 				var endInstant : Long= 0;
 				var deltatime: Long =0;
-				val MINT: Long=4000;
-				val DLIMIT = 20 ;
+				val MINT: Long=40000;
+				val DLIMIT = 70 ;
 				var D = 0;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
@@ -160,10 +160,10 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("handleobstacle") { //this:State
 					action { //it:State
 						 endInstant=  System.currentTimeMillis();   
-						 	 	deltatime= (endInstant - startInstant);
+						 	 	deltatime= (endInstant - startInstant); //tempo trascorso dall'ultima resume
 						CommUtils.outred("$name | end-start= $deltatime >/< MINT=$MINT")
 						CommUtils.outred("$name handleobstacle ALARM")
-						if(  deltatime >= MINT 
+						if(  startInstant==0L || deltatime >= MINT 
 						 ){emit("alarm", "alarm(obstacle)" ) 
 						}
 						else
@@ -179,20 +179,13 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("alarmconsidered") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("distance(D)"), Term.createTerm("distance(D)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 D = payloadArg(0).toInt()  
-								CommUtils.outred("$name sonardata $D")
-						}
+						CommUtils.outred("$name waiting for endalarm...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="restorelastmove", cond=doswitchGuarded({ D >= DLIMIT  
-					}) )
-					transition( edgeName="goto",targetState="alarmconsidered", cond=doswitchGuarded({! ( D >= DLIMIT  
-					) }) )
+					 transition(edgeName="t723",targetState="restorelastmove",cond=whenEvent("endalarm"))
 				}	 
 				state("restorelastmove") { //this:State
 					action { //it:State
