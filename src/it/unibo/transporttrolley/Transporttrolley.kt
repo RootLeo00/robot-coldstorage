@@ -32,8 +32,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var startInstant:Long = 0;
 				var endInstant : Long= 0;
 				var deltatime: Long =0;
-				val MINT: Long=4000;
-				val DLIMIT = 20 ;
+				val MINT: Long=40000;
+				val DLIMIT = 70 ;
 				var D = 0;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
@@ -160,10 +160,10 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("handleobstacle") { //this:State
 					action { //it:State
 						 endInstant=  System.currentTimeMillis();   
-						 	 	deltatime= (endInstant - startInstant);
+						 	 	deltatime= (endInstant - startInstant); //tempo trascorso dall'ultima resume
 						CommUtils.outred("$name | end-start= $deltatime >/< MINT=$MINT")
 						CommUtils.outred("$name handleobstacle ALARM")
-						if(  deltatime >= MINT 
+						if(  startInstant==0L || deltatime >= MINT 
 						 ){emit("alarm", "alarm(obstacle)" ) 
 						}
 						else

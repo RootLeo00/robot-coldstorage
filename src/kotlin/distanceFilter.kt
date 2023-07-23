@@ -26,7 +26,6 @@ val LimitDistance = 70
 		  // if( msg.msgId() == "sonardata" ) return; //avoid ...
  		val data  = (Term.createTerm( msg.msgContent() ) as Struct).getArg(0).toString()
 		val Distance = Integer.parseInt( data )
-		CommUtils.outgreen("$tt $name |  distance $Distance")
 /*
  * Emit a sonarRobot event to test the behavior with MQTT
  * We should avoid this pattern
