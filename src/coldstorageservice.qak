@@ -133,7 +133,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 				replyTo storefood with ticketdenied : ticketdenied(ARG)
 			}
 				
-			}
+			} 
 					}   
 	  	Goto s0
 	  	///////////////////////////////////////////////////////////
