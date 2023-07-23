@@ -33,11 +33,13 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var endInstant : Long= 0;
 				var deltatime: Long =0;
 				val MINT: Long=4000;
+				val DLIMIT = 70 ;
+				var D = 0;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						discardMessages = false
-						CommUtils.outred("$name |  request engage")
+						CommUtils.outmagenta("$name |  request engage")
 						request("engage", "engage(transporttrolley,330)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
@@ -49,7 +51,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("waitrobotfree") { //this:State
 					action { //it:State
-						CommUtils.outred("$name | Sorry, the robot is already engaged.")
+						CommUtils.outmagenta("$name | Sorry, the robot is already engaged.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -58,7 +60,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("waitforcommands") { //this:State
 					action { //it:State
-						CommUtils.outred("$name | waiting for commands.")
+						CommUtils.outmagenta("$name | waiting for commands.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -75,22 +77,23 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 								
 								 				TICKETCODE=payloadArg(0).toInt();
 						}
-						CommUtils.outred("$name | moving robot to indoor.")
+						CommUtils.outmagenta("$name | moving robot to indoor.")
 						request("moverobot", "moverobot($INDOORX,$INDOORY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t210",targetState="moverobottocoldroom",cond=whenReply("moverobotdone"))
-					transition(edgeName="t211",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t210",targetState="handleobstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t211",targetState="moverobottocoldroom",cond=whenReply("moverobotdone"))
+					transition(edgeName="t212",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
 				state("moverobottocoldroom") { //this:State
 					action { //it:State
 						emit("robotismoving", "robotismoving" ) 
 						 lastmove = "moverobottocoldroom"  
-						CommUtils.outred("$name | robot is in indoor")
-						CommUtils.outred("$name | moving robot to coldroom")
+						CommUtils.outmagenta("$name | robot is in indoor")
+						CommUtils.outmagenta("$name | moving robot to coldroom")
 						emit("robotisinindoor", "robotisindoor(ok)" ) 
 						request("moverobot", "moverobot($COLDROOMX,$COLDROOMY)" ,"basicrobot" )  
 						//genTimer( actor, state )
@@ -98,15 +101,16 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t312",targetState="depositactionended",cond=whenReply("moverobotdone"))
-					transition(edgeName="t313",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t313",targetState="handleobstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t314",targetState="depositactionended",cond=whenReply("moverobotdone"))
+					transition(edgeName="t315",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
 				state("depositactionended") { //this:State
 					action { //it:State
 						emit("depositactionended", "depositactionended($TICKETCODE)" ) 
-						CommUtils.outred("$name | robot is in coldroom")
-						CommUtils.outred("$name | depositaction ended")
-						CommUtils.outred("$name | waiting for next move")
+						CommUtils.outmagenta("$name | robot is in coldroom")
+						CommUtils.outmagenta("$name | depositaction ended")
+						CommUtils.outmagenta("$name | waiting for next move")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -114,8 +118,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				 	 		stateTimer = TimerActor("timer_depositactionended", 
 				 	 					  scope, context!!, "local_tout_transporttrolley_depositactionended", 100.toLong() )
 					}	 	 
-					 transition(edgeName="t414",targetState="moverobottohome",cond=whenTimeout("local_tout_transporttrolley_depositactionended"))   
-					transition(edgeName="t415",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
+					 transition(edgeName="t416",targetState="moverobottohome",cond=whenTimeout("local_tout_transporttrolley_depositactionended"))   
+					transition(edgeName="t417",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
 				}	 
 				state("moverobottohome") { //this:State
 					action { //it:State
@@ -127,14 +131,15 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t516",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
-					transition(edgeName="t517",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
+					 transition(edgeName="t518",targetState="handleobstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t519",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
+					transition(edgeName="t520",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
 				state("emitrobotisinhome") { //this:State
 					action { //it:State
 						 lastmove = ""  
 						emit("robotisinhome", "robotisinhome(ok)" ) 
-						CommUtils.outred("$name | robot is in home")
+						CommUtils.outmagenta("$name | robot is in home")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -145,69 +150,57 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("robotmovefailed") { //this:State
 					action { //it:State
 						CommUtils.outred("$name | robot failed to move $lastmove")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="restorelastmove", cond=doswitch() )
+				}	 
+				state("handleobstacle") { //this:State
+					action { //it:State
 						 endInstant=  System.currentTimeMillis();   
 						 	 	deltatime= (endInstant - startInstant);
 						CommUtils.outred("$name | end-start= $deltatime >/< MINT=$MINT")
+						if( checkMsgContent( Term.createTerm("obstacle(D)"), Term.createTerm("obstacle(D)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								CommUtils.outred("$name handleobstacle ALARM ${payloadArg(0)}")
+								if(  deltatime >= MINT 
+								 ){emit("alarm", "alarm(obstacle)" ) 
+								}
+								else
+								 {CommUtils.outmagenta("$name alarm IGNORED")
+								 }
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="ignorealarm", cond=doswitchGuarded({ deltatime <= MINT 
-					}) )
-					transition( edgeName="goto",targetState="alarmconsidered", cond=doswitchGuarded({! ( deltatime <= MINT 
-					) }) )
-				}	 
-				state("ignorealarm") { //this:State
-					action { //it:State
-						CommUtils.outred("$name | alarm ignored --> resume to $lastmove")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="moverobottoindoor", cond=doswitchGuarded({ lastmove == "moverobottoindoor"  
-					}) )
-					transition( edgeName="goto",targetState="option2", cond=doswitchGuarded({! ( lastmove == "moverobottoindoor"  
-					) }) )
-				}	 
-				state("option2") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="moverobottohome", cond=doswitchGuarded({ lastmove == "moverobottohome"  
-					}) )
-					transition( edgeName="goto",targetState="option3", cond=doswitchGuarded({! ( lastmove == "moverobottohome"  
-					) }) )
-				}	 
-				state("option3") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="moverobottocoldroom", cond=doswitch() )
+					 transition(edgeName="t621",targetState="alarmconsidered",cond=whenReply("moverobotfailed"))
+					transition(edgeName="t622",targetState="restorelastmove",cond=whenReply("moverobotdone"))
 				}	 
 				state("alarmconsidered") { //this:State
 					action { //it:State
-						CommUtils.outred("$name | alarm considered!!! --> wait for moverobotdone or endalarm")
-						emit("robotisstopped", "robotisstopped" ) 
+						if( checkMsgContent( Term.createTerm("distance(D)"), Term.createTerm("distance(D)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 D = payloadArg(0).toInt()  
+								CommUtils.outred("$name sonardata $D")
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t018",targetState="endalarmstate",cond=whenReply("moverobotdone"))
-					transition(edgeName="t019",targetState="endalarmstate",cond=whenEvent("endalarm"))
+					 transition( edgeName="goto",targetState="restorelastmove", cond=doswitchGuarded({ D >= DLIMIT  
+					}) )
+					transition( edgeName="goto",targetState="alarmconsidered", cond=doswitchGuarded({! ( D >= DLIMIT  
+					) }) )
 				}	 
-				state("endalarmstate") { //this:State
+				state("restorelastmove") { //this:State
 					action { //it:State
-						CommUtils.outred("$name | resume to $lastmove")
-						 startInstant=  System.currentTimeMillis();    
+						CommUtils.outred("$name | restore to $lastmove")
+						 startInstant=System.currentTimeMillis();  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

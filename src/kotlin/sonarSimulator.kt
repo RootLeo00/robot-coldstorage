@@ -29,7 +29,6 @@ class sonarSimulator ( name : String ) : ActorBasic( name ) {
 		var v0 = 80
 		var i=0
 			while(true){
-			v0 = 80
 			yield(v0)
 			i=0
 			while(i<5){
