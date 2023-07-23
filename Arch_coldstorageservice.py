@@ -46,8 +46,6 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
      transporttrolley >> Edge( xlabel='robotisinhome', **eventedgeattr, fontcolor='red') >> sys
      transporttrolley >> Edge( xlabel='alarm', **eventedgeattr, fontcolor='red') >> sys
      sys >> Edge(color='red', style='dashed', xlabel='sonardata', fontcolor='red') >> transporttrolley
-     sys >> Edge(color='red', style='dashed', xlabel='sonardata', fontcolor='red') >> sonar
-     sys >> Edge(color='red', style='dashed', xlabel='obstacle', fontcolor='red') >> sonar
      controllerled >> Edge(color='blue', style='solid', xlabel='ledCmd', fontcolor='blue') >> led
      sys >> Edge(color='red', style='dashed', xlabel='robotismoving', fontcolor='red') >> controllerled
      sys >> Edge(color='red', style='dashed', xlabel='robotisinhome', fontcolor='red') >> controllerled
