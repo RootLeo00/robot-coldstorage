@@ -7,7 +7,7 @@ context(ctxcoldstorageservice, "localhost",  "TCP", "8038").
   qactor( coldstorageservice, ctxcoldstorageservice, "it.unibo.coldstorageservice.Coldstorageservice").
   qactor( coldroom, ctxcoldstorageservice, "it.unibo.coldroom.Coldroom").
   qactor( transporttrolley, ctxcoldstorageservice, "it.unibo.transporttrolley.Transporttrolley").
-  qactor( sonar, ctxcoldstorageservice, "sonarSimulator").
+  qactor( sonar, ctxcoldstorageservice, "sonarHCSR04Support23").
   qactor( datacleaner, ctxcoldstorageservice, "rx.dataCleaner").
   qactor( distancefilter, ctxcoldstorageservice, "rx.distanceFilter").
   qactor( sonar, ctxcoldstorageservice, "it.unibo.sonar.Sonar").
