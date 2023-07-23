@@ -427,8 +427,8 @@ QActor transporttrolley context ctxcoldstorageservice{
  *  sonar
  * ------------------------------------------------------------------
 */ 
-CodedQActor sonarfisico  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
-//CodedQActor sonar  context ctxsonarqak23 className "sonarHCSR04Support23"   //SU RASP
+//CodedQActor sonarfisico  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
+CodedQActor sonar  context ctxcoldstorageservice className "sonarHCSR04Support23"   //SU RASP
 //CodedQActor datalogger     context ctxsonarqak23 className "rx.dataLogger"
 CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataCleaner"
 CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
@@ -441,39 +441,39 @@ QActor sonar context ctxcoldstorageservice{
 		println("sonar | start") 
 		[# subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonarfisico") #]
 	}
-	Goto work
-	 
-	State work{
-		//println("sonar | waits ... ") 		 
-		updateResource [# "sonar waiting ..." #]
-	}
-	Transition t0 whenEvent sonardata -> handlesonardata
-	              whenEvent obstacle  -> handleobstacle
-	
-	State handlesonardata{
-		printCurrentMessage
-		updateResource [# "sonar handles $currentMsg" #]
-		onMsg( sonardata : distance(D)){
-			[# var D = payloadArg(0).toInt() #]
-			//Interact with the Led
-			if [# D >= DLIMIT && stopped == true #]{
-//				println("$name | resume transport trolley") color red
-//				emit endalarm : endalarm	
-				[# stopped = false #]
-			}
-		}
-	}
-	Goto work 
-	
-	State handleobstacle{
-		onMsg( obstacle : obstacle(D)){			
-//			println("$name handleobstacle ALARM ${payloadArg(0)}") color red
-//			emit stopobstacle : stopobstacle
-			[# stopped = true #]			
-		}
-		
-	}
-	Goto work  
+//	Goto work
+//	 
+//	State work{
+//		//println("sonar | waits ... ") 		 
+//		updateResource [# "sonar waiting ..." #]
+//	}
+//	Transition t0 whenEvent sonardata -> handlesonardata
+//	              whenEvent obstacle  -> handleobstacle
+//	
+//	State handlesonardata{
+//		printCurrentMessage
+//		updateResource [# "sonar handles $currentMsg" #]
+//		onMsg( sonardata : distance(D)){
+//			[# var D = payloadArg(0).toInt() #]
+//			//Interact with the Led
+//			if [# D >= DLIMIT && stopped == true #]{
+////				println("$name | resume transport trolley") color red
+////				emit endalarm : endalarm	
+//				[# stopped = false #]
+//			}
+//		}
+//	}
+//	Goto work 
+//	
+//	State handleobstacle{
+//		onMsg( obstacle : obstacle(D)){			
+////			println("$name handleobstacle ALARM ${payloadArg(0)}") color red
+////			emit stopobstacle : stopobstacle
+//			[# stopped = true #]			
+//		}
+//		
+//	}
+//	Goto work  
 	
 }   
 
@@ -561,7 +561,7 @@ QActor controllerled context ctxcoldstorageservice{
 	 		request coldstorageservice -m storefood:storefood(25)
 	 	}
  		Transition t1 whenReply ticketaccepted -> sendticket
- 		
+ 		 
  		State sendticket {
  		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
 	 		[# 

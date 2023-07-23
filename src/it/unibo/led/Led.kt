@@ -27,7 +27,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t026",targetState="doCmd",cond=whenDispatch("ledCmd"))
+					 transition(edgeName="t024",targetState="doCmd",cond=whenDispatch("ledCmd"))
 				}	 
 				state("doCmd") { //this:State
 					action { //it:State
@@ -49,7 +49,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t027",targetState="doCmd",cond=whenDispatch("ledCmd"))
+					 transition(edgeName="t025",targetState="doCmd",cond=whenDispatch("ledCmd"))
 				}	 
 			}
 		}
