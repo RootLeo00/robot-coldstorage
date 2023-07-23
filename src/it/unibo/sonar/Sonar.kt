@@ -41,8 +41,8 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t024",targetState="handlesonardata",cond=whenEvent("sonardata"))
-					transition(edgeName="t025",targetState="handleobstacle",cond=whenEvent("obstacle"))
+					 transition(edgeName="t025",targetState="handlesonardata",cond=whenEvent("sonardata"))
+					transition(edgeName="t026",targetState="handleobstacle",cond=whenEvent("obstacle"))
 				}	 
 				state("handlesonardata") { //this:State
 					action { //it:State
@@ -54,9 +54,7 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 var D = payloadArg(0).toInt()  
 								if(  D >= DLIMIT && stopped == true  
-								 ){CommUtils.outred("$name | resume transport trolley")
-								emit("endalarm", "endalarm" ) 
-								 stopped = false  
+								 ){ stopped = false  
 								}
 						}
 						//genTimer( actor, state )
@@ -70,8 +68,6 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("obstacle(D)"), Term.createTerm("obstacle(D)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outred("$name handleobstacle ALARM ${payloadArg(0)}")
-								emit("stopobstacle", "stopobstacle" ) 
 								 stopped = true  
 						}
 						//genTimer( actor, state )

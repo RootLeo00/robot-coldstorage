@@ -84,7 +84,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t210",targetState="handleobstacle",cond=whenEvent("stopobstacle"))
+					 transition(edgeName="t210",targetState="handleobstacle",cond=whenEvent("obstacle"))
 					transition(edgeName="t211",targetState="moverobottocoldroom",cond=whenReply("moverobotdone"))
 					transition(edgeName="t212",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
@@ -101,7 +101,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t313",targetState="handleobstacle",cond=whenEvent("stopobstacle"))
+					 transition(edgeName="t313",targetState="handleobstacle",cond=whenEvent("obstacle"))
 					transition(edgeName="t314",targetState="depositactionended",cond=whenReply("moverobotdone"))
 					transition(edgeName="t315",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
@@ -131,7 +131,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t518",targetState="handleobstacle",cond=whenEvent("stopobstacle"))
+					 transition(edgeName="t518",targetState="handleobstacle",cond=whenEvent("obstacle"))
 					transition(edgeName="t519",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
 					transition(edgeName="t520",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
@@ -179,13 +179,22 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("alarmconsidered") { //this:State
 					action { //it:State
-						CommUtils.outred("$name waiting for endalarm...")
+						CommUtils.outred("$name reading sonardata")
+						if( checkMsgContent( Term.createTerm("distance(D)"), Term.createTerm("distance(D)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var D = payloadArg(0).toInt()  
+								if(  D >= DLIMIT  
+								 ){CommUtils.outred("$name | resume transport trolley")
+								}
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t723",targetState="restorelastmove",cond=whenEvent("endalarm"))
+					 transition(edgeName="t023",targetState="restorelastmove",cond=whenEventGuarded("sonardata",{ D >= DLIMIT  
+					}))
+					transition(edgeName="t024",targetState="alarmconsidered",cond=whenEvent("sonardata"))
 				}	 
 				state("restorelastmove") { //this:State
 					action { //it:State
