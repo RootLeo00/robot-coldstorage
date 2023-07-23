@@ -37,6 +37,7 @@ Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(PLANDONE, PLANTODO)
 Event alarm           : alarm(X)
+Event stopobstacle : stopobstacle(X)
 Request engage : engage(ARG)
 Reply   engagedone    : engagedone(ARG) 
 Reply   engagerefused : engagerefused(ARG) 
@@ -304,7 +305,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  		println("$name | moving robot to indoor.") color magenta
  		request basicrobot -m moverobot:moverobot($INDOORX,$INDOORY)
  	}
- 	Transition t2 whenEvent obstacle  -> handleobstacle
+ 	Transition t2 whenEvent stopobstacle  -> handleobstacle
  				  whenReply moverobotdone -> moverobottocoldroom
  				  whenReply moverobotfailed -> robotmovefailed 
 
@@ -319,7 +320,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 		emit robotisinindoor:robotisindoor(ok)
 		request basicrobot -m moverobot:moverobot($COLDROOMX,$COLDROOMY)
 	}
-	Transition t3 whenEvent obstacle  -> handleobstacle
+	Transition t3 whenEvent stopobstacle  -> handleobstacle
 				  whenReply moverobotdone -> depositactionended
  				  whenReply moverobotfailed -> robotmovefailed
 	
@@ -340,7 +341,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 		//send event "robot is in home"
 		request basicrobot -m moverobot:moverobot($HOMEX,$HOMEY)
 	}
-	Transition t5 whenEvent obstacle  -> handleobstacle
+	Transition t5 whenEvent stopobstacle  -> handleobstacle
 				  whenReply moverobotdone -> emitrobotisinhome
  				  whenReply moverobotfailed -> robotmovefailed
  				  
@@ -365,12 +366,9 @@ QActor transporttrolley context ctxcoldstorageservice{
  	 	deltatime= (endInstant - startInstant);
  	 #]
  	 println("$name | end-start= $deltatime >/< MINT=$MINT") color red
-		onMsg( obstacle : obstacle(D)){			
-			println("$name handleobstacle ALARM ${payloadArg(0)}") color red
+			println("$name handleobstacle ALARM") color red
 			if [# deltatime >= MINT#] {emit alarm : alarm(obstacle)} //ricevuto da basicrobot
 			else{println("$name alarm IGNORED") color magenta}
-		}
-		
 	}
 	Transition t6 whenReply moverobotfailed -> alarmconsidered //allarme considerato e basicrobot ci dice che ha stoppato il robot dopi l'evento alarm
 				  whenReply moverobotdone -> restorelastmove //allarme ignorato dato che il robot si è fermato perchè ha finito la mossa
@@ -405,49 +403,47 @@ CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataClean
 CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
 
 QActor sonar context ctxcoldstorageservice{ 
-//	[# val DLIMIT = 70 ;
-//	   var stopped=false;
-//	#]
+	[# val DLIMIT = 70 ;
+	   var stopped=false;
+	#]
 	State s0 initial{  
 		println("sonar | start") 
 		[# subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonar") #]
 	}
-//	Goto work
-//	 
-//	State work{
-//		//println("sonar | waits ... ") 		
-//		updateResource [# "sonar waiting ..." #]
-//	}
-//	Goto work
-//	
-//	Transition t0 whenEvent sonardata -> handlesonardata
-//	              whenEvent obstacle  -> handleobstacle
-//	
-//	State handlesonardata{
-//		printCurrentMessage
-//		updateResource [# "sonar handles $currentMsg" #]
-//		onMsg( sonardata : distance(D)){
-//			[# var D = payloadArg(0).toInt() #]
-//			//Interact with the Led
-//			if [# D >= DLIMIT && stopped == true #]{
+	Goto work
+	 
+	State work{
+		//println("sonar | waits ... ") 		
+		updateResource [# "sonar waiting ..." #]
+	}
+	Transition t0 whenEvent sonardata -> handlesonardata
+	              whenEvent obstacle  -> handleobstacle
+	
+	State handlesonardata{
+		printCurrentMessage
+		updateResource [# "sonar handles $currentMsg" #]
+		onMsg( sonardata : distance(D)){
+			[# var D = payloadArg(0).toInt() #]
+			//Interact with the Led
+			if [# D >= DLIMIT && stopped == true #]{
 //				println("$name | resume transport trolley") color yellow
 //				emit endalarm : endalarm	
 //				[# stopped = false #]
-//			}
-//		}
-//	}
-//	Goto work 
-//	
-//	State handleobstacle{
-//		onMsg( obstacle : obstacle(D)){			
-//			println("$name handleobstacle ALARM ${payloadArg(0)}") color magenta
-//			emit alarm : alarm(obstacle)
-//			[# stopped = true #]			
-//		}
-//		
-//	}
-//	Goto work  
-//	
+			}
+		}
+	}
+	Goto work 
+	
+	State handleobstacle{
+		onMsg( obstacle : obstacle(D)){			
+			println("$name handleobstacle ALARM ${payloadArg(0)}") color magenta
+			emit stopobstacle : stopobstacle
+			[# stopped = true #]			
+		}
+		
+	}
+	Goto work  
+	
 }   
 
 

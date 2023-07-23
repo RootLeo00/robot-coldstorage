@@ -84,7 +84,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t210",targetState="handleobstacle",cond=whenEvent("obstacle"))
+					 transition(edgeName="t210",targetState="handleobstacle",cond=whenEvent("stopobstacle"))
 					transition(edgeName="t211",targetState="moverobottocoldroom",cond=whenReply("moverobotdone"))
 					transition(edgeName="t212",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
@@ -101,7 +101,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t313",targetState="handleobstacle",cond=whenEvent("obstacle"))
+					 transition(edgeName="t313",targetState="handleobstacle",cond=whenEvent("stopobstacle"))
 					transition(edgeName="t314",targetState="depositactionended",cond=whenReply("moverobotdone"))
 					transition(edgeName="t315",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
@@ -131,7 +131,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t518",targetState="handleobstacle",cond=whenEvent("obstacle"))
+					 transition(edgeName="t518",targetState="handleobstacle",cond=whenEvent("stopobstacle"))
 					transition(edgeName="t519",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
 					transition(edgeName="t520",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
@@ -162,16 +162,13 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						 endInstant=  System.currentTimeMillis();   
 						 	 	deltatime= (endInstant - startInstant);
 						CommUtils.outred("$name | end-start= $deltatime >/< MINT=$MINT")
-						if( checkMsgContent( Term.createTerm("obstacle(D)"), Term.createTerm("obstacle(D)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outred("$name handleobstacle ALARM ${payloadArg(0)}")
-								if(  deltatime >= MINT 
-								 ){emit("alarm", "alarm(obstacle)" ) 
-								}
-								else
-								 {CommUtils.outmagenta("$name alarm IGNORED")
-								 }
+						CommUtils.outred("$name handleobstacle ALARM")
+						if(  deltatime >= MINT 
+						 ){emit("alarm", "alarm(obstacle)" ) 
 						}
+						else
+						 {CommUtils.outmagenta("$name alarm IGNORED")
+						 }
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
