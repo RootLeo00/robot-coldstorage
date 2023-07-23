@@ -398,8 +398,8 @@ QActor transporttrolley context ctxcoldstorageservice{
  *  sonar
  * ------------------------------------------------------------------
 */ 
-CodedQActor sonar  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
-    //CodedQActor sonar  context ctxsonarqak23 className "sonarHCSR04Support23"   //SU RASP
+//CodedQActor sonar  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
+CodedQActor sonar  context ctxcoldstorageservice className "sonarHCSR04Support23"   //SU RASP
 //CodedQActor datalogger     context ctxcoldstorageservice className "rx.dataLogger"
 CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataCleaner"
 CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
