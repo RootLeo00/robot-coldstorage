@@ -37,6 +37,7 @@ Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(PLANDONE, PLANTODO)
 Event alarm           : alarm(X)
+Event stopobstacle : stopobstacle(X)
 Request engage : engage(ARG)
 Reply   engagedone    : engagedone(ARG) 
 Reply   engagerefused : engagerefused(ARG) 
@@ -133,7 +134,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 				replyTo storefood with ticketdenied : ticketdenied(ARG)
 			}
 				
-			}
+			} 
 					}   
 	  	Goto s0
 	  	///////////////////////////////////////////////////////////
@@ -265,6 +266,8 @@ QActor transporttrolley context ctxcoldstorageservice{
 		var endInstant : Long= 0;
 		var deltatime: Long =0;
 		val MINT: Long=4000;
+		val DLIMIT = 20 ;
+		var D = 0;
 	#]
 	State s0 initial{
 		//set home,indoor,coldroom positions
@@ -272,7 +275,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 	//usefull for keep tracking of coldstorageservice request operations
 	discardMsg Off
 	//try to engage basicrobot on startup
-    println("$name |  request engage") color red
+    println("$name |  request engage") color magenta
     request basicrobot -m engage : engage( transporttrolley , 330)
   	}
    	Transition t0 whenReply engagedone    -> waitforcommands
@@ -280,10 +283,10 @@ QActor transporttrolley context ctxcoldstorageservice{
    
    //what to do if robot alredy engaged?
    	State waitrobotfree{
-    println("$name | Sorry, the robot is already engaged.")  color red
+    println("$name | Sorry, the robot is already engaged.")  color magenta
   	}
   	State waitforcommands{
-  	println("$name | waiting for commands.") color red
+  	println("$name | waiting for commands.") color magenta
   	}
  	Transition t1 whenMsg dodepositaction -> moverobottoindoor
  				  
@@ -299,10 +302,11 @@ QActor transporttrolley context ctxcoldstorageservice{
  				TICKETCODE=payloadArg(0).toInt();
  			#]
  		}
- 		println("$name | moving robot to indoor.") color red
+ 		println("$name | moving robot to indoor.") color magenta
  		request basicrobot -m moverobot:moverobot($INDOORX,$INDOORY)
  	}
- 	Transition t2 whenReply moverobotdone -> moverobottocoldroom
+ 	Transition t2 whenEvent stopobstacle  -> handleobstacle
+ 				  whenReply moverobotdone -> moverobottocoldroom
  				  whenReply moverobotfailed -> robotmovefailed 
 
 
@@ -311,19 +315,20 @@ QActor transporttrolley context ctxcoldstorageservice{
 		emit robotismoving : robotismoving //per gestire led!!!!!
 		[# lastmove = "moverobottocoldroom" #]
 		//send event "robot is in indoor"
-		println("$name | robot is in indoor") color red
-		println("$name | moving robot to coldroom") color red
+		println("$name | robot is in indoor") color magenta
+		println("$name | moving robot to coldroom") color magenta
 		emit robotisinindoor:robotisindoor(ok)
 		request basicrobot -m moverobot:moverobot($COLDROOMX,$COLDROOMY)
 	}
-	Transition t3 whenReply moverobotdone -> depositactionended
+	Transition t3 whenEvent stopobstacle  -> handleobstacle
+				  whenReply moverobotdone -> depositactionended
  				  whenReply moverobotfailed -> robotmovefailed
 	
 	State depositactionended{
 		emit depositactionended:depositactionended($TICKETCODE)
-		println("$name | robot is in coldroom") color red
-		println("$name | depositaction ended") color red
-		println("$name | waiting for next move" ) color red
+		println("$name | robot is in coldroom") color magenta
+		println("$name | depositaction ended") color magenta
+		println("$name | waiting for next move" ) color magenta
 		
 	} 
 	Transition t4 whenTime 100    -> moverobottohome
@@ -336,13 +341,15 @@ QActor transporttrolley context ctxcoldstorageservice{
 		//send event "robot is in home"
 		request basicrobot -m moverobot:moverobot($HOMEX,$HOMEY)
 	}
-	Transition t5 whenReply moverobotdone -> emitrobotisinhome
+	Transition t5 whenEvent stopobstacle  -> handleobstacle
+				  whenReply moverobotdone -> emitrobotisinhome
  				  whenReply moverobotfailed -> robotmovefailed
+ 				  
  
  	State emitrobotisinhome{
  		[# lastmove = "" #]
  		emit robotisinhome: robotisinhome(ok) 
- 		println("$name | robot is in home") color red
+ 		println("$name | robot is in home") color magenta
  	}Goto waitforcommands
  	
  	
@@ -351,38 +358,36 @@ QActor transporttrolley context ctxcoldstorageservice{
  	*/
  	State robotmovefailed{
  		println("$name | robot failed to move $lastmove") color red
- 	 
+ 	}Goto restorelastmove //try again
+ 	
+ 	State handleobstacle{
  	 //attenzione se arriva allarme *dopo* resume e prima di MINT
  	 [# endInstant=  System.currentTimeMillis();   
  	 	deltatime= (endInstant - startInstant);
- 	 	#
- 	 ]
+ 	 #]
  	 println("$name | end-start= $deltatime >/< MINT=$MINT") color red
- 	}
- 	Goto ignorealarm if [# deltatime <= MINT#] else alarmconsidered
- 	
- 	State ignorealarm{
- 		println("$name | alarm ignored --> resume to $lastmove") color red
+			println("$name handleobstacle ALARM") color red
+			if [# deltatime >= MINT#] {emit alarm : alarm(obstacle)} //ricevuto da basicrobot
+			else{println("$name alarm IGNORED") color magenta}
+	}
+	Transition t6 whenReply moverobotfailed -> alarmconsidered //allarme considerato e basicrobot ci dice che ha stoppato il robot dopi l'evento alarm
+				  whenReply moverobotdone -> restorelastmove //allarme ignorato dato che il robot si è fermato perchè ha finito la mossa
+
+	State alarmconsidered{
+		println("$name waiting for endalarm...") color red
+//		onMsg( sonardata : distance(D)){
+//			[# D = payloadArg(0).toInt() #]
+//			println("$name sonardata $D") color red
+//		}
+	}Transition t7 whenEvent endalarm -> restorelastmove
+	//Goto restorelastmove if [# D >= DLIMIT #] else alarmconsidered
+	
+	State restorelastmove{
+ 		println("$name | restore to $lastmove") color red
+ 		[# startInstant=System.currentTimeMillis(); #]
  	}Goto moverobottoindoor if [# lastmove == "moverobottoindoor" #] else option2
 	State option2{} Goto moverobottohome if [# lastmove == "moverobottohome" #] else option3
 	State option3{} Goto moverobottocoldroom
- 	
- 	
- 	State alarmconsidered{
- 		println("$name | alarm considered!!! --> wait for moverobotdone or endalarm") color red
- 		emit robotisstopped: robotisstopped //serve per led
- 	} Transition t0  whenReply moverobotdone -> endalarmstate
-					 whenEvent endalarm -> endalarmstate
-
-				  
-	State endalarmstate{
-		println("$name | resume to $lastmove") color red
-		[# startInstant=  System.currentTimeMillis();   #]
-	}Goto moverobottoindoor if [# lastmove == "moverobottoindoor" #] else option2
-	State option2{} Goto moverobottohome if [# lastmove == "moverobottohome" #] else option3
-	State option3{} Goto moverobottocoldroom
-	
-
 }
 
  
@@ -394,31 +399,31 @@ QActor transporttrolley context ctxcoldstorageservice{
  * ------------------------------------------------------------------
 */ 
 CodedQActor sonar  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
-    //CodedQActor sonar  context ctxsonarqak23 className "sonarHCSR04Support23"   //SU RASP
-//CodedQActor datalogger     context ctxsonarqak23 className "rx.dataLogger"
+//CodedQActor sonar  context ctxcoldstorageservice className "sonarHCSR04Support23"   //SU RASP
+//CodedQActor datalogger     context ctxcoldstorageservice className "rx.dataLogger"
 CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataCleaner"
 CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
 
-QActor sonar23 context ctxcoldstorageservice{ 
+QActor sonar context ctxcoldstorageservice{ 
 	[# val DLIMIT = 70 ;
 	   var stopped=false;
 	#]
 	State s0 initial{  
-		println("sonar23 | start") 
+		println("sonar | start") 
 		[# subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonar") #]
 	}
 	Goto work
 	 
 	State work{
-		//println("sonar23 | waits ... ") 		
-		updateResource [# "sonar23 waiting ..." #]
+		//println("sonar | waits ... ") 		
+		updateResource [# "sonar waiting ..." #]
 	}
 	Transition t0 whenEvent sonardata -> handlesonardata
 	              whenEvent obstacle  -> handleobstacle
 	
 	State handlesonardata{
 		printCurrentMessage
-		updateResource [# "sonar23 handles $currentMsg" #]
+		updateResource [# "sonar handles $currentMsg" #]
 		onMsg( sonardata : distance(D)){
 			[# var D = payloadArg(0).toInt() #]
 			//Interact with the Led
@@ -434,7 +439,7 @@ QActor sonar23 context ctxcoldstorageservice{
 	State handleobstacle{
 		onMsg( obstacle : obstacle(D)){			
 			println("$name handleobstacle ALARM ${payloadArg(0)}") color magenta
-			emit alarm : alarm(obstacle)
+			emit stopobstacle : stopobstacle
 			[# stopped = true #]			
 		}
 		
@@ -485,7 +490,7 @@ QActor controllerled context ctxcoldstorageservice{
 	
 	State s0 initial{
 		println("${name} | START") color yellow
-//		forward sonar23 -m sonaractivate : info(ok)
+//		forward sonar -m sonaractivate : info(ok)
 		forward led -m ledCmd : ledCmd(off) //robot nasce in home
 	} 
 	Transition t0 whenEvent robotismoving -> ledblink
