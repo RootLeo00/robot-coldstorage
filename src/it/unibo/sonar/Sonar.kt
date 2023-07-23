@@ -18,7 +18,7 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-		 val DLIMIT = 70 ; 
+		 val DLIMIT = 30 ; 
 			   var stopped=false;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
