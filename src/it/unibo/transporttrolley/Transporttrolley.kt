@@ -29,12 +29,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				
 				//var per gestire la alarm/endalarm
 				var lastmove="";
-				var startInstant:Long = 0;
-				var endInstant : Long= 0;
-				var deltatime: Long =0;
-				val MINT: Long=40000;
-				val DLIMIT = 70 ;
-				var D = 0;
+		
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -84,7 +79,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t210",targetState="handleobstacle",cond=whenEvent("stopobstacle"))
+					 transition(edgeName="t210",targetState="handleobstacle",cond=whenDispatch("stopobstacle"))
 					transition(edgeName="t211",targetState="moverobottocoldroom",cond=whenReply("moverobotdone"))
 					transition(edgeName="t212",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
@@ -101,7 +96,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t313",targetState="handleobstacle",cond=whenEvent("stopobstacle"))
+					 transition(edgeName="t313",targetState="handleobstacle",cond=whenDispatch("stopobstacle"))
 					transition(edgeName="t314",targetState="depositactionended",cond=whenReply("moverobotdone"))
 					transition(edgeName="t315",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
@@ -131,7 +126,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t518",targetState="handleobstacle",cond=whenEvent("stopobstacle"))
+					 transition(edgeName="t518",targetState="handleobstacle",cond=whenDispatch("stopobstacle"))
 					transition(edgeName="t519",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
 					transition(edgeName="t520",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
 				}	 
@@ -159,16 +154,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("handleobstacle") { //this:State
 					action { //it:State
-						 endInstant=  System.currentTimeMillis();   
-						 	 	deltatime= (endInstant - startInstant); //tempo trascorso dall'ultima resume
-						CommUtils.outred("$name | end-start= $deltatime >/< MINT=$MINT")
 						CommUtils.outred("$name handleobstacle ALARM")
-						if(  startInstant==0L || deltatime >= MINT 
-						 ){emit("alarm", "alarm(obstacle)" ) 
-						}
-						else
-						 {CommUtils.outmagenta("$name alarm IGNORED")
-						 }
+						emit("alarm", "alarm(obstacle)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -185,12 +172,11 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t723",targetState="restorelastmove",cond=whenEvent("endalarm"))
+					 transition(edgeName="t723",targetState="restorelastmove",cond=whenDispatch("endalarm"))
 				}	 
 				state("restorelastmove") { //this:State
 					action { //it:State
 						CommUtils.outred("$name | restore to $lastmove")
-						 startInstant=System.currentTimeMillis();  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

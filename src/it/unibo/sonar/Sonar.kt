@@ -20,6 +20,9 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		 val DLIMIT = 70 ; 
 			   var stopped=false;
+			   
+			   	var startInstant:Long = 0;
+				val MINT: Long=4000;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -55,8 +58,9 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 								 var D = payloadArg(0).toInt()  
 								if(  D >= DLIMIT && stopped == true  
 								 ){CommUtils.outred("$name | resume transport trolley")
-								emit("endalarm", "endalarm" ) 
-								 stopped = false  
+								forward("endalarm", "endalarm" ,"transporttrolley" ) 
+								 stopped = false;
+													startInstant=System.currentTimeMillis();
 								}
 						}
 						//genTimer( actor, state )
@@ -70,9 +74,17 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("obstacle(D)"), Term.createTerm("obstacle(D)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outred("$name handleobstacle ALARM ${payloadArg(0)}")
-								emit("stopobstacle", "stopobstacle" ) 
-								 stopped = true  
+								 var endInstant=  System.currentTimeMillis();   
+									 	 	   var deltatime= (endInstant - startInstant); //tempo trascorso dall'ultima resume
+								CommUtils.outred("$name | end-start= $deltatime >/< MINT=$MINT")
+								if(  startInstant==0L || deltatime >= MINT 
+								 ){CommUtils.outred("$name handleobstacle ALARM ${payloadArg(0)}")
+								forward("stopobstacle", "stopobstacle" ,"transporttrolley" ) 
+								 stopped = true;  
+								}
+								else
+								 {CommUtils.outmagenta("$name alarm IGNORED")
+								 }
 						}
 						//genTimer( actor, state )
 					}
