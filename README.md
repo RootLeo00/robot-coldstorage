@@ -1,6 +1,15 @@
 # Robot commanded by a server using QAktor system (DLS based on Kotlin) - deployed on RaspBerry Pi 4B / 3B+
 ⚠️⚠️⚠️ REPOSITORY UNDER CONSTRUCTION ⚠️⚠️⚠️
 
+##### Table of Contents  
+[Delivery Requirements](#delivery)  
+[Install and Usage - Robot](#basic-robot)  
+[Install and Usage - Cold Storage Service Application](#cold-storage-service-application)  
+[Install and Usage - Service Access GUI](#serviceaccessgui-application)  
+[File Details](#file-details)  
+[Troubleshooting](#troubleshooting)  
+
+
 # Delivery
 A company intends to build a ColdStorageService, composed of a set of elements:
 
@@ -52,15 +61,6 @@ The story of the ColdStorageService can be summarized as follows:
     - the current state of the transport trolley and it position in the room;
     - the current weigth of the material stored in the ColdRoom;
     - the number of store-requests rejected since the start of the service.
-
-
-
-##### Table of Contents  
-[Install](#install)  
-[Usage](#usage)  
-[File Details](#file-details)  
-[Bill Of Materials](#bill-of-materials)  
-[Troubleshooting](#troubleshooting)  
 
 
 # Install and Usage
@@ -139,7 +139,7 @@ chmod +x setup.sh
 
 
 
-# Cold Storage Service Application
+## Cold Storage Service Application
 1. Clone this repository
 ```bash
 git clone https://github.com/RootLeo00/robot-coldstorage.git
