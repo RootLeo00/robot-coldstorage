@@ -13,4 +13,3 @@ context(ctxcoldstorageservice, "localhost",  "TCP", "8038").
   qactor( sonar, ctxcoldstorageservice, "it.unibo.sonar.Sonar").
   qactor( led, ctxcoldstorageservice, "it.unibo.led.Led").
   qactor( controllerled, ctxcoldstorageservice, "it.unibo.controllerled.Controllerled").
-  qactor( guimok, ctxcoldstorageservice, "it.unibo.guimok.Guimok").

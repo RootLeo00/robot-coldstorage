@@ -28,7 +28,6 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
           sonar=Custom('sonar','./qakicons/symActorSmall.png')
           led=Custom('led','./qakicons/symActorSmall.png')
           controllerled=Custom('controllerled','./qakicons/symActorSmall.png')
-          guimok=Custom('guimok','./qakicons/symActorSmall.png')
           sonarfisico=Custom('sonarfisico(coded)','./qakicons/codedQActor.png')
           datacleaner=Custom('datacleaner(coded)','./qakicons/codedQActor.png')
           distancefilter=Custom('distancefilter(coded)','./qakicons/codedQActor.png')
@@ -52,6 +51,4 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
      sys >> Edge(color='red', style='dashed', xlabel='robotismoving', fontcolor='red') >> controllerled
      sys >> Edge(color='red', style='dashed', xlabel='robotisinhome', fontcolor='red') >> controllerled
      sys >> Edge(color='red', style='dashed', xlabel='robotisstopped', fontcolor='red') >> controllerled
-     guimok >> Edge(color='magenta', style='solid', xlabel='storefood', fontcolor='magenta') >> coldstorageservice
-     guimok >> Edge(color='magenta', style='solid', xlabel='sendticket', fontcolor='magenta') >> coldstorageservice
 diag

@@ -25,12 +25,14 @@ class sonarSimulator ( name : String ) : ActorBasic( name ) {
 //@kotlinx.coroutines.ObsoleteCoroutinesApi
 
 	suspend fun startDataReadSimulation(    ){
+	/*
 		val data = sequence<Int>{
 		var v0 = 80
 		var i=0
-			while(true){
+		while(true){
 			v0 = 80
 			yield(v0)
+			
 			i=0
 			while(i<5){
 				v0 = v0 - 5
@@ -43,10 +45,11 @@ class sonarSimulator ( name : String ) : ActorBasic( name ) {
 				yield( v0 ) 
 				i++
 			}
+			
 		}
 		}
 		var i = 0
-			while( i < 20 ){
+			while( i < 100 ){
  	 			val m1 = "distance( ${data.elementAt(i)} )"
 				i++
  				val event = CommUtils.buildEvent( name,"sonardistance",m1)
@@ -54,7 +57,19 @@ class sonarSimulator ( name : String ) : ActorBasic( name ) {
  				println("$tt $name | generates $event")
  				//emit(event)  //APPROPRIATE ONLY IF NOT INCLUDED IN A PIPE
  				delay( 500 )
-  			}			
+  			}
+  			*/
+  			val m1 = "distance( 100 )"
+  			val event1 = CommUtils.buildEvent( name,"sonardistance",m1)	
+  			emitLocalStreamEvent( event1 )
+  			delay( 7000 )	
+  			val m2 = "distance( 20 )"
+  			val event2 = CommUtils.buildEvent( name,"sonardistance",m2)
+  			emitLocalStreamEvent( event2 )
+  			delay( 5000 )	
+  			val m3 = "distance( 100 )"
+  			val event3 = CommUtils.buildEvent( name,"sonardistance",m3)
+  			emitLocalStreamEvent( event3 )
 			terminate()
 	}
 

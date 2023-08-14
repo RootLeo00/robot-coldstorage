@@ -20,13 +20,14 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		 
 					var Kgtoload : Int = 0; 
-					var Expirationtime:Long = 100;
+					var Expirationtime:Long = 60000;
 					var ticketList=it.unibo.ticket.TicketList(Expirationtime);
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outgreen("$name | wait for messages")
 						discardMessages = false
+						delegate("howmanykgavailable", "coldroom") 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -96,6 +97,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 								 }
 								 else
 								  {Ticket.setStatus(1); 
+								  answer("sendticket", "requestaccepted", "requestaccepted(ARG)"   )  
 								  forward("dodepositaction", "dodepositaction($TICKETCODE)" ,"transporttrolley" ) 
 								  }
 								 }
@@ -109,7 +111,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				}	 
 				state("sendchargetaken") { //this:State
 					action { //it:State
-						answer("sendticket", "chargetaken", "chargetaken(ok)"   )  
+						answer("loaddone", "chargetaken", "chargetaken(ok)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

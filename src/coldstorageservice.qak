@@ -1,5 +1,5 @@
 /*
- * SPRINT3 --version 0
+ * SPRINT4 --version 4
  * author Caterina Leonelli, Matteo Longhi
  * project repository: https://github.com/RootLeo00/robot-coldstorage
  */
@@ -18,6 +18,8 @@ Request sendticket: sendticket(TICKETCODE, TICKETSECRET) //sender:serviceaccessg
 Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketrejected: ticketrejected(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
+Reply requestaccepted:requestaccepted(ARG)			//sender:coldstorageservice receiver:serviceaccessgui
+Request loaddone:loaddone(ARG)						//sender:???? receiver:coldstorageservice
 //-------------------------------------------------------------
 
  
@@ -78,12 +80,15 @@ ExternalQActor basicrobot context ctxbasicrobot
  *  coldstorageservice 
  * ------------------------------------------------------------------
 */      
+
 QActor coldstorageservice context ctxcoldstorageservice{  
+	
+		
 	 
 		//*********** INTERAZIONE CON SERVICE ACCESS GUI
 		[# 
 			var Kgtoload : Int = 0; 
-			var Expirationtime:Long = 100;
+			var Expirationtime:Long = 60000;
 			var ticketList=it.unibo.ticket.TicketList(Expirationtime);
 			#
 		]
@@ -93,7 +98,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			//se non considerati, non vengono scartati, ma vengono memorizzati in coda e presi in carico successivamente
 			//quando si andrà in uno stato che potrà processarli
 			discardMsg Off  //default: discardMsg On
-	    	  
+	    	delegate "howmanykgavailable" to coldroom
 	   	}  
 	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
 	    			whenRequest sendticket-> checkforticketexpired
@@ -133,8 +138,8 @@ QActor coldstorageservice context ctxcoldstorageservice{
 				println("$name | ticket denied") color green
 				replyTo storefood with ticketdenied : ticketdenied(ARG)
 			}
-				
-			} 
+				 
+			}
 					}   
 	  	Goto s0
 	  	///////////////////////////////////////////////////////////
@@ -154,6 +159,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			   			replyTo sendticket with  ticketrejected: ticketrejected(ARG)
 			   		}else{
 			   			[#Ticket.setStatus(1);#]
+			   			replyTo sendticket with  requestaccepted: requestaccepted(ARG)
 						forward transporttrolley -m dodepositaction : dodepositaction($TICKETCODE)  	
 			   		}	
 			   }
@@ -165,7 +171,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	  	
 	  	//////////////// SEND CHARGETAKEN/////////////////
 	  	State sendchargetaken{
-	  		replyTo sendticket with chargetaken:chargetaken(ok)
+	  		replyTo loaddone with chargetaken:chargetaken(ok)
 	  	}
 	  	Goto s0
 	  	///////////////////////////////////////////////
@@ -192,6 +198,8 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	  		]
 	  			println("$L") color green
 	  		}
+	  		
+	  		
 	  	}
 	   	Goto s0
   		/////////////////////////////////////////////////////////////////
@@ -202,7 +210,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
  * ------------------------------------------------------------------
  *  coldroom
  * ------------------------------------------------------------------
-*/      
+*/     
 QActor coldroom context ctxcoldstorageservice{   
 	[# var Kgstored : Long = 0 ;
 		var MAXW : Long = 100;
@@ -237,11 +245,13 @@ QActor coldroom context ctxcoldstorageservice{
 			Kgavailable-=insertkg;
 		#]	
 		println("$name | updated storage Kgavailable:$Kgavailable Kgstored:$Kgstored") color yellow
+		
 		}
 		
 	}
 	Goto s0
 }
+
 
 
 /*  
@@ -500,13 +510,13 @@ QActor controllerled context ctxcoldstorageservice{
 	Transition t0 whenEvent robotismoving -> ledblink
 				  whenEvent robotisinhome -> ledoff 
 				  whenEvent robotisstopped -> ledon
-	
+	 
 	State ledon{
 		 println("${name} - Turn the Led on") color yellow
 		 forward led -m ledCmd : ledCmd(on)
 	}
 	Transition t0 whenEvent robotismoving -> ledblink
-				  whenEvent robotisstopped -> ledon
+				  whenEvent robotisstopped -> ledon 
 	
 	
 	State ledoff{
@@ -516,41 +526,3 @@ QActor controllerled context ctxcoldstorageservice{
 	Transition t0 whenEvent robotismoving -> ledblink
 				  whenEvent robotisinhome -> ledoff
 }
-
-
-/*  
- * ------------------------------------------------------------------
- *  gui MOCK
- * ------------------------------------------------------------------
-*/ 
- 	QActor guimok context ctxcoldstorageservice{
-	 	State s0 initial{
-	 		discardMsg Off
-	 		println("$name | start request") color magenta
-	 		request coldstorageservice -m storefood:storefood(25)
-	 	}
- 		Transition t1 whenReply ticketaccepted -> sendticket
- 		
- 		State sendticket {
- 		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
-	 		[# 
-				var Ticketcode= payloadArg(0);
-				var Ticketsecret= payloadArg(1);
-			#]
-		println("$name | sending ticket to coldstorageservice") color magenta
-		request coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
-//		delay 4000
-//		emit stopobstacle: stopobstacle(10)
-//		delay 4000
-//		emit endalarm: endalarm
-// 		
- 		}
- 		 
-		
- 		}
- 		Transition t2 whenReply chargetaken-> end
- 		State end{
- 			println("$name | robot has taken the load") color magenta
- 		}
- 		Goto s0
- }
