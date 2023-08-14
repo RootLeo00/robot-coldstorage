@@ -27,6 +27,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					action { //it:State
 						CommUtils.outgreen("$name | wait for messages")
 						discardMessages = false
+						delegate("howmanykgavailable", "coldroom") 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -96,6 +97,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 								 }
 								 else
 								  {Ticket.setStatus(1); 
+								  answer("sendticket", "requestaccepted", "requestaccepted(ARG)"   )  
 								  forward("dodepositaction", "dodepositaction($TICKETCODE)" ,"transporttrolley" ) 
 								  }
 								 }
@@ -109,7 +111,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 				}	 
 				state("sendchargetaken") { //this:State
 					action { //it:State
-						answer("sendticket", "chargetaken", "chargetaken(ok)"   )  
+						answer("loaddone", "chargetaken", "chargetaken(ok)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

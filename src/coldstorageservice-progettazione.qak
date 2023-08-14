@@ -12,11 +12,12 @@ Reply ticketdenied  : ticketdenied( ARG ) 		//sender:coldstorageservice receiver
 
 //Dispatch failticket : failticket(ARG) 
 Request sendticket: sendticket(TICKETCODE, TICKETSECRET) 			//sender:serviceaccessgui receiver:coldstorageservice
-Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
+
 Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketrejected: ticketrejected(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
-
-
+Reply requestaccepted:requestaccepted(ARG)
+Request loaddone:loaddone(ARG)
+Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
 //start depositaction
 Dispatch dodepositaction:dodepositaction(TICKETCODE)
 //robot events
@@ -27,7 +28,7 @@ Dispatch gohome:gohome(ARG)													//emitter:serviceaccessgui listener:cold
 										 			//emitter:serviceaccessgui listener:fakeuser
 
  
-//robot pos messages
+//robot pos messagesloaddone
 Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
@@ -37,14 +38,6 @@ Reply moverobotfailed:  moverobotfailed(ARG)
 Request howmanykgavailable : howmanykgavailable(ARG) //sender:coldstorageservice receiver:coldroom
 Reply kgavailable : kgavailable(KG) //sender:coldroom receiver:coldstorageservice 
 Dispatch updatekg : updatekg (KG) //sender:coldstorageservice receiver:coldroom
-Event updatedcoldroom:updatedcoldroom (AVAILABLEKG)
- 
- //serviceaccessgui messages
-Request dostorefood:dostorefood(KG)
-Request doinsertticket:doinsertticket(TICKETNUMBER,TIMESTAMP)
-Request getcoldroomstatus:getcoldroomstatus(ARG)
-Reply coldroomstatus:coldroomstatus(KG)
-
 
 Request engage : engage(ARG)
 Reply   engagedone    : engagedone(ARG) 
@@ -63,7 +56,10 @@ ExternalQActor basicrobot context ctxbasicrobot
  *  coldstorageservice 
  * ------------------------------------------------------------------
 */      
+
 QActor coldstorageservice context ctxcoldstorageservice{  
+	
+		
 	 
 		//*********** INTERAZIONE CON SERVICE ACCESS GUI
 		[# 
@@ -78,7 +74,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			//se non considerati, non vengono scartati, ma vengono memorizzati in coda e presi in carico successivamente
 			//quando si andrà in uno stato che potrà processarli
 			discardMsg Off  //default: discardMsg On
-	    	
+	    	delegate "howmanykgavailable" to coldroom
 	   	}  
 	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
 	    			whenRequest sendticket-> checkforticketexpired
@@ -139,6 +135,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			   			replyTo sendticket with  ticketrejected: ticketrejected(ARG)
 			   		}else{
 			   			[#Ticket.setStatus(1);#]
+			   			replyTo sendticket with  requestaccepted: requestaccepted(ARG)
 						forward transporttrolley -m dodepositaction : dodepositaction($TICKETCODE)  	
 			   		}	
 			   }
@@ -150,7 +147,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	  	
 	  	//////////////// SEND CHARGETAKEN/////////////////
 	  	State sendchargetaken{
-	  		replyTo sendticket with chargetaken:chargetaken(ok)
+	  		replyTo loaddone with chargetaken:chargetaken(ok)
 	  	}
 	  	Goto s0
 	  	///////////////////////////////////////////////
@@ -224,7 +221,7 @@ QActor coldroom context ctxcoldstorageservice{
 			Kgavailable-=insertkg;
 		#]	
 		println("$name | updated storage Kgavailable:$Kgavailable Kgstored:$Kgstored") color yellow
-		emit updatedcoldroom:updatedcoldroom($Kgavailable)
+		
 		}
 		
 	}
@@ -339,7 +336,7 @@ QActor transporttrolley context ctxcoldstorageservice{
   	
 }
 
- 	 QActor serviceaccessgui context ctxcoldstorageservice{  
+ 	/* QActor serviceaccessgui context ctxcoldstorageservice{  
 	 	[#
 	 		var SPACELEFT:Long=100;#
 	 	]
@@ -488,7 +485,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  		}
  		Goto s0
  		
- 		}
+ 		} */
  	/*QActor guimok context ctxcoldstorageservice{
 	 	State s0 initial{
 	 		discardMsg Off

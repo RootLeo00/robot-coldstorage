@@ -54,7 +54,6 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 											Kgstored += insertkg;
 											Kgavailable-=insertkg;
 								CommUtils.outyellow("$name | updated storage Kgavailable:$Kgavailable Kgstored:$Kgstored")
-								emit("updatedcoldroom", "updatedcoldroom($Kgavailable)" ) 
 						}
 						//genTimer( actor, state )
 					}

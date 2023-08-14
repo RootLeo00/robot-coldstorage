@@ -24,7 +24,7 @@ public class MainController {
     Socket client;
     BufferedReader reader;
     BufferedWriter writer;
-
+    /// HOMEPAGE
     @GetMapping("/")
     public String homePage(Model model) {
         String msg = "msg(howmanykgavailable,request,webgui,coldstorageservice,howmanykgavailable(ARG),1)\n";
@@ -45,7 +45,7 @@ public class MainController {
         }
 
     }
-
+    /// INSERTTICKET USECASE
     @PostMapping("/insertticket")
     public String insertticket(Model model, @RequestParam(name = "ticketnumber") String ticketnumber,
             @RequestParam(name = "ticketsecret") String ticketsecret) {
@@ -73,7 +73,7 @@ public class MainController {
         }
 
     }
-
+    /// STOREFOOD USECASE
     @PostMapping("/storefood")
     public String storefood(Model model, @RequestParam(name = "fwg") String fw) {
         // storefood request
