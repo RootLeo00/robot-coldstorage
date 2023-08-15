@@ -60,11 +60,11 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t01",targetState="startcoldstoragerobot",cond=whenDispatch("sendticket"))
+					 transition(edgeName="t01",targetState="startcoldstoragerobot",cond=whenRequest("sendticket"))
 				}	 
 				state("startcoldstoragerobot") { //this:State
 					action { //it:State
-						forward("chargetaken", "chargetaken(ok)" ,"serviceaccessgui" ) 
+						answer("sendticket", "chargetaken", "chargetaken(ok)"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

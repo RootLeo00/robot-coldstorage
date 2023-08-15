@@ -11,8 +11,8 @@ Reply ticketdenied    : ticketdenied( ARG ) 		//sender:coldstorageservice receiv
 													//sender:coldstorage receiver:coldstorageservice
 
 //Dispatch failticket : failticket(ARG) 
-Dispatch sendticket: sendticket(TICKETCODE) 			//sender:serviceaccessgui receiver:coldstorageservice
-Dispatch chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
+Request sendticket: sendticket(TICKETCODE) 			//sender:serviceaccessgui receiver:coldstorageservice
+Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:serviceaccessgui 
 
 													//emitter:serviceaccessgui listener:coldstorageservice
@@ -78,10 +78,10 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			replyTo storefood with ticketaccepted : ticketaccepted($TICKETCODE)
 		[# } #] 
 	}	  
-  	Transition t0 whenMsg sendticket-> startcoldstoragerobot
+  	Transition t0 whenRequest sendticket-> startcoldstoragerobot
   	
   	State startcoldstoragerobot{
-  		forward serviceaccessgui -m chargetaken : chargetaken(ok)
+  		replyTo sendticket with chargetaken : chargetaken(ok)
   		//send start command to coldstoragerobot
   		
   	}
@@ -211,7 +211,7 @@ QActor serviceaccessgui context ctxserviceaccessgui{
 	State handleticketfromuser{
 		// send sendcamion request to send truck in the indoor area
 	
-			forward coldstorageservice -m sendticket: sendticket($Ticket) 
+			request  coldstorageservice -m sendticket: sendticket($Ticket) 
 		
 	}
 	Goto waitticketrequest
