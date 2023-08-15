@@ -19,13 +19,13 @@ client.connect(QAKPORT, QAKADDRESS, function () {
 app.get("/", (req, res) => {
   res.status(200);
   var message =
-    "msg(getcoldroomstatus,request,webgui,serviceaccessgui,getcoldroomstatus(ARG),1)\n";
+    "msg(howmanykgavailable,request,webgui,coldstorageservice,howmanykgavailable(ARG),1)\n";
   console.log(message);
   client.write(message, "utf-8", function () {
     var msg = "";
     client.on("data", function (buffer = Buffer.alloc(93)) {
       msg += buffer.toString();
-      if (msg.length >= 70) {
+      if (msg.length >= 52) {
         console.log(msg);
         res.status(200);
         res.render("webgui.pug",{spaceleft:getParameters(msg)[0]});
@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
 app.post("/storefood", (req, res) => {
   var fw = req.body.fwg;
   var message =
-    "msg(dostorefood,request,webgui,serviceaccessgui,dostorefood(" +
+    "msg(storefood,request,webgui,coldstorageservice,storefood(" +
     fw +
     "),1)\n";
   client.write(message, "utf-8", function () {
@@ -75,7 +75,7 @@ app.post("/insertticket", (req, res) => {
   var ticketnumber = req.body.ticketnumber;
   var ticketsecret = req.body.ticketsecret;
   var message =
-    "msg(doinsertticket,request,webgui,serviceaccessgui,doinsertticket(" +
+    "msg(sendticket,request,webgui,coldstorageservice,sendticket(" +
     ticketnumber +
     "," +
     ticketsecret +
