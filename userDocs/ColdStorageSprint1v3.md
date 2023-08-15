@@ -4,9 +4,9 @@
 - individuare un architettura logica iniziale che definisca le macro-entità del sistema e le loro interazioni
 - definire un piano di lavoro iniziale 
 ### architettura logica sprint0
-![[coldstorageservicearchsprint0V4.png]]
+![[coldstorageservicearch-sprint0.png]]
 ### Goal dello sprint1
-- prototipazione del core business ColdStorageService + TransportTrolley
+- prototipazione del core business ColdStorageService + TransportTrolley+ ColdRoom
 
 
 ## Requirements
@@ -37,8 +37,6 @@ The transport trolley is used to perform a deposit action that consists in the f
 int TICKETTIME INTEGER
 int TICKETNUMBER INTEGER
 ``` 
- 
-
 ### Cold Storage Service
 - ColdStorageService è l'entità core business del sistema e siccome il sistema è distribuito, allora ColdStorageService è modellata come un attore
 
@@ -52,7 +50,7 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 - le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.
 
 ### Architettura logica requisiti
-
+![[coldstorageservicearch-requisiti.png]]
 
 ## Problem Analysis
 
@@ -67,7 +65,8 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 dai requisiti si evince che il messaggio **chargetaken** deve essere inviato da coldstorageservice nel momento in cui il transporttrolley ha effettuato lo scarico della merce, questo presume che esista un qualche tipo di comunicazione fra i due nel momento in cui questo avviene 
 possibili soluzioni:
 - **transporttrolley emette un evento** che, viene catturato da coldstorageservice, che invia il messaggio chargetaken, in seguito viene comunicato al transporttrolley di spostarsi verso la coldroom
-- **transporttrolley emette un Dispatch/request** verso coldstorageservice, che invia il messaggio chargetaken, in seguito viene comunicato al transporttrolley di spostarsi verso la coldroom
+- **transporttrolley emette un Dispatch** verso coldstorageservice, che, di conseguenza invia il messaggio chargetaken, in seguito viene comunicato al transporttrolley di spostarsi verso la coldroom
+Si decide di optare per emettere un evento e per limitare l'occupazione di banda si decide di sfruttare la proprietà del supporto qak di emettere eventi locali.
 
 ### Carico del transport trolley
 il transporttrolley potrebbe ammettere un carico massimo trasportabile, dopo opportune discussioni con il committente si è deciso di non prendere in carico questa eventualità
@@ -93,11 +92,8 @@ Il sistema è composto da:
   - *ServiceAccessGui*: si interfaccia con ColdStorageService per la richiesa di ticket
   - *Cold Room*: aggiorna lo stato della quantità di kg
   - *Scarico*: entità esterna che effettua una operazione di scarico della Cold Room, diminuendo i kg presenti in essa
-  
-  ![[coldstorageservicearchsprint1.png]]
-
-### la struttura containerizzata
-- la software house possiede degli strumenti per l'interazione con il robot ddr sotto forma di progetti qak, per facilitare lo sviluppo si prevede di containerizzare questi componenti in modo da avere una infrastruttura system independent per lo sviluppo e il testing della logica applicativa.
+   per evitare di 
+  ![[coldstorageservicearch-analisi.png]]
 
 ## Test plan
 si prevede di testare le seguenti funzionalità del sistema
@@ -228,7 +224,7 @@ il ticket può quindi trovarsi in due stati distinti
 si prevede di aggiungere all'architettura logica predisposta in analisi del problema un attore **GUIMOK** per simulare il comportamento di un utente che interagisce con la main logic di sistema
 
 ### Architettura finale progettazione
-![[coldstorageservicearchprogettazione.png]]
+![[coldstorageservicearch-progettazione.png]]
 
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">

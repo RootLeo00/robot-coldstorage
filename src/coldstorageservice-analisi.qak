@@ -18,11 +18,12 @@ Reply ticketrejected: ticketrejected(ARG) 			//sender:coldstorageservice receive
 
 
 //start depositaction
-Dispatch dodepositaction:dodepositaction(TICKETCODE)
+Request dodepositaction:dodepositaction(TICKETCODE)
+Reply depositactionended:depositactionended(ARG)
 //robot events
 Event robotisinindoor:robotisinindoor(ARG)
 Event robotisinhome:robotisinhome(ARG) 
-Event depositactionended:depositactionended(ARG)
+
 Dispatch gohome:gohome(ARG)													//emitter:serviceaccessgui listener:coldstorageservice
 										 			//emitter:serviceaccessgui listener:fakeuser
 
@@ -75,10 +76,10 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			discardMsg Off  //default: discardMsg On
 	    	
 	   	}  
-	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
+	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied 
 	    			whenRequest sendticket-> checkforticketexpired
 	    			whenEvent robotisinindoor-> sendchargetaken
-	    			whenEvent depositactionended -> updatecoldstorage
+	    			whenReply depositactionended -> updatecoldstorage
 	  	
 	  	///STOREFOOD REQUEST MANAGEMENT/////////////////
 	  	State askhowmanykgoccupied{ 
@@ -88,10 +89,12 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	  		
 	  		//chiedi a cold room quanto spazio è disponibile
 	  		request coldroom -m howmanykgavailable : howmanykgavailable
-	  		} 
+	  		}
+	  		
+	  	 
 		}
-		Transition t0 whenReply kgavailable -> checkifthereisenoughspace
-		
+		//Transition t0 whenReply kgavailable -> checkifthereisenoughspace
+		 
 		State checkifthereisenoughspace {
 			onMsg(kgavailable:kgavailable(KG)){
 			[# var Kgavailable = payloadArg(0).toLong(); 
@@ -134,7 +137,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			   			replyTo sendticket with  ticketrejected: ticketrejected(ARG)
 			   		}else{
 			   			[#Ticket.setStatus(1);#]
-						forward transporttrolley -m dodepositaction : dodepositaction($TICKETCODE)  	
+						request transporttrolley -m dodepositaction : dodepositaction($TICKETCODE)  	
 			   		}	
 			   }
 			   
@@ -223,6 +226,8 @@ QActor coldroom context ctxcoldstorageservice{
 		
 	}
 	Goto s0
+	
+	
 }
 
 
@@ -261,7 +266,7 @@ QActor transporttrolley context ctxcoldstorageservice{
   	State waitforcommands{
   	println("$name | waiting for commands.") color red
   	}
- 	Transition t1 whenMsg dodepositaction -> moverobottoindoor
+ 	Transition t1 whenRequest dodepositaction -> moverobottoindoor
  	
  	//move robot to indoor, then send chargetaken message and go to coldroom
  	State moverobottoindoor {
@@ -292,14 +297,14 @@ QActor transporttrolley context ctxcoldstorageservice{
 	
 	State depositactionended{
 		
-		emit depositactionended:depositactionended($TICKETCODE)
+		replyTo dodepositaction with depositactionended:depositactionended($TICKETCODE)
 		println("$name | robot is in coldroom") color red
 		println("$name | depositaction ended") color red
 		println("$name | waiting for next move" ) color red
 		
 	} 
 	Transition t4 whenTime 100    -> moverobottohome
-	whenMsg dodepositaction -> moverobottoindoor
+	whenRequest dodepositaction -> moverobottoindoor
 	 			  
 				
 	
@@ -313,7 +318,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  				  whenReply moverobotfailed -> robotmovefailed
  
  	State emitrobotisinhome{
- 		emit robotisinhome: robotisinhome(ok)
+ 		//emit robotisinhome: robotisinhome(ok)
  		println("$name | robot is in home") color red
  		
  	}Goto waitforcommands
@@ -328,42 +333,14 @@ QActor transporttrolley context ctxcoldstorageservice{
  
  	
 	//wait next startcoldstoragerobot --> transition to moverobottoindoor
-  	
+  	 
   	
   	
 }
 
-/*	 QActor guimok context ctxcoldstorageservice{
-	 	State s0 initial{
-	 		discardMsg Off
-	 		println("$name | start request") color magenta
-	 		request coldstorageservice -m storefood:storefood(25)
-	 	}
- 		Transition t1 whenReply ticketaccepted -> sendticket
- 		
- 		State sendticket {
- 			
- 		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
- 			[# 
-			var Ticketcode= payloadArg(0);
-			var Ticketsecret= payloadArg(1);
-		#]
-		println("$name | sneding ticket to coldstorageservice") color magenta
-		request coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
-		
- 		}
- 		
-		
- 		}
- 		Transition t2 whenReply chargetaken-> end
- 		State end{
- 			println("$name | robot has taken the load") color magenta
- 		}
- 		Goto s0
- 		
- 	} */
+
  	
- 	QActor guimok context ctxcoldstorageservice{
+ 	/*QActor guimok context ctxcoldstorageservice{
 	 	State s0 initial{
 	 		discardMsg Off
 	 		println("$name | start request") color magenta
@@ -392,6 +369,6 @@ QActor transporttrolley context ctxcoldstorageservice{
  		Goto s0
  		
  		}
- 
+ */
 
  

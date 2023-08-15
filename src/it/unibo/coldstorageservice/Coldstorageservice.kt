@@ -35,7 +35,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					 transition(edgeName="t00",targetState="askhowmanykgoccupied",cond=whenRequest("storefood"))
 					transition(edgeName="t01",targetState="checkforticketexpired",cond=whenRequest("sendticket"))
 					transition(edgeName="t02",targetState="sendchargetaken",cond=whenEvent("robotisinindoor"))
-					transition(edgeName="t03",targetState="updatecoldstorage",cond=whenEvent("depositactionended"))
+					transition(edgeName="t03",targetState="updatecoldstorage",cond=whenReply("depositactionended"))
 				}	 
 				state("askhowmanykgoccupied") { //this:State
 					action { //it:State
@@ -95,7 +95,8 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 								  ){answer("sendticket", "ticketrejected", "ticketrejected(ARG)"   )  
 								 }
 								 else
-								  {forward("dodepositaction", "dodepositaction($TICKETCODE)" ,"transporttrolley" ) 
+								  {Ticket.setStatus(1); 
+								  request("dodepositaction", "dodepositaction($TICKETCODE)" ,"transporttrolley" )  
 								  }
 								 }
 						}
