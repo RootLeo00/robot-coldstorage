@@ -21,7 +21,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("${name} | START")
+						CommUtils.outcyan("${name} | START")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -35,13 +35,13 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 var Cmd = payloadArg(0)  
 								if(  Cmd=="on"  
-								 ){CommUtils.outmagenta("${name} - on")
+								 ){CommUtils.outcyan("${name} - on")
 								}
 								if(  Cmd=="blink"  
-								 ){CommUtils.outmagenta("${name} - blink")
+								 ){CommUtils.outcyan("${name} - blink")
 								}
 								if(  Cmd=="off"  
-								 ){CommUtils.outmagenta("${name} - off")
+								 ){CommUtils.outcyan("${name} - off")
 								}
 						}
 						//genTimer( actor, state )

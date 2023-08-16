@@ -22,14 +22,14 @@ class Guimok ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("s0") { //this:State
 					action { //it:State
 						discardMessages = false
-						CommUtils.outmagenta("$name | start request")
+						CommUtils.outmagenta("${name} | start request")
 						request("storefood", "storefood(25)" ,"coldstorageservice" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t138",targetState="sendticket",cond=whenReply("ticketaccepted"))
+					 transition(edgeName="t130",targetState="sendticket",cond=whenReply("ticketaccepted"))
 				}	 
 				state("sendticket") { //this:State
 					action { //it:State
@@ -38,7 +38,7 @@ class Guimok ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								 
 												var Ticketcode= payloadArg(0);
 												var Ticketsecret= payloadArg(1);
-								CommUtils.outmagenta("$name | sending ticket to coldstorageservice")
+								CommUtils.outmagenta("${name} | sending ticket to coldstorageservice")
 								request("sendticket", "sendticket($Ticketcode,$Ticketsecret)" ,"coldstorageservice" )  
 						}
 						//genTimer( actor, state )
@@ -46,11 +46,11 @@ class Guimok ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t239",targetState="end",cond=whenReply("chargetaken"))
+					 transition(edgeName="t231",targetState="end",cond=whenReply("chargetaken"))
 				}	 
 				state("end") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("$name | robot has taken the load")
+						CommUtils.outmagenta("${name} | robot has taken the load")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

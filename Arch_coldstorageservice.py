@@ -29,29 +29,21 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
           led=Custom('led','./qakicons/symActorSmall.png')
           controllerled=Custom('controllerled','./qakicons/symActorSmall.png')
           guimok=Custom('guimok','./qakicons/symActorSmall.png')
-          sonarfisico=Custom('sonarfisico(coded)','./qakicons/codedQActor.png')
-          datacleaner=Custom('datacleaner(coded)','./qakicons/codedQActor.png')
-          distancefilter=Custom('distancefilter(coded)','./qakicons/codedQActor.png')
-     sys >> Edge(color='red', style='dashed', xlabel='robotisinindoor', fontcolor='red') >> coldstorageservice
-     sys >> Edge(color='red', style='dashed', xlabel='depositactionended', fontcolor='red') >> coldstorageservice
+     sys >> Edge(color='red', style='dashed', xlabel='pickupindoordone', fontcolor='red') >> coldstorageservice
      coldstorageservice >> Edge(color='magenta', style='solid', xlabel='howmanykgavailable', fontcolor='magenta') >> coldroom
-     coldstorageservice >> Edge(color='blue', style='solid', xlabel='dodepositaction', fontcolor='blue') >> transporttrolley
+     coldstorageservice >> Edge(color='magenta', style='solid', xlabel='dodepositaction', fontcolor='magenta') >> transporttrolley
      coldstorageservice >> Edge(color='blue', style='solid', xlabel='updatekg', fontcolor='blue') >> coldroom
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='engage', fontcolor='magenta') >> basicrobot
-     transporttrolley >> Edge( xlabel='robotismoving', **eventedgeattr, fontcolor='red') >> sys
+     transporttrolley >> Edge( xlabel='robotstate', **eventedgeattr, fontcolor='red') >> sys
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='moverobot', fontcolor='magenta') >> basicrobot
-     transporttrolley >> Edge( xlabel='robotisinindoor', **eventedgeattr, fontcolor='red') >> sys
-     transporttrolley >> Edge( xlabel='depositactionended', **eventedgeattr, fontcolor='red') >> sys
-     transporttrolley >> Edge( xlabel='robotisinhome', **eventedgeattr, fontcolor='red') >> sys
+     transporttrolley >> Edge( xlabel='pickupindoordone', **eventedgeattr, fontcolor='red') >> sys
      transporttrolley >> Edge( xlabel='alarm', **eventedgeattr, fontcolor='red') >> sys
      sys >> Edge(color='red', style='dashed', xlabel='sonardata', fontcolor='red') >> sonar
      sys >> Edge(color='red', style='dashed', xlabel='obstacle', fontcolor='red') >> sonar
      sonar >> Edge(color='blue', style='solid', xlabel='endalarm', fontcolor='blue') >> transporttrolley
      sonar >> Edge(color='blue', style='solid', xlabel='stopobstacle', fontcolor='blue') >> transporttrolley
      controllerled >> Edge(color='blue', style='solid', xlabel='ledCmd', fontcolor='blue') >> led
-     sys >> Edge(color='red', style='dashed', xlabel='robotismoving', fontcolor='red') >> controllerled
-     sys >> Edge(color='red', style='dashed', xlabel='robotisinhome', fontcolor='red') >> controllerled
-     sys >> Edge(color='red', style='dashed', xlabel='robotisstopped', fontcolor='red') >> controllerled
+     sys >> Edge(color='red', style='dashed', xlabel='robotstate', fontcolor='red') >> controllerled
      guimok >> Edge(color='magenta', style='solid', xlabel='storefood', fontcolor='magenta') >> coldstorageservice
      guimok >> Edge(color='magenta', style='solid', xlabel='sendticket', fontcolor='magenta') >> coldstorageservice
 diag

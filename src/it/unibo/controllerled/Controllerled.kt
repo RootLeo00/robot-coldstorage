@@ -21,53 +21,46 @@ class Controllerled ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outyellow("${name} | START")
+						CommUtils.outcyan("${name} | START")
 						forward("ledCmd", "ledCmd(off)" ,"led" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t028",targetState="ledblink",cond=whenEvent("robotismoving"))
-					transition(edgeName="t029",targetState="ledoff",cond=whenEvent("robotisinhome"))
-					transition(edgeName="t030",targetState="ledon",cond=whenEvent("robotisstopped"))
+					 transition(edgeName="t028",targetState="handlerobotstate",cond=whenEvent("robotstate"))
 				}	 
-				state("ledblink") { //this:State
+				state("handlerobotstate") { //this:State
 					action { //it:State
-						CommUtils.outyellow("${name} - Turn the Led blink")
-						forward("ledCmd", "ledCmd(blink)" ,"led" ) 
+						if( checkMsgContent( Term.createTerm("robotstate(ATHOME,MOVING,STOPPED)"), Term.createTerm("robotstate(ATHOME,MOVING,STOPPED)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var Athome = payloadArg(0).toBoolean(); 
+											   var Moving = payloadArg(1).toBoolean(); 
+											   var Stopped = payloadArg(2).toBoolean(); 
+								CommUtils.outcyan("${name} | robotstate: ATHOME=$Athome MOVING=$Moving STOPPED=$Stopped")
+								if(  Athome  
+								 ){forward("ledCmd", "ledCmd(off)" ,"led" ) 
+								}
+								else
+								 {if(  Stopped  
+								  ){forward("ledCmd", "ledCmd(on)" ,"led" ) 
+								 }
+								 else
+								  {if(  Moving  
+								   ){forward("ledCmd", "ledCmd(blink)" ,"led" ) 
+								  }
+								  else
+								   {CommUtils.outcyan("${name} | WRONG ROBOT STATE MESSAGE")
+								   }
+								  }
+								 }
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t031",targetState="ledblink",cond=whenEvent("robotismoving"))
-					transition(edgeName="t032",targetState="ledoff",cond=whenEvent("robotisinhome"))
-					transition(edgeName="t033",targetState="ledon",cond=whenEvent("robotisstopped"))
-				}	 
-				state("ledon") { //this:State
-					action { //it:State
-						CommUtils.outyellow("${name} - Turn the Led on")
-						forward("ledCmd", "ledCmd(on)" ,"led" ) 
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t034",targetState="ledblink",cond=whenEvent("robotismoving"))
-					transition(edgeName="t035",targetState="ledon",cond=whenEvent("robotisstopped"))
-				}	 
-				state("ledoff") { //this:State
-					action { //it:State
-						CommUtils.outyellow("${name} - Turn the Led off")
-						forward("ledCmd", "ledCmd(off)" ,"led" ) 
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t036",targetState="ledblink",cond=whenEvent("robotismoving"))
-					transition(edgeName="t037",targetState="ledoff",cond=whenEvent("robotisinhome"))
+					 transition(edgeName="t029",targetState="handlerobotstate",cond=whenEvent("robotstate"))
 				}	 
 			}
 		}

@@ -27,15 +27,14 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var HOMEY=0;
 				var TICKETCODE=-1;
 				
-				//var per gestire la alarm/endalarm
-				var lastmove="";
+				var lastmove=""; //var per gestire la alarm/endalarm
 		
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						discardMessages = false
-						CommUtils.outmagenta("$name |  request engage")
-						request("engage", "engage(transporttrolley,330)" ,"basicrobot" )  
+						CommUtils.outmagenta("${name} |  request engage")
+						request("engage", "engage(transporttrolley,300)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -46,7 +45,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("waitrobotfree") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("$name | Sorry, the robot is already engaged.")
+						CommUtils.outmagenta("${name} | Sorry, the robot is already engaged.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -55,24 +54,24 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("waitforcommands") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("$name | waiting for commands.")
+						CommUtils.outmagenta("${name} | waiting for commands.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t19",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
+					 transition(edgeName="t19",targetState="moverobottoindoor",cond=whenRequest("dodepositaction"))
 				}	 
 				state("moverobottoindoor") { //this:State
 					action { //it:State
-						emit("robotismoving", "robotismoving" ) 
+						emit("robotstate", "robotstate(false,true,false)" ) 
 						 lastmove = "moverobottoindoor"  
 						if( checkMsgContent( Term.createTerm("dodepositaction(TICKETCODE)"), Term.createTerm("dodepositaction(TICKETCODE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
 								 				TICKETCODE=payloadArg(0).toInt();
 						}
-						CommUtils.outmagenta("$name | moving robot to indoor.")
+						CommUtils.outmagenta("${name} | moving robot to indoor.")
 						request("moverobot", "moverobot($INDOORX,$INDOORY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
@@ -85,11 +84,11 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("moverobottocoldroom") { //this:State
 					action { //it:State
-						emit("robotismoving", "robotismoving" ) 
+						emit("robotstate", "robotstate(false,true,false)" ) 
 						 lastmove = "moverobottocoldroom"  
-						CommUtils.outmagenta("$name | robot is in indoor")
-						CommUtils.outmagenta("$name | moving robot to coldroom")
-						emit("robotisinindoor", "robotisindoor(ok)" ) 
+						CommUtils.outmagenta("${name} | robot is in indoor")
+						CommUtils.outmagenta("${name} | moving robot to coldroom")
+						emit("pickupindoordone", "pickupindoordone(ok)" ) 
 						request("moverobot", "moverobot($COLDROOMX,$COLDROOMY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
@@ -102,10 +101,10 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("depositactionended") { //this:State
 					action { //it:State
-						emit("depositactionended", "depositactionended($TICKETCODE)" ) 
-						CommUtils.outmagenta("$name | robot is in coldroom")
-						CommUtils.outmagenta("$name | depositaction ended")
-						CommUtils.outmagenta("$name | waiting for next move")
+						answer("dodepositaction", "depositactionended", "depositactionended($TICKETCODE)"   )  
+						CommUtils.outmagenta("${name} | robot is in coldroom")
+						CommUtils.outmagenta("${name} | depositaction ended")
+						CommUtils.outmagenta("${name} | waiting for next move")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -114,11 +113,11 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				 	 					  scope, context!!, "local_tout_transporttrolley_depositactionended", 100.toLong() )
 					}	 	 
 					 transition(edgeName="t416",targetState="moverobottohome",cond=whenTimeout("local_tout_transporttrolley_depositactionended"))   
-					transition(edgeName="t417",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
+					transition(edgeName="t417",targetState="moverobottoindoor",cond=whenRequest("dodepositaction"))
 				}	 
 				state("moverobottohome") { //this:State
 					action { //it:State
-						emit("robotismoving", "robotismoving" ) 
+						emit("robotstate", "robotstate(false,true,false)" ) 
 						 lastmove = "moverobottohome"  
 						request("moverobot", "moverobot($HOMEX,$HOMEY)" ,"basicrobot" )  
 						//genTimer( actor, state )
@@ -132,9 +131,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("emitrobotisinhome") { //this:State
 					action { //it:State
-						 lastmove = ""  
-						emit("robotisinhome", "robotisinhome(ok)" ) 
-						CommUtils.outmagenta("$name | robot is in home")
+						emit("robotstate", "robotstate(true,false,false)" ) 
+						CommUtils.outmagenta("${name} | robot is in home")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -144,7 +142,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("robotmovefailed") { //this:State
 					action { //it:State
-						CommUtils.outred("$name | robot failed to move $lastmove")
+						CommUtils.outmagenta("${name} | robot failed to move $lastmove")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -154,7 +152,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("handleobstacle") { //this:State
 					action { //it:State
-						CommUtils.outred("$name handleobstacle ALARM")
+						CommUtils.outmagenta("${name} handleobstacle ALARM")
 						emit("alarm", "alarm(obstacle)" ) 
 						//genTimer( actor, state )
 					}
@@ -166,7 +164,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("alarmconsidered") { //this:State
 					action { //it:State
-						CommUtils.outred("$name waiting for endalarm...")
+						emit("robotstate", "robotstate(false,false,true)" ) 
+						CommUtils.outmagenta("${name} waiting for endalarm...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -176,7 +175,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("restorelastmove") { //this:State
 					action { //it:State
-						CommUtils.outred("$name | restore to $lastmove")
+						CommUtils.outmagenta("${name} | restore to $lastmove")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
