@@ -28,7 +28,7 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
           sonar=Custom('sonar','./qakicons/symActorSmall.png')
           led=Custom('led','./qakicons/symActorSmall.png')
           controllerled=Custom('controllerled','./qakicons/symActorSmall.png')
-          sonarfisico=Custom('sonarfisico(coded)','./qakicons/codedQActor.png')
+          sonarsimulator=Custom('sonarsimulator(coded)','./qakicons/codedQActor.png')
           datacleaner=Custom('datacleaner(coded)','./qakicons/codedQActor.png')
           distancefilter=Custom('distancefilter(coded)','./qakicons/codedQActor.png')
      sys >> Edge(color='red', style='dashed', xlabel='pickupindoordone', fontcolor='red') >> coldstorageservice
