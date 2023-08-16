@@ -31,7 +31,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						discardMessages = false
 						CommUtils.outred("$name |  request engage")
-						request("engage", "engage(transporttrolley)" ,"basicrobot" )  
+						request("engage", "engage(transporttrolley,330)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

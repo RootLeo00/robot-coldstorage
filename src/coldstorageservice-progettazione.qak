@@ -250,7 +250,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 	discardMsg Off
 	//try to engage basicrobot on startup
     println("$name |  request engage") color red
-    request basicrobot -m engage : engage( transporttrolley )
+    request basicrobot -m engage : engage( transporttrolley ,330)
   	}
    	Transition t0 whenReply engagedone    -> waitforcommands
                 whenReply engagerefused -> waitrobotfree
@@ -324,7 +324,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  		println("$name | robot failed to move") color red
  		
  	}
- 	
+ 	 
  	//fake gui
  
  	
@@ -334,35 +334,35 @@ QActor transporttrolley context ctxcoldstorageservice{
   	
 }
  	
- 	QActor guimok context ctxcoldstorageservice{
-	 	State s0 initial{
-	 		discardMsg Off
-	 		println("$name | start request") color magenta
-	 		request coldstorageservice -m storefood:storefood(25)
-	 	}
- 		Transition t1 whenReply ticketaccepted -> sendticket
- 		
- 		State sendticket {
- 			
- 		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
- 			[# 
-			var Ticketcode= payloadArg(0);
-			var Ticketsecret= payloadArg(1);
-		#]
-		println("$name | sneding ticket to coldstorageservice") color magenta
-		request coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
-		
- 		}
- 		
-		
- 		}
- 		Transition t2 whenReply chargetaken-> end
- 		State end{
- 			println("$name | robot has taken the load") color magenta
- 		}
- 		Goto s0
- 		
- 		}
- 
+// 	QActor guimok context ctxcoldstorageservice{
+//	 	State s0 initial{
+//	 		discardMsg Off
+//	 		println("$name | start request") color magenta
+//	 		request coldstorageservice -m storefood:storefood(25)
+//	 	}
+// 		Transition t1 whenReply ticketaccepted -> sendticket
+// 		
+// 		State sendticket {
+// 			
+// 		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
+// 			[# 
+//			var Ticketcode= payloadArg(0);
+//			var Ticketsecret= payloadArg(1);
+//		#]
+//		println("$name | sneding ticket to coldstorageservice") color magenta
+//		request coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
+//		
+// 		}
+// 		
+//		
+// 		}
+// 		Transition t2 whenReply chargetaken-> end
+// 		State end{
+// 			println("$name | robot has taken the load") color magenta
+// 		}
+// 		Goto s0
+// 		
+// 		}
+// 
 
  
