@@ -385,7 +385,7 @@ QActor sonar context ctxcoldstorageservice{
 	   var stopped=false;
 	   
 	   	var startInstant:Long = 0;
-		val MINT: Long=40000;
+		val MINT: Long=4000;
 	#]
 	State s0 initial{  
 		println("sonar | start") 

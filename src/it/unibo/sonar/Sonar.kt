@@ -22,7 +22,7 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 			   var stopped=false;
 			   
 			   	var startInstant:Long = 0;
-				val MINT: Long=40000;
+				val MINT: Long=4000;
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
