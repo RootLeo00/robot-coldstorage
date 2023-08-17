@@ -6,6 +6,7 @@ import it.unibo.kactor.ActorBasic;
 import it.unibo.kactor.QakContext;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapObserveRelation;
+import org.eclipse.californium.elements.exception.ConnectorException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,6 +16,9 @@ import unibo.basicomm23.utils.ColorsOut;
 import unibo.basicomm23.utils.CommUtils;
 
 
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.junit.Assert.*;
 
 
@@ -22,10 +26,10 @@ public class CtxColdStorageServiceTestJUnit {
 
 	private final CoapObserveRelation service_relation = null;
 
-	private static CoapClient 	service_client = null;
+	private static CoapClient service_client = null;
 
 	private final CoapObserveRelation trolley_relation = null;
-	private static CoapClient 	trolley_client = null;
+	private static CoapClient trolley_client = null;
 
 	static ConnTcp connTcp;
 	static int MAXPB = 10;
@@ -33,24 +37,24 @@ public class CtxColdStorageServiceTestJUnit {
 
 
 	@BeforeClass
-	public  static void up() {
+	public static void up() {
 		new Thread(MainCtxcoldstorageserviceKt::main).start();
 		waitForApplStarted();
 		//5683 default
 		String service_ipaddr = "localhost:8038";
 		String service_context = "ctxcoldstorageservice";
 		String service_destactor = "ctxcoldstorageservice";
-		service_client = new CoapClient("coap://"+ service_ipaddr +"/"+ service_context +"/"+ service_destactor);
+		service_client = new CoapClient("coap://" + service_ipaddr + "/" + service_context + "/" + service_destactor);
 		//5683 default
 		String trolley_ipaddr = "localhost:8038";
 		String trolley_context = "ctxcoldstorageservice";
 		String trolley_destactor = "transporttrolley";
-		trolley_client = new CoapClient("coap://"+ trolley_ipaddr +"/"+ trolley_context +"/"+ trolley_destactor);
+		trolley_client = new CoapClient("coap://" + trolley_ipaddr + "/" + trolley_context + "/" + trolley_destactor);
 
-		try{
+		try {
 			connTcp = new ConnTcp("localhost", 8038);
 
-		}catch(Exception e){
+		} catch (Exception e) {
 			ColorsOut.outerr("initial ERROR:" + e.getMessage());
 		}
 /*		String initContainersStr = CommUtils.buildDispatch("test","init_capacity","values("+MAXGB+","+MAXPB+")","ctxcoldstorageservice").toString();
@@ -72,10 +76,10 @@ public class CtxColdStorageServiceTestJUnit {
 	}
 
 
-	protected  static void waitForApplStarted(){
+	protected static void waitForApplStarted() {
 		ActorBasic service = QakContext.Companion.getActor("coldstorageservice");
-		while( service == null ){
-			ColorsOut.outappl("TestCoreRequisiti waits for appl ... " , ColorsOut.GREEN);
+		while (service == null) {
+			ColorsOut.outappl("TestCoreRequisiti waits for appl ... ", ColorsOut.GREEN);
 			CommUtils.delay(400);
 			service = QakContext.Companion.getActor("coldstorageservice");
 		}
@@ -86,10 +90,10 @@ public class CtxColdStorageServiceTestJUnit {
 
 		try {
 			connTcp.close();
-		}catch(Exception e){
+		} catch (Exception e) {
 			ColorsOut.outerr("close ERROR:" + e.getMessage());
 		}
-		ColorsOut.outappl("TestCoreRequisiti ENDS" , ColorsOut.BLUE);
+		ColorsOut.outappl("TestCoreRequisiti ENDS", ColorsOut.BLUE);
 	}
 /*
 	@After
@@ -101,98 +105,128 @@ public class CtxColdStorageServiceTestJUnit {
 
 	@Test
 	public void testSingleLoadAccepted() {
-		ColorsOut.outappl("testLoadok STARTS" , ColorsOut.BLUE);
-		String truckRequestStr = CommUtils.buildRequest("tester","storefood","storefood( 10 )","coldstorageservice").toString();
+		ColorsOut.outappl("testLoadok STARTS", ColorsOut.BLUE);
+		String truckRequestStr = CommUtils.buildRequest("tester", "storefood", "storefood( 50 )", "coldstorageservice").toString();
 
 
-			try {
-				IApplMessage reply = connTcp.request(new ApplMessage(truckRequestStr));
-				ColorsOut.outappl("reply: "+reply.msgContent() , ColorsOut.BLUE);
-				assertTrue(reply.msgContent().contains("ticketaccepted"));
+		try {
+			IApplMessage reply = connTcp.request(new ApplMessage(truckRequestStr));
+			ColorsOut.outappl("reply: " + reply.msgContent(), ColorsOut.BLUE);
+			String ticket = reply.msgContent().split(",")[0].split("[\\\\(]")[1];
+			ColorsOut.outappl("ticket:  " + ticket, ColorsOut.ANSI_PURPLE);
+			String secret = reply.msgContent().split(",")[1];
+			ColorsOut.outappl("secret:  " + secret, ColorsOut.ANSI_PURPLE);
 
-			String pathStr = trolley_client.get().getResponseText();
-			CommUtils.delay(600);
-			//while (pathStr.split(" ").length < 4){ 	// controllo che ci siano almeno 4 elementi, amplio
-															// per percorsi futuri
-				//pathStr = trolley_client.get().getResponseText();
-				//CommUtils.delay(600);
-			//}
-
-			ColorsOut.outappl("response:  " +pathStr, ColorsOut.ANSI_PURPLE );
+			assertTrue(reply.msgContent().contains("ticketaccepted"));
+			assertTrue(!ticket.isEmpty() || !ticket.isBlank());
+			assertTrue(!secret.isEmpty() || !secret.isBlank());
 
 
-		}
-		catch (Exception e){
+			String response = trolley_client.get().getResponseText();
+			ColorsOut.outappl("response: " + response, ColorsOut.ANSI_PURPLE);
+			assertTrue(response.contains("created"));
+
+			truckRequestStr = CommUtils.buildRequest("tester", "sendticket", "sendticket( " + ticket + "," + secret + " )", "coldstorageservice").toString();
+			reply = connTcp.request(new ApplMessage(truckRequestStr));
+			ColorsOut.outappl("reply: " + reply.msgContent(), ColorsOut.BLUE);
+			assertTrue(reply.msgContent().contains("chargetaken"));
+
+		} catch (Exception e) {
 			ColorsOut.outerr("testLoadAccept ERROR:" + e.getMessage());
 		}
 
 	}
-/*
+
 	@Test
 	public void testConsecutiveLoadAccepted() {
-		ColorsOut.outappl("testLoadok_double STARTS" , ColorsOut.BLUE);
-		String truckRequestStr_1 = CommUtils.buildRequest("test","waste","details(Glass,6)","ctxcoldstorageservice").toString();
-		String truckRequestStr_2 = CommUtils.buildRequest("test","waste","details(Plastic,4)","ctxcoldstorageservice").toString();
+		ColorsOut.outappl("testLoadok_double STARTS", ColorsOut.BLUE);
+		String truckRequestStr_1 = CommUtils.buildRequest("tester", "storefood", "storefood( 50 )", "coldstorageservice").toString();
+		String truckRequestStr_2 = CommUtils.buildRequest("tester", "storefood", "storefood( 50 )", "coldstorageservice").toString();
+
+/*
+
 
 		try {
 
-		new Thread( (() ->{
+			String finalTruckRequestStr_2 = truckRequestStr_1;
+			String finalTruckRequestStr_3 = truckRequestStr_2;
+			String ticket_1=null;
+			String secret_1=null;
+			String ticket_2=null;
+			String secret_2=null;
+			new Thread((() -> {
 
-			String reply_1 = null;
-			String reply_2 = null;
+				IApplMessage reply_1 = null;
+				IApplMessage reply_2 = null;
+				try {
+					reply_1 = connTcp.request(new ApplMessage(finalTruckRequestStr_2));
+					reply_2 = connTcp.request(new ApplMessage(finalTruckRequestStr_3));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+
+				assertTrue(reply_1.msgContent().contains("ticketaccepted"));
+				ticket_1 = reply_1.msgContent().split(",")[0].split("[\\\\(]")[1];
+				ColorsOut.outappl("ticket:  " + ticket_1, ColorsOut.ANSI_PURPLE);
+				secret_1 = reply_1.msgContent().split(",")[1];
+				ColorsOut.outappl("secret:  " + secret_1, ColorsOut.ANSI_PURPLE);
+
+				assertTrue(!ticket_1.get().isEmpty() || !ticket_1.get().isBlank());
+				assertTrue(!secret_1.isEmpty() || !secret_1.isBlank());
+
+				assertTrue(reply_2.msgContent().contains("ticketaccepted"));
+				ticket_2 = reply_2.msgContent().split(",")[0].split("[\\\\(]")[1];
+				ColorsOut.outappl("ticket:  " + ticket_2, ColorsOut.ANSI_PURPLE);
+				secret_2 = reply_2.msgContent().split(",")[1];
+				ColorsOut.outappl("secret:  " + secret_2, ColorsOut.ANSI_PURPLE);
+
+				assertTrue(!ticket_2.isEmpty() || !ticket_2.isBlank());
+				assertTrue(!secret_2.isEmpty() || !secret_2.isBlank());
+
+			})).start();
+
+
+			String response = null;
 			try {
-				reply_1 = connTcp.request(truckRequestStr_1);
-				reply_2 = connTcp.request(truckRequestStr_2);
-			} catch (Exception e) {
+				response = trolley_client.get().getResponseText();
+			} catch (ConnectorException | IOException e) {
 				throw new RuntimeException(e);
 			}
 
-			assertTrue(reply_1.contains("loadAccept"));
-			assertTrue(reply_2.contains("loadAccept"));
-		} )).start();
+			ColorsOut.outappl("response: " + response, ColorsOut.ANSI_PURPLE);
+			assertTrue(response.contains("created"));
+			CommUtils.delay(600);
 
 
-			String pathStr = trolley_client.get().getResponseText();
+			truckRequestStr_1 = CommUtils.buildRequest("tester", "sendticket", "sendticket( " + ticket_1 + "," + secret_1 + " )", "coldstorageservice").toString();
+			truckRequestStr_2 = CommUtils.buildRequest("tester", "sendticket", "sendticket( " + ticket_2 + "," + secret_2 + " )", "coldstorageservice").toString();
 
-			while (pathStr.split(" ").length < 6 *//*&& (pathStr.contains("Glass") || pathStr.contains(("Plastic")))*//*){ 	// controllo che ci siano almeno 4 elementi, amplio
-				// per percorsi futuri
-				pathStr = trolley_client.get().getResponseText();
-				CommUtils.delay(600);
-			}
+			String finalTruckRequestStr_ = truckRequestStr_1;
+			String finalTruckRequestStr_1 = truckRequestStr_2;
+			new Thread((() -> {
 
-			ColorsOut.outappl("position " +pathStr, ColorsOut.ANSI_PURPLE );
-			assertTrue(pathStr.contains("ACCEPTED"));
-			pathStr = pathStr.substring(pathStr.indexOf("ACCEPTED"));
-
-			assertTrue(pathStr.contains("INDOOR"));
-			pathStr = pathStr.substring(pathStr.indexOf("INDOOR"));
-
-			assertTrue(pathStr.contains("Glass"));
-			pathStr = pathStr.substring(pathStr.indexOf("Glass"));
+				IApplMessage reply_1 = null;
+				IApplMessage reply_2 = null;
+				try {
+					reply_1 = connTcp.request(new ApplMessage(finalTruckRequestStr_));
+					reply_2 = connTcp.request(new ApplMessage(finalTruckRequestStr_1));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 
 
+				ColorsOut.outappl("reply: " + reply_1.msgContent(), ColorsOut.BLUE);
+				assertTrue(reply_1.msgContent().contains("chargetaken"));
+				ColorsOut.outappl("reply: " + reply_2.msgContent(), ColorsOut.BLUE);
+				assertTrue(reply_2.msgContent().contains("chargetaken"));
 
-			assertTrue(pathStr.contains("ACCEPTED"));
+			})).start();
 
-			var oldPathStr = pathStr.substring(0,pathStr.indexOf("ACCEPTED"));
-
-			assertFalse(oldPathStr.contains("HOME"));
-			pathStr = pathStr.substring(pathStr.indexOf("ACCEPTED"));
-
-			assertTrue(pathStr.contains("INDOOR"));
-			pathStr = pathStr.substring(pathStr.indexOf("INDOOR"));
-
-			assertTrue(pathStr.contains("Plastic"));
-			pathStr = pathStr.substring(pathStr.indexOf("Plastic"));
-
-
-		}
-		catch (Exception e){
+			} catch (Exception e) {
 			ColorsOut.outerr("testLoadAccept ERROR:" + e.getMessage());
+
 		}
+*/
 
-	}*/
-
-
-
+	}
 }

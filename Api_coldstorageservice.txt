@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 {"actor":"coldstorageservice", "msgType":"eventtransition", "sender":"sys", "msgId":"pickupindoordone"}
 {"actor":"coldroom", "msgType":"request", "sender":"coldstorageservice", "msgId":"howmanykgavailable"}
 {"actor":"transporttrolley", "msgType":"request", "sender":"coldstorageservice", "msgId":"dodepositaction"}
@@ -89,12 +90,16 @@
 {"actor":"led", "msgType":"dispatch", "sender":"controllerled", "msgId":"ledCmd"}
 {"actor":"controllerled", "msgType":"eventtransition", "sender":"sys", "msgId":"robotstate"}
 {"actor":"coldstorageservice", "msgType":"eventtransition", "sender":"sys", "msgId":"pickupindoordone"}
+=======
+{"actor":"coldstorageservice", "msgType":"eventtransition", "sender":"sys", "msgId":"robotisinindoor"}
+>>>>>>> Stashed changes
 {"actor":"coldroom", "msgType":"request", "sender":"coldstorageservice", "msgId":"howmanykgavailable"}
 {"actor":"transporttrolley", "msgType":"request", "sender":"coldstorageservice", "msgId":"dodepositaction"}
 {"actor":"coldroom", "msgType":"dispatch", "sender":"coldstorageservice", "msgId":"updatekg"}
 {"actor":"basicrobot", "msgType":"request", "sender":"transporttrolley", "msgId":"engage"}
 {"actor":"sys", "msgType":"event", "sender":"transporttrolley", "msgId":"robotstate"}
 {"actor":"basicrobot", "msgType":"request", "sender":"transporttrolley", "msgId":"moverobot"}
+<<<<<<< Updated upstream
 {"actor":"sys", "msgType":"event", "sender":"transporttrolley", "msgId":"pickupindoordone"}
 {"actor":"sys", "msgType":"event", "sender":"transporttrolley", "msgId":"alarm"}
 {"actor":"sonar", "msgType":"eventtransition", "sender":"sys", "msgId":"sonardata"}
@@ -103,3 +108,6 @@
 {"actor":"transporttrolley", "msgType":"dispatch", "sender":"sonar", "msgId":"stopobstacle"}
 {"actor":"led", "msgType":"dispatch", "sender":"controllerled", "msgId":"ledCmd"}
 {"actor":"controllerled", "msgType":"eventtransition", "sender":"sys", "msgId":"robotstate"}
+=======
+{"actor":"sys", "msgType":"event", "sender":"transporttrolley", "msgId":"robotisinindoor"}
+>>>>>>> Stashed changes
