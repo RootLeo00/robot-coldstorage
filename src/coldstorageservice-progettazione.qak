@@ -375,7 +375,7 @@ QActor transporttrolley context ctxcoldstorageservice{
  * ------------------------------------------------------------------
 */ 
 CodedQActor sonarsimulator  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
-//CodedQActor sonarfisico  context ctxsonarqak23 className "sonarHCSR04Support23"   //SU RASP
+//CodedQActor sonarfisico  context ctxcoldstorageservice className "sonarHCSR04Support23"   //SU RASP
 //CodedQActor datalogger     context ctxsonarqak23 className "rx.dataLogger"
 CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataCleaner"
 CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
@@ -389,7 +389,7 @@ QActor sonar context ctxcoldstorageservice{
 	#]
 	State s0 initial{  
 		println("sonar | start") 
-		[# subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonarsimulator") #]
+		[# subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonarfisico") #]
 	}
 	Goto work
 	 

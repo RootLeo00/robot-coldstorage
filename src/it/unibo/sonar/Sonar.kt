@@ -27,7 +27,7 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 				state("s0") { //this:State
 					action { //it:State
 						CommUtils.outblack("sonar | start")
-						 subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonarsimulator")  
+						 subscribeToLocalActor("distancefilter").subscribeToLocalActor("datacleaner").subscribeToLocalActor("sonarfisico")  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
