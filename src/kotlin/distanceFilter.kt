@@ -10,7 +10,7 @@ import unibo.basicomm23.utils.CommUtils
 
 
 class distanceFilter (name : String ) : ActorBasic( name ) {
-val LimitDistance = 50
+val LimitDistance = 30
 //@kotlinx.coroutines.ObsoleteCoroutinesApi
 
     override suspend fun actorBody(msg: IApplMessage) {
@@ -36,7 +36,8 @@ val LimitDistance = 50
  		if( Distance > 0 && Distance < LimitDistance ){
 	 		val m1 = MsgUtil.buildEvent(name, "obstacle", "obstacle($data)")
 			CommUtils.outgreen("$tt $name |  emitLocalStreamEvent m1= $m1")
-			emitLocalStreamEvent( m1 ) //propagate event obstacle
+			//emitLocalStreamEvent( m1 ) //propagate event obstacle
+			emit(m1)
      	}else{
 			//println("$tt $name | DISCARDS $Distance ")
  		}				
