@@ -5,12 +5,9 @@ bin/default
 .project
 .idea
 build
-logs
-*.class 
-.gradle
-.settings
+logs 
+
 log4jInfo.log
-.obsidian
 
 #node
 nodeCode/*/node_modules/

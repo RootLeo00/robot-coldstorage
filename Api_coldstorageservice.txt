@@ -183,6 +183,4 @@
 {"actor":"coldroom", "msgType":"dispatch", "sender":"coldstorageservice", "msgId":"updatekg"}
 {"actor":"basicrobot", "msgType":"request", "sender":"transporttrolley", "msgId":"engage"}
 {"actor":"basicrobot", "msgType":"request", "sender":"transporttrolley", "msgId":"moverobot"}
-{"actor":"sys", "msgType":"event", "sender":"transporttrolley", "msgId":"robotisinindoor"}
-{"actor":"coldstorageservice", "msgType":"request", "sender":"guimok", "msgId":"storefood"}
-{"actor":"coldstorageservice", "msgType":"request", "sender":"guimok", "msgId":"sendticket"}
+
