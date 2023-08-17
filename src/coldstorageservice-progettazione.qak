@@ -381,7 +381,7 @@ CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataClean
 CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
 
 QActor sonar context ctxcoldstorageservice{ 
-	[# val DLIMIT = 70 ; 
+	[# val DLIMIT = 10 ; 
 	   var stopped=false;
 	   
 	   	var startInstant:Long = 0;
@@ -412,7 +412,7 @@ QActor sonar context ctxcoldstorageservice{
 				[# stopped = false;
 					startInstant=System.currentTimeMillis();
 				#]
-			}
+			} 
 		}
 	}
 	Goto work 
