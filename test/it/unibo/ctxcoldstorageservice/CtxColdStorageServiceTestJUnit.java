@@ -98,41 +98,6 @@ public class CtxColdStorageServiceTestJUnit {
 
 
 	@Test
-	public void testSingleLoadExpirationTime() {
-		ColorsOut.outappl("testLoadok STARTS", ColorsOut.BLUE);
-		String truckRequestStr = CommUtils.buildRequest("tester", "storefood", "storefood( 50 )", "coldstorageservice").toString();
-
-
-		try {
-			IApplMessage reply = connTcp[0].request(new ApplMessage(truckRequestStr));
-			ColorsOut.outappl("reply: " + reply.msgContent(), ColorsOut.BLUE);
-			String ticket = reply.msgContent().split(",")[0].split("[\\\\(]")[1];
-			ColorsOut.outappl("ticket:  " + ticket, ColorsOut.ANSI_PURPLE);
-			String secret = reply.msgContent().split(",")[1];
-			ColorsOut.outappl("secret:  " + secret, ColorsOut.ANSI_PURPLE);
-
-			assertTrue(reply.msgContent().contains("ticketaccepted"));
-			assertTrue(!ticket.isEmpty() || !ticket.isBlank());
-			assertTrue(!secret.isEmpty() || !secret.isBlank());
-
-			String response = trolley_client.get().getResponseText();
-			ColorsOut.outappl("response: " + response, ColorsOut.ANSI_PURPLE);
-			assertTrue(response.contains("created"));
-
-			CommUtils.delay(11000);
-			truckRequestStr = CommUtils.buildRequest("tester", "sendticket", "sendticket( " + ticket + "," + secret + " )", "coldstorageservice").toString();
-			reply = connTcp[0].request(new ApplMessage(truckRequestStr));
-			ColorsOut.outappl("reply: " + reply.msgContent(), ColorsOut.BLUE);
-			assertTrue(reply.msgContent().contains("ticketexpired"));
-
-		} catch (Exception e) {
-			ColorsOut.outerr("testLoadAccept ERROR:" + e.getMessage());
-		}
-
-
-	}
-
-	@Test
 	public void testMultipleLoad() throws InterruptedException {
 		ColorsOut.outappl("testLoadok_double STARTS", ColorsOut.BLUE);
 		int numberOfThreads = 10;
@@ -172,4 +137,41 @@ public class CtxColdStorageServiceTestJUnit {
 		latch.await();
 		assertEquals(numberOfThreads, i);
 	}
+
+
+	@Test
+	public void testSingleLoadExpirationTime() {
+		ColorsOut.outappl("testLoadok STARTS", ColorsOut.BLUE);
+		String truckRequestStr = CommUtils.buildRequest("tester", "storefood", "storefood( 50 )", "coldstorageservice").toString();
+
+
+		try {
+			IApplMessage reply = connTcp[0].request(new ApplMessage(truckRequestStr));
+			ColorsOut.outappl("reply: " + reply.msgContent(), ColorsOut.BLUE);
+			String ticket = reply.msgContent().split(",")[0].split("[\\\\(]")[1];
+			ColorsOut.outappl("ticket:  " + ticket, ColorsOut.ANSI_PURPLE);
+			String secret = reply.msgContent().split(",")[1];
+			ColorsOut.outappl("secret:  " + secret, ColorsOut.ANSI_PURPLE);
+
+			assertTrue(reply.msgContent().contains("ticketaccepted"));
+			assertTrue(!ticket.isEmpty() || !ticket.isBlank());
+			assertTrue(!secret.isEmpty() || !secret.isBlank());
+
+			String response = trolley_client.get().getResponseText();
+			ColorsOut.outappl("response: " + response, ColorsOut.ANSI_PURPLE);
+			assertTrue(response.contains("created"));
+
+			CommUtils.delay(11000);
+			truckRequestStr = CommUtils.buildRequest("tester", "sendticket", "sendticket( " + ticket + "," + secret + " )", "coldstorageservice").toString();
+			reply = connTcp[0].request(new ApplMessage(truckRequestStr));
+			ColorsOut.outappl("reply: " + reply.msgContent(), ColorsOut.BLUE);
+			assertTrue(reply.msgContent().contains("ticketexpired"));
+
+		} catch (Exception e) {
+			ColorsOut.outerr("testLoadAccept ERROR:" + e.getMessage());
+		}
+
+
+	}
+
 }
