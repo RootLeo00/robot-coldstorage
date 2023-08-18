@@ -24,6 +24,10 @@ repositories {
 }
 
 dependencies {
+
+    //JsonObject
+    implementation 'org.json:json:20230618'
+
     // Align versions of all Kotlin components
     implementation platform('org.jetbrains.kotlin:kotlin-bom')
 

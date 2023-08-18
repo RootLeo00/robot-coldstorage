@@ -80,7 +80,9 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						CommUtils.outred("$name | robot is in indoor")
 						CommUtils.outred("$name | moving robot to coldroom")
-						emit("robotisinindoor", "robotisindoor(ok)" ) 
+						
+									var event = MsgUtil.buildEvent( "transporttrolley","pickupindoordone","ok");	
+									emitLocalEvent(event); //not propagated to remote actors
 						request("moverobot", "moverobot($COLDROOMX,$COLDROOMY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
@@ -114,18 +116,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t516",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
+					 transition(edgeName="t516",targetState="waitforcommands",cond=whenReply("moverobotdone"))
 					transition(edgeName="t517",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
-				}	 
-				state("emitrobotisinhome") { //this:State
-					action { //it:State
-						CommUtils.outred("$name | robot is in home")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="waitforcommands", cond=doswitch() )
 				}	 
 				state("robotmovefailed") { //this:State
 					action { //it:State
