@@ -60,7 +60,7 @@ Si predispongono due CodedQActor usabili per costruire una pipe che ha sonar com
 Se l'attore Sonar emettesse direttamente l'evento **alarm**, fermando così il basicrobot il Transport Trolley dovrebbe gestire i casi di fallimento dovuti alla risposta **moverobotfailed** data dal basic robot. Questo è il problema che si è riscontrato nello sprint3 originale. 
 In questo sprint3.4, si è deciso di inserire tutta la logica dell'alarm requirement all'interno dell'entità Sonar, ma non sarà questa entità a fermare direttamente il basicrobot, bensì sarà solo il Transport Trolley ad avere la responsabilità di fermare il basicrobot. 
 Si veda l'entità Sonar nella progettazione per maggiori dettagli, al seguente link:
-https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.4/src/coldstorageservice.qak
+https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageservice.qak
 
 
 ## Il timer 
