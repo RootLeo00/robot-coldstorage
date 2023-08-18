@@ -25,11 +25,13 @@ with Diagram('coldstorageserviceArch', show=False, outformat='png', graph_attr=g
           coldstorageservice=Custom('coldstorageservice','./qakicons/symActorSmall.png')
           coldroom=Custom('coldroom','./qakicons/symActorSmall.png')
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
-     sys >> Edge(color='red', style='dashed', xlabel='robotisinindoor', fontcolor='red') >> coldstorageservice
+          guimok=Custom('guimok','./qakicons/symActorSmall.png')
+     sys >> Edge(color='red', style='dashed', xlabel='pickupindoordone', fontcolor='red') >> coldstorageservice
      coldstorageservice >> Edge(color='magenta', style='solid', xlabel='howmanykgavailable', fontcolor='magenta') >> coldroom
      coldstorageservice >> Edge(color='magenta', style='solid', xlabel='dodepositaction', fontcolor='magenta') >> transporttrolley
      coldstorageservice >> Edge(color='blue', style='solid', xlabel='updatekg', fontcolor='blue') >> coldroom
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='engage', fontcolor='magenta') >> basicrobot
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='moverobot', fontcolor='magenta') >> basicrobot
-     transporttrolley >> Edge( xlabel='robotisinindoor', **eventedgeattr, fontcolor='red') >> sys
+     guimok >> Edge(color='magenta', style='solid', xlabel='storefood', fontcolor='magenta') >> coldstorageservice
+     guimok >> Edge(color='magenta', style='solid', xlabel='sendticket', fontcolor='magenta') >> coldstorageservice
 diag
