@@ -181,7 +181,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 */     
 QActor coldroom context ctxcoldstorageservice{   
 	[# var Kgstored : Long = 0 ;
-		var MAXW : Long = 100;
+		var MAXW : Long = DomainSystemConfig.getMaxWeight();
 		var Kgavailable=MAXW; #
 	] 
 	
@@ -196,7 +196,7 @@ QActor coldroom context ctxcoldstorageservice{
 	
 	
 	State replywithcoldroomspacestate{ 
-		//send the actual state of the space
+		//send the actual state of the space 
 		println("$name | kg available $Kgavailable") color yellow
 		replyTo howmanykgavailable with kgavailable : kgavailable($Kgavailable)
 	}

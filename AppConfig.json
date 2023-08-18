@@ -1,3 +1,4 @@
 {
-  "Expirationtime": "1000"
+  "Expirationtime": "1000",
+  "Maxweight": "100"
 }

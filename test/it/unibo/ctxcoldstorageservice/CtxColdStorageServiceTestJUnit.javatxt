@@ -17,6 +17,9 @@ import unibo.basicomm23.utils.CommUtils;
 
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.*;
@@ -29,11 +32,11 @@ public class CtxColdStorageServiceTestJUnit {
 	private static CoapClient service_client = null;
 
 	private final CoapObserveRelation trolley_relation = null;
-	private static CoapClient trolley_client = null;
 
-	static ConnTcp connTcp;
-	static int MAXPB = 10;
-	static int MAXGB = 20;
+	private static CoapClient trolley_client = null;
+	static int MAXREQ = 20;
+	static ConnTcp[] connTcp=new ConnTcp[MAXREQ];
+
 
 
 	@BeforeClass
@@ -52,27 +55,14 @@ public class CtxColdStorageServiceTestJUnit {
 		trolley_client = new CoapClient("coap://" + trolley_ipaddr + "/" + trolley_context + "/" + trolley_destactor);
 
 		try {
-			connTcp = new ConnTcp("localhost", 8038);
+			for (int i = 0; i<connTcp.length;i++) {
+				connTcp[i] = new ConnTcp("localhost", 8038);
+			}
+
 
 		} catch (Exception e) {
 			ColorsOut.outerr("initial ERROR:" + e.getMessage());
 		}
-/*		String initContainersStr = CommUtils.buildDispatch("test","init_capacity","values("+MAXGB+","+MAXPB+")","ctxcoldstorageservice").toString();
-
-
-		//Dispatch all_position : coordinates(HOMEX,HOMEY,INDOORX,INDOORY,PLASTICX,PLASTICY,GLASSX,GLASSY)
-
-		String initPositionsStr = CommUtils.buildDispatch("test","all_position", "coordinates(0,0,1,4,6,3,5,0)","transporttrolley").toString();
-		try{
-			connTcp = new ConnTcp("localhost", 8038);
-			connTcp.forward(new ApplMessage(initContainersStr));
-			connTcp.forward(new ApplMessage(initPositionsStr));
-
-		}catch(Exception e){
-			ColorsOut.outerr("initial ERROR:" + e.getMessage());
-
-		}*/
-
 	}
 
 
@@ -89,7 +79,10 @@ public class CtxColdStorageServiceTestJUnit {
 	public static void down() {
 
 		try {
-			connTcp.close();
+			for (int i = 0; i<connTcp.length;i++) {
+				connTcp[i].close();
+			}
+
 		} catch (Exception e) {
 			ColorsOut.outerr("close ERROR:" + e.getMessage());
 		}
@@ -103,14 +96,15 @@ public class CtxColdStorageServiceTestJUnit {
 		connTcp.forward(resetDispatch);
 	}*/
 
+
 	@Test
-	public void testSingleLoadAccepted() {
+	public void testSingleLoadExpirationTime() {
 		ColorsOut.outappl("testLoadok STARTS", ColorsOut.BLUE);
 		String truckRequestStr = CommUtils.buildRequest("tester", "storefood", "storefood( 50 )", "coldstorageservice").toString();
 
 
 		try {
-			IApplMessage reply = connTcp.request(new ApplMessage(truckRequestStr));
+			IApplMessage reply = connTcp[0].request(new ApplMessage(truckRequestStr));
 			ColorsOut.outappl("reply: " + reply.msgContent(), ColorsOut.BLUE);
 			String ticket = reply.msgContent().split(",")[0].split("[\\\\(]")[1];
 			ColorsOut.outappl("ticket:  " + ticket, ColorsOut.ANSI_PURPLE);
@@ -121,112 +115,61 @@ public class CtxColdStorageServiceTestJUnit {
 			assertTrue(!ticket.isEmpty() || !ticket.isBlank());
 			assertTrue(!secret.isEmpty() || !secret.isBlank());
 
-
 			String response = trolley_client.get().getResponseText();
 			ColorsOut.outappl("response: " + response, ColorsOut.ANSI_PURPLE);
 			assertTrue(response.contains("created"));
 
+			CommUtils.delay(11000);
 			truckRequestStr = CommUtils.buildRequest("tester", "sendticket", "sendticket( " + ticket + "," + secret + " )", "coldstorageservice").toString();
-			reply = connTcp.request(new ApplMessage(truckRequestStr));
+			reply = connTcp[0].request(new ApplMessage(truckRequestStr));
 			ColorsOut.outappl("reply: " + reply.msgContent(), ColorsOut.BLUE);
-			assertTrue(reply.msgContent().contains("chargetaken"));
+			assertTrue(reply.msgContent().contains("ticketexpired"));
 
 		} catch (Exception e) {
 			ColorsOut.outerr("testLoadAccept ERROR:" + e.getMessage());
 		}
 
+
 	}
 
 	@Test
-	public void testConsecutiveLoadAccepted() {
+	public void testMultipleLoad() throws InterruptedException {
 		ColorsOut.outappl("testLoadok_double STARTS", ColorsOut.BLUE);
-		String truckRequestStr_1 = CommUtils.buildRequest("tester", "storefood", "storefood( 50 )", "coldstorageservice").toString();
-		String truckRequestStr_2 = CommUtils.buildRequest("tester", "storefood", "storefood( 50 )", "coldstorageservice").toString();
+		int numberOfThreads = 10;
+		ExecutorService service = Executors.newFixedThreadPool(10);
+		CountDownLatch latch = new CountDownLatch(numberOfThreads);
+		int i=0;
 
-/*
-
-
-		try {
-
-			String finalTruckRequestStr_2 = truckRequestStr_1;
-			String finalTruckRequestStr_3 = truckRequestStr_2;
-			String ticket_1=null;
-			String secret_1=null;
-			String ticket_2=null;
-			String secret_2=null;
-			new Thread((() -> {
-
-				IApplMessage reply_1 = null;
-				IApplMessage reply_2 = null;
+		for (i = 0; i < numberOfThreads; i++) {
+			int finalI = i;
+			service.submit(() -> {
 				try {
-					reply_1 = connTcp.request(new ApplMessage(finalTruckRequestStr_2));
-					reply_2 = connTcp.request(new ApplMessage(finalTruckRequestStr_3));
+					CommUtils.delay(1000);
+					String truckRequestStr = CommUtils.buildRequest("tester", "storefood", "storefood(50)", "coldstorageservice").toString();
+					ColorsOut.outappl(truckRequestStr+"\n", ColorsOut.ANSI_YELLOW);
+					CommUtils.delay(1000);
+					IApplMessage reply = connTcp[finalI].request(new ApplMessage(truckRequestStr));
+					ColorsOut.outappl("reply: " + reply.msgContent()+"\n", ColorsOut.BLUE);
+					assertTrue(reply.msgContent().contains("ticketaccepted") || reply.msgContent().contains("ticketdenied"));
+
+					if(reply.msgContent().contains("ticketaccepted")){
+						String ticket = reply.msgContent().split(",")[0].split("[\\\\(]")[1];
+						ColorsOut.outappl("ticket:  " + ticket, ColorsOut.ANSI_PURPLE);
+						String secret = reply.msgContent().split(",")[1];
+						ColorsOut.outappl("secret:  " + secret, ColorsOut.ANSI_PURPLE);
+						assertTrue(!ticket.isEmpty() || !ticket.isBlank());
+						assertTrue(!secret.isEmpty() || !secret.isBlank());
+					}
+					CommUtils.delay(1000);
+				} catch (InterruptedException e) {
+					// Handle exception
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
-
-				assertTrue(reply_1.msgContent().contains("ticketaccepted"));
-				ticket_1 = reply_1.msgContent().split(",")[0].split("[\\\\(]")[1];
-				ColorsOut.outappl("ticket:  " + ticket_1, ColorsOut.ANSI_PURPLE);
-				secret_1 = reply_1.msgContent().split(",")[1];
-				ColorsOut.outappl("secret:  " + secret_1, ColorsOut.ANSI_PURPLE);
-
-				assertTrue(!ticket_1.get().isEmpty() || !ticket_1.get().isBlank());
-				assertTrue(!secret_1.isEmpty() || !secret_1.isBlank());
-
-				assertTrue(reply_2.msgContent().contains("ticketaccepted"));
-				ticket_2 = reply_2.msgContent().split(",")[0].split("[\\\\(]")[1];
-				ColorsOut.outappl("ticket:  " + ticket_2, ColorsOut.ANSI_PURPLE);
-				secret_2 = reply_2.msgContent().split(",")[1];
-				ColorsOut.outappl("secret:  " + secret_2, ColorsOut.ANSI_PURPLE);
-
-				assertTrue(!ticket_2.isEmpty() || !ticket_2.isBlank());
-				assertTrue(!secret_2.isEmpty() || !secret_2.isBlank());
-
-			})).start();
-
-
-			String response = null;
-			try {
-				response = trolley_client.get().getResponseText();
-			} catch (ConnectorException | IOException e) {
-				throw new RuntimeException(e);
-			}
-
-			ColorsOut.outappl("response: " + response, ColorsOut.ANSI_PURPLE);
-			assertTrue(response.contains("created"));
-			CommUtils.delay(600);
-
-
-			truckRequestStr_1 = CommUtils.buildRequest("tester", "sendticket", "sendticket( " + ticket_1 + "," + secret_1 + " )", "coldstorageservice").toString();
-			truckRequestStr_2 = CommUtils.buildRequest("tester", "sendticket", "sendticket( " + ticket_2 + "," + secret_2 + " )", "coldstorageservice").toString();
-
-			String finalTruckRequestStr_ = truckRequestStr_1;
-			String finalTruckRequestStr_1 = truckRequestStr_2;
-			new Thread((() -> {
-
-				IApplMessage reply_1 = null;
-				IApplMessage reply_2 = null;
-				try {
-					reply_1 = connTcp.request(new ApplMessage(finalTruckRequestStr_));
-					reply_2 = connTcp.request(new ApplMessage(finalTruckRequestStr_1));
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-
-
-				ColorsOut.outappl("reply: " + reply_1.msgContent(), ColorsOut.BLUE);
-				assertTrue(reply_1.msgContent().contains("chargetaken"));
-				ColorsOut.outappl("reply: " + reply_2.msgContent(), ColorsOut.BLUE);
-				assertTrue(reply_2.msgContent().contains("chargetaken"));
-
-			})).start();
-
-			} catch (Exception e) {
-			ColorsOut.outerr("testLoadAccept ERROR:" + e.getMessage());
-
+				latch.countDown();
+			});
 		}
-*/
-
+		latch.await();
+		assertEquals(numberOfThreads, i);
 	}
 }
