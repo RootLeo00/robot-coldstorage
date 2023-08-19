@@ -20,7 +20,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		 
 					var Kgtoload : Int = 0; 
-					var Expirationtime:Long = 100;
+					var Expirationtime:Long = DomainSystemConfig.getExpirationTime();
 					var ticketList=it.unibo.ticket.TicketList(Expirationtime);
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State

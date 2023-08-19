@@ -79,7 +79,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 		//*********** INTERAZIONE CON SERVICE ACCESS GUI
 		[# 
 			var Kgtoload : Int = 0; 
-			var Expirationtime:Long = 100;
+			var Expirationtime:Long = DomainSystemConfig.getExpirationTime();
 			var ticketList=it.unibo.ticket.TicketList(Expirationtime);
 			#
 		]
@@ -202,7 +202,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 */     
 QActor coldroom context ctxcoldstorageservice{   
 	[# var Kgstored : Long = 0 ;
-		var MAXW : Long = 100;
+		var MAXW : Long = DomainSystemConfig.getMaxWeight();
 		var Kgavailable=MAXW; #
 	] 
 	
@@ -249,14 +249,15 @@ QActor coldroom context ctxcoldstorageservice{
 QActor transporttrolley context ctxcoldstorageservice{     
 	
 	[#
-		var COLDROOMX=4;
-		var COLDROOMY=3;
-		var INDOORX=0;
-		var INDOORY=4;
-		var HOMEX=0;
-		var HOMEY=0;
-		var TICKETCODE=-1;
+		var COLDROOMX=DomainSystemConfig.getColdRoomX();
+		var COLDROOMY=DomainSystemConfig.getColdRoomY();
+		var INDOORX=DomainSystemConfig.getIndoorX();
+		var INDOORY=DomainSystemConfig.getIndoorY();
+		var HOMEX=DomainSystemConfig.getHomeX();
+		var HOMEY=DomainSystemConfig.getHomeY();
+		var TICKETCODE=-1; 
 		
+		var StepTime=DomainSystemConfig.getStepTime(); 
 		var lastmove=""; //var per gestire la alarm/endalarm
 
 	#]
@@ -267,7 +268,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 	discardMsg Off
 	//try to engage basicrobot on startup
     println("${name} |  request engage") color magenta
-    request basicrobot -m engage : engage( transporttrolley , 300)
+    request basicrobot -m engage : engage( transporttrolley , $StepTime )
   	}
    	Transition t0 whenReply engagedone    -> waitforcommands
                 whenReply engagerefused -> waitrobotfree

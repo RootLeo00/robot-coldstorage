@@ -24,6 +24,10 @@ repositories {
 }
 
 dependencies {
+
+    //JsonObject
+    implementation 'org.json:json:20230618'
+
     // Align versions of all Kotlin components
     implementation platform('org.jetbrains.kotlin:kotlin-bom')
 
@@ -98,6 +102,9 @@ testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.7'
     implementation name: 'unibo.planner23-1.0'
     // https://mvnrepository.com/artifact/com.googlecode.aima-java/aima-core
     implementation group: 'com.googlecode.aima-java', name: 'aima-core', version: '3.0.0'
+
+    // Use JUnit test framework.
+    testImplementation 'junit:junit:4.13.2'
 
 }
 
