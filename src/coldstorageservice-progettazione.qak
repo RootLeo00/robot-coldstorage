@@ -19,7 +19,7 @@ Reply chargetaken : chargetaken(ARG)					//sender:coldstorageservice receiver:se
 Reply ticketexpired: ticketexpired(ARG) 				//sender:coldstorageservice receiver:serviceaccessgui 
 Reply ticketrejected: ticketrejected(ARG) 				//sender:coldstorageservice receiver:serviceaccessgui 
 //-------------------------------------------------------------
-
+ 
 
 //--------Transport trolley section-----------------------------------
 Request dodepositaction:dodepositaction(TICKETCODE)//sender:coldstorageservice receiver:transporttrolley
