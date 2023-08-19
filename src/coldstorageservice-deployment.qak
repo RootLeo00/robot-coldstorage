@@ -69,6 +69,7 @@ Context ctxsonar ip [host="127.0.0.1" port=8040 ]
 //Context ctxguimock ip [host="127.0.0.1" port=8050] 
 Context ctxcoldstorageservice ip [host="localhost" port=8038 ] 
 ExternalQActor basicrobot context ctxbasicrobot  
+
  
  
 /*  
