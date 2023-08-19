@@ -4,7 +4,7 @@
 - individuare un architettura logica iniziale che definisca le macro-entità del sistema e le loro interazioni
 - definire un piano di lavoro iniziale 
 ### architettura logica sprint0
-![[coldstorageservicearch-sprint0.png]]
+![[coldstorageservicearchsprint0V4.png]]
 ### Goal dello sprint1
 - prototipazione del core business ColdStorageService + TransportTrolley+ ColdRoom
 
