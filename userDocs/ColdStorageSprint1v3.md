@@ -93,7 +93,7 @@ Il sistema è composto da:
   - *Cold Room*: aggiorna lo stato della quantità di kg
   - *Scarico*: entità esterna che effettua una operazione di scarico della Cold Room, diminuendo i kg presenti in essa
    per evitare di 
-  ![[coldstorageservicearch-analisi.png]]
+  ![[coldstorageservicearch-analisi2.png]]
 
 ## Test plan
 si prevede di testare le seguenti funzionalità del sistema
@@ -106,37 +106,31 @@ creare un attore che funge da fake user e nel codice Kotlin inseriamo delle Asse
 - fake user inserisce il ticket e si aspetta un dispatch di chargetaken
 - dopo un chargetaken, controllare la cold room che abbia diminuito lo storage
 ```Java
-public class CtxColdStorageServiceTest{
-
-    @Test
-    public void mainUseCaseTest(){
-        //connect to port
-        try{
-        Socket client= new Socket("localhost", 8038);
-        PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
-        //send message
-        out.write("msg(storefood,Request,tester,coldstorageservice,storefood( 10 ),1)");
-        //wait for response
-        String response= in.readLine();
-        //aspected ticketaccepted reply
-        assertTrue(response.contains("ticketaccepted"));
-        //some string manipulation to get parameters from response
-        String ticket= response.split(",")[4].split("(")[1];
-        String secret= response.split(",")[5];
-        out.write("msg(sendticket,Dispatch,tester,coldstorageservice,sendticket( "+ticket+","+secret+" ),2)");
-        response= in.readLine();
-        //aspected chargetaken dispatch
-        assertTrue(response.contains("chargetaken"));
-        }catch(Exception e){
-            System.out.println(e.getStackTrace());
-        }
-    }
+@Test  
+public void testMultipleLoad() throws InterruptedException {  
+   int numberOfThreads = 10;  
+   ...
+   
+   for (i = 0; i < numberOfThreads; i++) {  
+      int finalI = i;  
+      service.submit(() -> {  
+            String truckRequestStr = CommUtils.buildRequest("tester", "storefood", "storefood(50)", "coldstorageservice").toString();  
+            IApplMessage reply = connTcp[finalI].request(new ApplMessage(truckRequestStr));  
+            assertTrue(reply.msgContent().contains("ticketaccepted") || reply.msgContent().contains("ticketdenied"));  
+  
+            if(reply.msgContent().contains("ticketaccepted")){  
+               String ticket = reply.msgContent().split(",")[0].split("[\\\\(]")[1];  
+               String secret = reply.msgContent().split(",")[1];  
+               assertTrue(!ticket.isEmpty() || !ticket.isBlank());  
+               assertTrue(!secret.isEmpty() || !secret.isBlank());  
+            }  
+         latch.countDown();  
+      });  
+   }  
+   latch.await();  
 }
-
 ```
-
+Il test prevede di creare molteplici "fake user", ognuno dei quali crea una connessione con ColdStorageService e invia una richiesta.
 ### realizzazione mediante eventi 
 per implementare i test si prevede di sfruttare la generazione degli eventi da parte del transport trolley e della cooldroom in modo da essere il meno invasivi possibile sul sistema.
 
@@ -185,7 +179,7 @@ private int kgToStore;
 l'attore resta in uno stato di attesa in cui attende uno dei seguenti messaggi:
 - `Request storefood : storefood( KG )`
 - `Request sendticket: sendticket(TICKETCODE, TICKETSECRET)`
-- `Event robotisinindoor:robotisinindoor(ARG)`
+- `Event pickupindoordone:pickupindoordone(ARG)`
 - `Event depositactionended:depositactionended(ARG)`
 ognuno di questi messaggi innesca un diverso servizio fornito dall'attore, che lo riporta in questo stato in attesa di altri messaggi.
 
@@ -223,8 +217,27 @@ il ticket può quindi trovarsi in due stati distinti
 ### l'attore GUIMOK 
 si prevede di aggiungere all'architettura logica predisposta in analisi del problema un attore **GUIMOK** per simulare il comportamento di un utente che interagisce con la main logic di sistema
 
+## Lettura parametri di configurazione da file
+Si è deciso di impostare i parametri del sistema tramite un file JSON.
+A run-time, l'applicazione legge il file JSON e inizializza i parametri di conseguenza:
+```Java
+object DomainSystemConfig {  
+  
+   private var Expirationtime : Long = 0;  
+    private var Maxweight : Long = 0;  
+  
+    init {  
+            val config = File("AppConfig.json").readText(Charsets.UTF_8)  
+            val jsonObject   =  JSONObject( config );  
+  
+            Expirationtime= jsonObject.getLong("Expirationtime")  
+            Maxweight= jsonObject.getLong("Maxweight")  
+        }  
+}
+```
+
 ### Architettura finale progettazione
-![[coldstorageservicearch-progettazione.png]]
+![[coldstorageservicearch-progettazione2.png]]
 
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
