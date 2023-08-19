@@ -88,7 +88,9 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						 lastmove = "moverobottocoldroom"  
 						CommUtils.outmagenta("${name} | robot is in indoor")
 						CommUtils.outmagenta("${name} | moving robot to coldroom")
-						emit("pickupindoordone", "pickupindoordone(ok)" ) 
+						
+									var event = MsgUtil.buildEvent( "transporttrolley","pickupindoordone","ok");	
+									emitLocalEvent(event); //not propagated to remote actors
 						request("moverobot", "moverobot($COLDROOMX,$COLDROOMY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}

@@ -305,7 +305,10 @@ QActor transporttrolley context ctxcoldstorageservice{
 		//send event "robot is in indoor"
 		println("${name} | robot is in indoor") color magenta
 		println("${name} | moving robot to coldroom") color magenta
-		emit pickupindoordone:pickupindoordone(ok)
+		[#
+			var event = MsgUtil.buildEvent( "transporttrolley","pickupindoordone","ok");	
+			emitLocalEvent(event); //not propagated to remote actors
+		#] 
 		request basicrobot -m moverobot:moverobot($COLDROOMX,$COLDROOMY)
 	}
 	Transition t3 whenMsg stopobstacle  -> handleobstacle
