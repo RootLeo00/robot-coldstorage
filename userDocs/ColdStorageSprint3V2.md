@@ -3,6 +3,8 @@
 ### Goal conseguiti nello sprint1
 - prototipazione del core business ColdStorageService + TransportTrolley
 ### architettura logica sprint1
+Codice dell'architettura:  
+https://github.com/RootLeo00/robot-coldstorage/blob/sprint1/src/coldstorageservice-analisi.qak
 ![[coldstorageservicearch-analisi-sprint1-v2.png]]
 ### Goal dello sprint3
 - introduzione del alarm requirement nel prototipo sviluppato nella progettazione dello sprint1
@@ -34,36 +36,38 @@ Dopo opportuni colloqui con il committente, possiamo affermare che :
 
 
 ## Architettura logica dopo analisi dei requisiti
+Codice dell'architettura:  
+https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageservice-analisi.qak
 ![[coldstorageservicearch-analisi-sprint3V2.png]]
 
 ## Problem Analysis
 
-## Misurazioni corrette Sonar
+### Misurazioni corrette Sonar
 Si predispongono due CodedQActor usabili per costruire una pipe che ha sonar come sorgente-dati e che provvede a eliminare dati spuri ([dataCleaner](https://github.com/RootLeo00/robot-coldstorage/blob/main/sprint3.4/userDocs)) e a generare ([distancefilter](https://github.com/RootLeo00/robot-coldstorage/blob/main/sprint3.4/userDocs)) eventi significativi per il livello applicativo.
 
 ### Alarm Basic Robot
 Per fermare il robot si fa affidamento al comando "alarm", già formalizzato dai messaggi presenti in questa documentazione: [BasicRobot23.html](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/BasicRobot23.html#basicrobot23-messaggi)
 
-## Il messaggio endalarm
+### Il messaggio endalarm
 Quando il Transport Trolley riceve un evento di alarm, il Basic Robot poi gli invia **moverobotfailed** come risposta finale dell'ultimo comando. Dunque si deve tener traccia dell'ultima mossa finale del Transport Trolley, dovendo così estendere il Transport Trolley sviluppato allo sprint1.
 
-## Lo stato del Basic Robot
+### Lo stato del Basic Robot
 Il comportamento del led è profondamente legato allo stato del Basic Robot. In particolare, il led ha bisogno di sapere se il Basic Robot è in home, in movimento oppure fermo a causa di un alarm.
 
 
 ## Progettazione
 
-## Misurazioni corrette Sonar
+### Misurazioni corrette Sonar
 Si predispongono due CodedQActor usabili per costruire una pipe che ha sonar come sorgente-dati e che provvede a eliminare dati spuri ([dataCleaner]()) e a generare ([distancefilter]()) eventi significativi per il livello applicativo.
 
-## Il messaggio stopobstacle
+### Il messaggio stopobstacle
 Se l'attore Sonar emettesse direttamente l'evento **alarm**, fermando così il basicrobot il Transport Trolley dovrebbe gestire i casi di fallimento dovuti alla risposta **moverobotfailed** data dal basic robot. Questo è il problema che si è riscontrato nello sprint3 originale. 
 In questo sprint3.4, si è deciso di inserire tutta la logica dell'alarm requirement all'interno dell'entità Sonar, ma non sarà questa entità a fermare direttamente il basicrobot, bensì sarà solo il Transport Trolley ad avere la responsabilità di fermare il basicrobot. 
 Si veda l'entità Sonar nella progettazione per maggiori dettagli, al seguente link:
 https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageservice.qak
 
 
-## Il timer 
+### Il timer 
 Dai requisiti si deve predisporre un timer che parte dall'ultima endalarm effettuata. Per fare ciò si adopera la classe Java System con il metodo:
 
 ``` Java
@@ -71,7 +75,7 @@ System.currentTimeMillis()
 ```
 
 
-## Controllo del Led tramite RobotState
+### Controllo del Led tramite RobotState
 Dai requisiti il Led deve modificare il proprio stato a seconda dello stato del robot (se in movimento oppure se è in home oppure se è in stato di allarme). Questo è possibile se il Transport Trolley emette degli eventi sullo stato del robot ricevuti dal ControllerLed.
 E' stato necessario inserire un evento nell'attore Transport Trolley della progettazione dello sprint1: 
 ```Java
