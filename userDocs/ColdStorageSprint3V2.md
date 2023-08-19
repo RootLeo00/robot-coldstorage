@@ -3,7 +3,7 @@
 ### Goal conseguiti nello sprint1
 - prototipazione del core business ColdStorageService + TransportTrolley
 ### architettura logica sprint1
-![[coldstorageservicearch-progettazione-sprint1V3.png]]
+![[coldstorageservicearch-analisi-sprint1-v2.png]]
 ### Goal dello sprint3
 - introduzione del alarm requirement nel prototipo sviluppato nella progettazione dello sprint1
 
@@ -90,6 +90,14 @@ https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageser
 
 ![[coldstorageservicearch-progettazione-sprint3V2.png]]
 
+## Deployment
+Come è descritto nei requisiti, Sonar e Led sono installati su un dispositivo (Raspberry) diverso da quello di Basic Robot o ColdStorageService.
+L'architettura sottostante mostra che il Sonar e Led sono in un contesto esterno a quello della business logic.
+
+Codice dell'architettura:  
+https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageservice-deployment.qak
+
+![[coldstorageservicearch-deployment-sprint3V2.png]]
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
         By Caterina Leonelli email: caterina.leonelli2@studio.unibo.it,
         GIT repo: https://github.com/RootLeo00/sw-eng.git

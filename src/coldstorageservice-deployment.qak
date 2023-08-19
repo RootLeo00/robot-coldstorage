@@ -27,7 +27,7 @@ Reply depositactionended:depositactionended(ARG) //sender:transporttrolley  rece
 Event pickupindoordone : pickupindoordone(ARG) //emitter:transporttrolley
 Event robotstate : robotstate(ATHOME,MOVING,STOPPED) //emitter:transporttrolley
 //-------------------------------------------------------------
-
+ 
  
 //--------From basicrobot-----------------------------------
 Request moverobot    :  moverobot(TARGETX, TARGETY)
@@ -66,7 +66,7 @@ Dispatch doinsertticket:doinsertticket(SESSIONNUMBER,KG)
 
 Context ctxbasicrobot ip [host="127.0.0.1" port=8020 ]   
 Context ctxsonar ip [host="127.0.0.1" port=8040 ]   
-Context ctxguimock ip [host="127.0.0.1" port=8050] 
+//Context ctxguimock ip [host="127.0.0.1" port=8050] 
 Context ctxcoldstorageservice ip [host="localhost" port=8038 ] 
 ExternalQActor basicrobot context ctxbasicrobot  
  
@@ -310,7 +310,10 @@ QActor transporttrolley context ctxcoldstorageservice{
 		//send event "robot is in indoor"
 		println("${name} | robot is in indoor") color magenta
 		println("${name} | moving robot to coldroom") color magenta
-		emit pickupindoordone:pickupindoordone(ok)
+		[#
+			var event = MsgUtil.buildEvent( "transporttrolley","pickupindoordone","ok");	
+			emitLocalEvent(event); //not propagated to remote actors
+		#] 
 		request basicrobot -m moverobot:moverobot($COLDROOMX,$COLDROOMY)
 	}
 	Transition t3 whenMsg stopobstacle  -> handleobstacle
@@ -525,29 +528,29 @@ QActor controllerled context ctxsonar{
  *  gui MOCK
  * ------------------------------------------------------------------
 */ 
- 	QActor guimok context ctxguimock{
-	 	State s0 initial{
-	 		discardMsg Off
-	 		println("${name} | start request") color magenta
-	 		request coldstorageservice -m storefood:storefood(25)
-	 	}
- 		Transition t1 whenReply ticketaccepted -> sendticket
- 		
- 		State sendticket {
- 		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
-	 		[# 
-				var Ticketcode= payloadArg(0);
-				var Ticketsecret= payloadArg(1);
-			#]
-		println("${name} | sending ticket to coldstorageservice") color magenta
-		request coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
- 		}
- 		 
-		
- 		}
- 		Transition t2 whenReply chargetaken-> end
- 		State end{
- 			println("${name} | robot has taken the load") color magenta
- 		}
- 		Goto s0
- }
+// 	QActor guimok context ctxguimock{
+//	 	State s0 initial{
+//	 		discardMsg Off
+//	 		println("${name} | start request") color magenta
+//	 		request coldstorageservice -m storefood:storefood(25)
+//	 	}
+// 		Transition t1 whenReply ticketaccepted -> sendticket
+// 		
+// 		State sendticket {
+// 		onMsg(ticketaccepted:ticketaccepted(TICKETCODE, TICKETSECRET,TIMESTAMP)){		
+//	 		[# 
+//				var Ticketcode= payloadArg(0);
+//				var Ticketsecret= payloadArg(1);
+//			#]
+//		println("${name} | sending ticket to coldstorageservice") color magenta
+//		request coldstorageservice -m sendticket:sendticket($Ticketcode,$Ticketsecret)
+// 		}
+// 		 
+//		
+// 		}
+// 		Transition t2 whenReply chargetaken-> end
+// 		State end{
+// 			println("${name} | robot has taken the load") color magenta
+// 		}
+// 		Goto s0
+// }
