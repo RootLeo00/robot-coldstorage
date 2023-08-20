@@ -237,7 +237,7 @@ object DomainSystemConfig {
 ```
 
 ### Architettura finale progettazione
-![[coldstorageservicearch-progettazione2.png]]
+![[coldstorageservicearch-progettazione.png]]
 
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
