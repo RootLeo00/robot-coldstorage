@@ -60,7 +60,7 @@ data l'assenza di particolari requisiti che richiedano di inserire la serviceacc
 
 Tutto il codice della parte di progettazione è consultabile al seguente link [github](https://github.com/RootLeo00/robot-coldstorage/tree/sprint2)
 
-### L'alieno WEBGUI
+### L'alieno SERVICEACCESSGUI
 Il supporto degli attori qak non e ottimale per la realizzazione di una gui, pertanto si decide di sostituire l'attore serviceaccessgui con un componente alieno in grado di comunicare con il sistema tramite una connessione TCP.
 
 dopo una breve analisi dei tool disponibili si presentano le seguenti possibilità di implementazione:
@@ -71,6 +71,8 @@ dopo una prima fase di sperimentazione con  la combinazione nodejs+express si e 
 
 
 di seguito si presenta l'architettura di progettazione realizzata per testare le problematiche sopra riportate, per il codice fare riferimento al file [coldstorageservice-progettazione.qak](https://github.com/RootLeo00/robot-coldstorage/blob/main/sprint2/src/coldstorageservice-progettazione.qak)
+
+il codice dell'alieno serviceaccessgui puo essere trovato al file [MainController.java](https://github.com/RootLeo00/robot-coldstorage/blob/sprint2/serviceaccessgui/src/main/java/com/unibo/serviceaccessgui/MainController.java)
 
 ### Architettura finale progettazione
 ![[coldstorageservicearch-progettazione.png]]
