@@ -18,97 +18,22 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-		
-			 		var SPACELEFT:Long=100; 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						discardMessages = false
-						CommUtils.outmagenta("$name | waiting request")
+						CommUtils.outmagenta("$name | start request")
+						request("storefood", "storefood(25)" ,"coldstorageservice" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t118",targetState="storefood",cond=whenRequest("dostorefood"))
-					transition(edgeName="t119",targetState="insertticket",cond=whenRequest("doinsertticket"))
-					transition(edgeName="t120",targetState="sendcoldroomstatus",cond=whenRequest("getcoldroomstatus"))
-					transition(edgeName="t121",targetState="notifygui",cond=whenEvent("updatedcoldroom"))
+					 transition(edgeName="t118",targetState="sendticket",cond=whenReply("ticketaccepted"))
 				}	 
-				state("notifygui") { //this:State
+				state("sendticket") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("updatedcoldroom(AVAILABLEKG)"), Term.createTerm("updatedcoldroom(KG)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								CommUtils.outmagenta("$name | updating coldroom status")
-								
-								 					
-								 					SPACELEFT=payloadArg(0).toLong(); 
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
-				}	 
-				state("sendcoldroomstatus") { //this:State
-					action { //it:State
-						answer("getcoldroomstatus", "coldroomstatus", "coldroomstatus($SPACELEFT)"   )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
-				}	 
-				state("storefood") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("dostorefood(KG)"), Term.createTerm("dostorefood(KG)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								
-								 					
-								 					var Kg=payloadArg(0); 
-								CommUtils.outmagenta("$name | handling dostorefood request")
-								request("storefood", "storefood($Kg)" ,"coldstorageservice" )  
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t222",targetState="handlestorefoodreply",cond=whenReply("ticketaccepted"))
-					transition(edgeName="t223",targetState="handlestorefoodreply",cond=whenReply("ticketdenied"))
-				}	 
-				state("handlestorefoodreply") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("ticketaccepted(TICKETCODE,TICKETSECRET,TIMESTAMP)"), Term.createTerm("ticketaccepted(TICKETNUMBER,TICKETSECRET,TIMESTAMP)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								
-								 					var Ticketcode= payloadArg(0);
-											var Ticketsecret= payloadArg(1);
-											var Timestamp= payloadArg(2); 
-								CommUtils.outmagenta("$name | replying to client with ticketaccepted")
-								answer("dostorefood", "ticketaccepted", "ticketaccepted($Ticketcode,$Ticketsecret,$Timestamp)"   )  
-						}
-						if( checkMsgContent( Term.createTerm("ticketdenied(ARG)"), Term.createTerm("ticketdenied(RESPONSE)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								
-								 					var Msg= payloadArg(0);
-								CommUtils.outmagenta("$name | replying to client with ticketdenied")
-								answer("dostorefood", "ticketdenied", "ticketdenied($Msg)"   )  
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
-				}	 
-				state("insertticket") { //this:State
-					action { //it:State
-						CommUtils.outcyan("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
-						 	   
-						if( checkMsgContent( Term.createTerm("doinsertticket(TICKETNUMBER,TIMESTAMP)"), Term.createTerm("doinsertticket(TICKETCODE,TICKETSECRET)"), 
+						if( checkMsgContent( Term.createTerm("ticketaccepted(TICKETCODE,TICKETSECRET,TIMESTAMP)"), Term.createTerm("ticketaccepted(TICKETCODE,TICKETSECRET,TIMESTAMP)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
 											var Ticketcode= payloadArg(0);
@@ -121,31 +46,11 @@ class Serviceaccessgui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t324",targetState="handleinsertticketreply",cond=whenReply("chargetaken"))
-					transition(edgeName="t325",targetState="handleinsertticketreply",cond=whenReply("ticketexpired"))
-					transition(edgeName="t326",targetState="handleinsertticketreply",cond=whenReply("ticketrejected"))
+					 transition(edgeName="t219",targetState="end",cond=whenReply("chargetaken"))
 				}	 
-				state("handleinsertticketreply") { //this:State
+				state("end") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("chargetaken(ARG)"), Term.createTerm("chargetaken(ARG)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								
-								 					var Response= payloadArg(0);
-								answer("doinsertticket", "chargetaken", "chargetaken($Response)"   )  
-								CommUtils.outmagenta("$name | robot has taken the load")
-						}
-						if( checkMsgContent( Term.createTerm("ticketexpired(ARG)"), Term.createTerm("ticketexpired(ARG)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								
-								 					var Response= payloadArg(0);
-								answer("doinsertticket", "ticketexpired", "ticketexpired($Response)"   )  
-						}
-						if( checkMsgContent( Term.createTerm("ticketrejected(ARG)"), Term.createTerm("ticketrejected(ARG)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								
-								 					var Response= payloadArg(0);
-								answer("doinsertticket", "ticketrejected", "ticketrejected($Response)"   )  
-						}
+						CommUtils.outmagenta("$name | robot has taken the load")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
