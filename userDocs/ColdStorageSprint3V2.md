@@ -9,7 +9,6 @@ https://github.com/RootLeo00/robot-coldstorage/blob/sprint1/src/coldstorageservi
 ### Goal dello sprint3
 - introduzione del alarm requirement nel prototipo sviluppato nella progettazione dello sprint1
 
-
 ## Requirements
 
 The system includes a Sonar and a Led connected to a RaspberryPi.
@@ -38,7 +37,7 @@ Dopo opportuni colloqui con il committente, possiamo affermare che :
 ## Architettura logica dopo analisi dei requisiti
 Codice dell'architettura:  
 https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageservice-analisi.qak
-![[coldstorageservicearch-analisi-sprint3V2.png]]
+![[coldstorageservicearch-analisi.png]]
 
 ## Problem Analysis
 
@@ -92,7 +91,7 @@ Il sistema è composto da:
 Codice dell'architettura:  
 https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageservice-progettazione.qak
 
-![[coldstorageservicearch-progettazione-sprint3V2.png]]
+![[coldstorageservicearch-progettazione.png]]
 
 ## Deployment
 Come è descritto nei requisiti, Sonar e Led sono installati su un dispositivo (Raspberry) diverso da quello di Basic Robot o ColdStorageService.
