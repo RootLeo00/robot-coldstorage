@@ -50,6 +50,8 @@ Dopo opportuni colloqui con il committente, possiano affermare che :
 - le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.
 
 ### Architettura logica requisiti
+Il codice della seguente architettura può essere visionato al link:
+https://github.com/RootLeo00/robot-coldstorage/blob/sprint1/src/coldstorageservice-requisiti.qak
 ![[coldstorageservicearch-requisiti.png]]
 
 ## Problem Analysis
@@ -91,8 +93,10 @@ Il sistema è composto da:
   - *Basic Robot*: esegue i comandi del Transport Trolley
   - *ServiceAccessGui*: si interfaccia con ColdStorageService per la richiesa di ticket
   - *Cold Room*: aggiorna lo stato della quantità di kg
-  - *Scarico*: entità esterna che effettua una operazione di scarico della Cold Room, diminuendo i kg presenti in essa
-   per evitare di 
+  - *Scarico*: entità esterna che effettua una operazione di scarico della Cold Room, diminuendo i kg presenti  
+
+Il codice della seguente architettura può essere visionato al link:
+https://github.com/RootLeo00/robot-coldstorage/blob/sprint1/src/coldstorageservice-analisi.qak
   ![[coldstorageservicearch-analisi2.png]]
 
 ## Test plan
@@ -137,6 +141,7 @@ per implementare i test si prevede di sfruttare la generazione degli eventi da p
 ## PROGETTAZIONE
 
 Tutto il codice della parte di progettazione è consultabile al seguente link [github](https://github.com/RootLeo00/robot-coldstorage/tree/main/sprint0)
+(link: https://github.com/RootLeo00/robot-coldstorage/tree/main/sprint1)
 
 ### Il messaggio chargetaken
 si prevede di implementare la comunicazione del messaggio chargetaken tramite un evento per le seguenti motivazioni
@@ -237,6 +242,8 @@ object DomainSystemConfig {
 ```
 
 ### Architettura finale progettazione
+Il codice della seguente architettura può essere visionato al link:
+https://github.com/RootLeo00/robot-coldstorage/blob/sprint1/src/coldstorageservice-progettazione.qak
 ![[coldstorageservicearch-progettazione.png]]
 
 
