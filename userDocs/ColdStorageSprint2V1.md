@@ -30,6 +30,8 @@ Dal precedente sprint si ricorda che:
 - Non deve succedere che un camion, ricevuto il proprio ticket si veda rifiutata l'operazione di scarico una volta arrivato in INDOOR a patto che il ticket non sia scaduto.
 - la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti
 ### Architettura logica requisiti
+Il codice della seguente architettura si può trovare al link:
+https://github.com/RootLeo00/robot-coldstorage/blob/sprint2/src/coldstorageservice-requisiti.qak
 ![[coldstorageservicearch-requisiti.png]]
 ## Problem Analysis
 
@@ -75,6 +77,8 @@ di seguito si presenta l'architettura di progettazione realizzata per testare le
 il codice dell'alieno serviceaccessgui puo essere trovato al file [MainController.java](https://github.com/RootLeo00/robot-coldstorage/blob/sprint2/serviceaccessgui/src/main/java/com/unibo/serviceaccessgui/MainController.java)
 
 ### Architettura finale progettazione
+Il codice della seguente architettura si può trovare al link:
+https://github.com/RootLeo00/robot-coldstorage/blob/sprint2/src/coldstorageservice-progettazione.qak
 ![[coldstorageservicearch-progettazione.png]]
 
 
