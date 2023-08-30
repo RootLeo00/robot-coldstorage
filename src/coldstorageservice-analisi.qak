@@ -26,7 +26,7 @@ Event robotisinhome:robotisinhome(ARG)
 
 Dispatch gohome:gohome(ARG)													//emitter:serviceaccessgui listener:coldstorageservice
 										 			//emitter:serviceaccessgui listener:fakeuser
-
+Dispatch pickupindoordone : pickupindoordone(ARG) //emitter:transporttrolley
  
 //robot pos messages
 Request moverobot    :  moverobot(TARGETX, TARGETY)
@@ -78,7 +78,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	   	}  
 	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied 
 	    			whenRequest sendticket-> checkforticketexpired
-	    			whenEvent robotisinindoor-> sendchargetaken
+	    			whenMsg pickupindoordone-> sendchargetaken
 	    			whenReply depositactionended -> updatecoldstorage
 	  	
 	  	///STOREFOOD REQUEST MANAGEMENT/////////////////
@@ -289,7 +289,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 		//send event "robot is in indoor"
 		println("$name | robot is in indoor") color red
 		println("$name | moving robot to coldroom") color red
-		emit robotisinindoor:robotisindoor(ok)
+		forward coldstorageservice -m pickupindoordone:pickupindoordone(ok)
 		request basicrobot -m moverobot:moverobot($COLDROOMX,$COLDROOMY)
 	}
 	Transition t3 whenReply moverobotdone -> depositactionended
