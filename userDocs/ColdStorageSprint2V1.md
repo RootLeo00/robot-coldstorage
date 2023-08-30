@@ -63,7 +63,8 @@ data l'assenza di particolari requisiti che richiedano di inserire la serviceacc
 Tutto il codice della parte di progettazione è consultabile al seguente link [github](https://github.com/RootLeo00/robot-coldstorage/tree/sprint2)
 
 ### L'alieno SERVICEACCESSGUI
-Il supporto degli attori qak non e ottimale per la realizzazione di una gui, pertanto si decide di sostituire l'attore serviceaccessgui con un componente alieno in grado di comunicare con il sistema tramite una connessione TCP.
+
+Il supporto degli attori qak non e ottimale per la realizzazione di una gui data l'assenza di strumenti agili per definire la UI, pertanto si decide di sostituire l'attore serviceaccessgui con un componente alieno in grado di comunicare con il sistema tramite una connessione TCP.
 
 dopo una breve analisi dei tool disponibili si presentano le seguenti possibilità di implementazione:
 - **NODEJS** 
@@ -71,11 +72,16 @@ dopo una breve analisi dei tool disponibili si presentano le seguenti possibilit
 
 dopo una prima fase di sperimentazione con  la combinazione nodejs+express si e deciso di implementare l'interfaccia con il framework spring in quanto il codice risultante dall'utilizzo di nodejs risultava fragile viscoso e difficilmente manutenibile.
 
+il componente si predispone di un controller [MainController](https://github.com/RootLeo00/robot-coldstorage/blob/sprint2/serviceaccessgui/src/main/java/com/unibo/serviceaccessgui/MainController.java)
+che sfrutta le seguenti route 
+~~~
+/
+/insertticket
+/storefood
+~~~
 
-di seguito si presenta l'architettura di progettazione realizzata per testare le problematiche sopra riportate, per il codice fare riferimento al file [coldstorageservice-progettazione.qak](https://github.com/RootLeo00/robot-coldstorage/blob/main/sprint2/src/coldstorageservice-progettazione.qak)
-
-il codice dell'alieno serviceaccessgui puo essere trovato al file [MainController.java](https://github.com/RootLeo00/robot-coldstorage/blob/sprint2/serviceaccessgui/src/main/java/com/unibo/serviceaccessgui/MainController.java)
-
+la prima route fornisce hai client la UI con cui interagire,
+le altre due implementano la comunicazione con **coldstorageservice** per realizzare le funzionalita richieste.
 ### Architettura finale progettazione
 Il codice della seguente architettura si può trovare al link:
 https://github.com/RootLeo00/robot-coldstorage/blob/sprint2/src/coldstorageservice-progettazione.qak
