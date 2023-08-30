@@ -23,11 +23,6 @@ The transport trolley is used to perform a deposit action that consists in the f
 
 ## Requirements analysis
 
-### Modello della service area
-- dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**"
-- Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD numero reale positivo
-- Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. In particolare INDOOR è formalizzata con la cella di coordinate la coordinata **(5,0)** oppure **(5,1),**  mentre PORT è formalizzata con la cella di coordinate **(2,4)** oppure **(2,5)**
-![[modello_stanza2.png]]
 
 ### Transport Trolley
  **deposit action**: termine con cui si descrive il seguente ciclo di operazioni del sistema, formalizzate dai messaggi presenti in questa documentazione: [BasicRobot23.html](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/BasicRobot23.html#basicrobot23-messaggi)
@@ -44,9 +39,6 @@ int TICKETNUMBER INTEGER
 Dopo opportuni colloqui con il committente, possiano affermare che :
 - Non deve succedere che un camion, ricevuto il proprio ticket si veda rifiutata l'operazione di scarico una volta arrivato in INDOOR.
 - la richiesta di un ticket può avvenire mentre sono ancora in corso operazioni di scarico precedenti
-
-
-Dopo opportuni colloqui con il committente, possiano affermare che :
 - le operazioni di carico e di scarico della ColdRoom potrebbero essere effettuate in parallelo oppure in maniera sequenziale. Per semplicità di realizzazione, dato che il committente non ha espresso riflessioni in materia, vengono effettuate in maniera sequenziale, ma nel caso realistico esse verrebbero fatte in parallelo.
 
 ### Architettura logica requisiti
@@ -56,6 +48,19 @@ https://github.com/RootLeo00/robot-coldstorage/blob/sprint1/src/coldstorageservi
 
 ## Problem Analysis
 
+### Modello della service area
+- dai requisiti si evince la necessità di fornire una coordinata all'entita cooldroom in modo da avere una locazione in grado di essere elaborata dal calcolatore. Per fare ciò si decide di rappresentare la service area come una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**"
+- Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD numero reale positivo
+- Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. In particolare INDOOR è formalizzata con la cella di coordinate la coordinata **(5,0)** oppure **(5,1),**  mentre PORT è formalizzata con la cella di coordinate **(2,4)** oppure **(2,5)**
+![[modello_stanza2.png]]
+
+- si decide di rappresentare la service area in questo modo per facilitare la progettazione in fase successiva in quanto il componente **BASICROBOT** fornito dal committente posseiede una primitiva:
+~~~
+Request step       : step(TIME)
+Reply stepdone     : stepdone(V)
+Reply stepfailed   : stepfailed(DURATION, CAUSE)
+~~~
+che permettere di muovere il robot per un unita di tempo prefissata e quindi realizzare questo modello in maniera agevole
 ### Cold Room
 - Cold Room viene modellata come un attore di modo da interagire con ColdStorageService. 
 - KEYPOINT: essa potrebbe essere modellata come un POJO all'interno di ColdStorageService stesso, ma riteniamo che modellando Cold Room come un attore porti ai seguenti vantaggi:
@@ -68,7 +73,7 @@ dai requisiti si evince che il messaggio **chargetaken** deve essere inviato da 
 possibili soluzioni:
 - **transporttrolley emette un evento** che, viene catturato da coldstorageservice, che invia il messaggio chargetaken, in seguito viene comunicato al transporttrolley di spostarsi verso la coldroom
 - **transporttrolley emette un Dispatch** verso coldstorageservice, che, di conseguenza invia il messaggio chargetaken, in seguito viene comunicato al transporttrolley di spostarsi verso la coldroom
-Si decide di optare per emettere un evento e per limitare l'occupazione di banda si decide di sfruttare la proprietà del supporto qak di emettere eventi locali.
+Si decide di predisporre un dispatch di nome pickupindoored
 
 ### Carico del transport trolley
 il transporttrolley potrebbe ammettere un carico massimo trasportabile, dopo opportune discussioni con il committente si è deciso di non prendere in carico questa eventualità
@@ -97,7 +102,7 @@ Il sistema è composto da:
 
 Il codice della seguente architettura può essere visionato al link:
 https://github.com/RootLeo00/robot-coldstorage/blob/sprint1/src/coldstorageservice-analisi.qak
-  ![[coldstorageservicearch-analisi2.png]]
+  ![[coldstorageservicearch-analisi.png]]
 
 ## Test plan
 si prevede di testare le seguenti funzionalità del sistema
@@ -142,13 +147,6 @@ per implementare i test si prevede di sfruttare la generazione degli eventi da p
 
 Tutto il codice della parte di progettazione è consultabile al seguente link [github](https://github.com/RootLeo00/robot-coldstorage/tree/main/sprint0)
 (link: https://github.com/RootLeo00/robot-coldstorage/tree/main/sprint1)
-
-### Il messaggio chargetaken
-si prevede di implementare la comunicazione del messaggio chargetaken tramite un evento per le seguenti motivazioni
-- rendere più facile il testing dell'applicazione tramite la cattura degli eventi generati  
-- rendere il transporttrolley in grado di svolgere la **deposit action** in maniera indipendente
-questa soluzione ci consente di separare in maniera netta le competenze di coldstorageservice transporttrolley
-
 ### La gestione delle richieste parallele
 da requisiti sappiamo che la accettazione di un ticket e le operazioni di carico e scarico merce devono essere eseguite in parallelo, per consentire ciò si prevede, all'interno di coldstorageservice una struttura dati come segue:
 
@@ -194,11 +192,11 @@ L'implementazione dell'attore COLDROOM segue lo stesso principio con i seguenti 
 
 ## Implementazione TRANSPORTTROLLEY
 
-il transport trolley viene concepito come entità in grado di eseguire le sue responsabilità in maniera indipentente, al termine degli spostamenti genera degli eventi per notificare il suo stato a coldstorageservice
+il transport trolley viene concepito come entità in grado di eseguire le sue responsabilità in maniera indipentente
 
 ### Il problema della perdita di contesto
 
-una problematica sorta in fase di progettazione, è stata fare in modo che alla cattura di un evento `depositactionended` , generato da transporttrolley nel momento in cui avviene lo scarico della merce presso la coldroom, coldstorageservice fosse in grado di risalire all'identità del ticket che la ha generata in modo da aggiornare la lista di ticket attivi, per fare ciò viene fornito al trolley l'identificativo del ticket come payload del messaggio `dodepositaction`
+una problematica sorta in fase di progettazione, è stata fare in modo che alla ricezione di un messaggio `depositactionended` , generato da transporttrolley nel momento in cui avviene lo scarico della merce presso la coldroom, coldstorageservice fosse in grado di risalire all'identità del ticket che la ha generata in modo da aggiornare la lista di ticket attivi, per fare ciò viene fornito al trolley l'identificativo del ticket come payload del messaggio `dodepositaction`
 
 ### I ticket scaduti
 
