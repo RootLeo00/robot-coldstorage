@@ -24,7 +24,7 @@ Reply ticketrejected: ticketrejected(ARG) 				//sender:coldstorageservice receiv
 //--------Transport trolley section-----------------------------------
 Request dodepositaction:dodepositaction(TICKETCODE)//sender:coldstorageservice receiver:transporttrolley
 Reply depositactionended:depositactionended(ARG) //sender:transporttrolley  receiver:coldstorageservice
-Event pickupindoordone : pickupindoordone(ARG) //emitter:transporttrolley
+Dispatch pickupindoordone : pickupindoordone(ARG) //emitter:transporttrolley
 //-------------------------------------------------------------
 
 
@@ -72,7 +72,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	   	}  
 	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
 	    			whenRequest sendticket-> checkforticketexpired
-	    			whenEvent pickupindoordone-> sendchargetaken
+	    			whenMsg pickupindoordone-> sendchargetaken
 	    			whenReply depositactionended -> updatecoldstorage
 	  	
 	  	///STOREFOOD REQUEST MANAGEMENT/////////////////
