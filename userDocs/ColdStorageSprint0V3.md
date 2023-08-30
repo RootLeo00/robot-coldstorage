@@ -10,20 +10,24 @@ I requisiti sono scritti dal committente TemaFinale23.
 
 ## Requirements analysis
 
-dai requisiti si evince che la stanza sia modellabile tramite una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**."
-- Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD
+- **SERVICE AREA** area di lavoro del transport trolley
+- **INDOOR** zona della service area nell'angolo in basso a sinistra della stanza
+- **COLDROOM** entità caratterizzata da una porta con una posizione non precisabile dai requisiti e una capacità di carico
+- **TRANSPORT TROLLEY** entità logica capace di spostarsi all'interno della service area
+- **DDR ROBOT** soggetto fisico grazie al quale si implementano le azioni logiche compito del transport trolley
 
-![[modello_stanza.png]]
-- Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. Le coordinate precise di INDOOR e PORT verranno specificate nello sprint 1.
-- Il committente ha predisposto il software per modellare il ddr robot. Il ddr robot è modellato tramite l'entità robot astratta BasicRobot. le **API del componente basic robot** sono le seguenti:
+- Il committente ha predisposto il software per modellare il ddr robot tramite l'entità astratta BasicRobot. Le **API del componente basicrobot** sono le seguenti:
 	- **Request moverobot    :  moverobot(TARGETX, TARGETY)**
 	- **Reply moverobotdone  :  moverobotok(ARG)**
 	- **Reply moverobotfailed:  moverobotfailed(ARG)**
 
+	
 - Il transport trolley è quell'entità della applicazione che ha la responsabilità di controllare il basicrobot, il quale ci è stato già consegnato dal committente.
-- Fridge Truck è un'entità che interagisce con il sistema ma non ne fa parte, dunque non verrà modellato.
+
 - ServiceAccessGUI è un'entità formalizzata come un attore che ha la responsabilità di inviare messaggi alla ColdStorageService e di interagire con l'utente
+
 - ColdStorageService è l'entità core business del sistema e siccome il sistema è distribuito, allora ColdStorageService è modellata come un attore
+
 - Cold Room viene modellata come un attore di modo da interagire con ColdStorageService. 
 - KEYPOINT: essa potrebbe essere modellata come un POJO all'interno di ColdStorageService stesso, ma riteniamo che modellando Cold Room come un attore porti ai seguenti vantaggi:
 	- si alleggerisce ColdStorageService di un altro compito, dato che ColdStorageService è l'entità core business
