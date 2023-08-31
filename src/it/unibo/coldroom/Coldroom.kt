@@ -19,7 +19,7 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		 var Kgstored : Long = 0 ;
-				var MAXW : Long = 100;
+				var MAXW : Long = DomainSystemConfig.getMaxWeight();
 				var Kgavailable=MAXW;  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State

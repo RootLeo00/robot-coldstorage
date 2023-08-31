@@ -20,7 +20,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		 
 					var Kgtoload : Int = 0; 
-					var Expirationtime:Long = 100;
+					var Expirationtime:Long = DomainSystemConfig.getExpirationTime();
 					var ticketList=it.unibo.ticket.TicketList(Expirationtime);
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
@@ -62,7 +62,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 								if(  Kgtoload <= Kgavailable-Totalkgtostore 
 								 ){ 
 												var ticket=ticketList.createTicket(Kgtoload);
-											   var TICKETCODE = ticket.getTicketNumber();
+											   var TICKETCODE = ticket.getTicketNumber(); 
 											   var TICKETSECRET= ticket.getTicketSecret();
 											   var TIMESTAMP = ticket.getTimestamp(); 
 								CommUtils.outgreen("$name | ticket accepted with $TICKETCODE, $TICKETSECRET, $TIMESTAMP")
