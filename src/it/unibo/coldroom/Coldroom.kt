@@ -50,7 +50,7 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 						if( checkMsgContent( Term.createTerm("updatekg(KG)"), Term.createTerm("updatekg(KG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
-											var insertkg = payloadArg(0).toLong();
+											var insertkg = payloadArg(0).toLong(); 
 											Kgstored += insertkg;
 											Kgavailable-=insertkg;
 								CommUtils.outyellow("$name | updated storage Kgavailable:$Kgavailable Kgstored:$Kgstored")

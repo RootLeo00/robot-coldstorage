@@ -34,7 +34,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						discardMessages = false
 						CommUtils.outmagenta("${name} |  request engage")
-						request("engage", "engage(transporttrolley,300)" ,"basicrobot" )  
+						request("engage", "engage(transporttrolley,125)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -88,9 +88,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						 lastmove = "moverobottocoldroom"  
 						CommUtils.outmagenta("${name} | robot is in indoor")
 						CommUtils.outmagenta("${name} | moving robot to coldroom")
-						
-									var event = MsgUtil.buildEvent( "transporttrolley","pickupindoordone","ok");	
-									emitLocalEvent(event); //not propagated to remote actors
+						forward("pickupindoordone", "pickupindoordone(ok)" ,"coldstorageservice" ) 
 						request("moverobot", "moverobot($COLDROOMX,$COLDROOMY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
