@@ -1,0 +1,37 @@
+
+> Configure project :
+building jar
+
+> Task :compileKotlin
+> Task :compileJava NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes UP-TO-DATE
+
+> Task :run
+[33m               %%% sysUtil createContexts  ctxsList=[ctxcoldstorageservice, ctxbasicrobot]   thread=main n=1[0m
+[33m               %%% sysUtil | createTheContext ctxcoldstorageservice for DIFFERENT node (localContextName=ctxbasicrobot host=127.0.0.1)  thread=main n=1[0m
+[33m               %%% CREATED actor ctxcoldstorageservice -  thread=main n=1[0m
+[33m               %%% CoapResourceCtx ctxcoldstorageservice | AFTER init    thread=main n=2[0m
+[33m               %%% ActorBasic ctxcoldstorageservice |  RUNNING IN java.util.concurrent.ScheduledThreadPoolExecutor@41d71394[Running, pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0] thread=qakcpuspool-1 n=2[0m
+[33m               %%% sysUtil | createTheContext ctxbasicrobot for LOCAL node (host=localhost)   thread=main n=2[0m
+[33m               %%% CREATED actor ctxbasicrobot -  thread=main n=2[0m
+[33m               %%% ActorBasic ctxbasicrobot |  RUNNING IN java.util.concurrent.ScheduledThreadPoolExecutor@41d71394[Running, pool size = 2, active threads = 2, queued tasks = 0, completed tasks = 1] thread=qakcpuspool-1 n=3[0m
+[33m               %%% CoapResourceCtx ctxbasicrobot | AFTER init    thread=main n=3[0m
+[33m               %%% QakContext localhost:8020 AFTER CoapResourceCtx   thread=main n=3[0m
+[33m               %%% CREATED actor serverctxbasicrobot -  thread=main n=3[0m
+[33m               %%% ActorBasic serverctxbasicrobot |  RUNNING IN java.util.concurrent.ScheduledThreadPoolExecutor@41d71394[Running, pool size = 3, active threads = 2, queued tasks = 0, completed tasks = 2] thread=qakcpuspool-2 n=4[0m
+[33m               %%% QakContextServer serverctxbasicrobot  | AFTER init    thread=main n=6[0m
+[33m               %%% QakContextServer serverctxbasicrobot | READY TO RECEIVE TCP CONNS on 8020  thread=qakcpuspool-1 n=8[0m
+		[31mtcpSrv | costruct ERROR: Address already in use (Bind failed)[0m
+[31mtcpSrv | probably socket closed: null[0m
+               %%% QakContext ctxbasicrobot |  serverCoap error: None of the server endpoints could be started
+[33m               %%% addProxyToOtherCtxs ctxcoldstorageservice in [ctxcoldstorageservice, ctxbasicrobot] host=localhost localContextName=ctxbasicrobot thread=main n=11[0m
+[33m               %%% sysUtil addProxyToOtherCtxs ctxbasicrobot ctxcoldstorageservice thread=main n=11[0m
+[33m               %%% sysUtil addCtxProxy ctxbasicrobot , ctxcoldstorageservice thread=main n=11[0m
+[33m               %%% CREATED actor proxyctxcoldstorageservice -  thread=main n=11[0m
+[33m               %%% ActorBasic proxyctxcoldstorageservice |  RUNNING IN java.util.concurrent.ScheduledThreadPoolExecutor@41d71394[Running, pool size = 5, active threads = 2, queued tasks = 0, completed tasks = 4] thread=qakcpuspool-2 n=12[0m
+               %%% NodeProxy proxyctxcoldstorageservice | WAIT/RETRY TO SET PROXY TO 127.0.0.1:8720 
+               %%% NodeProxy proxyctxcoldstorageservice | WAIT/RETRY TO SET PROXY TO 127.0.0.1:8720 
+               %%% NodeProxy proxyctxcoldstorageservice | WAIT/RETRY TO SET PROXY TO 127.0.0.1:8720 
+               %%% NodeProxy proxyctxcoldstorageservice | WAIT/RETRY TO SET PROXY TO 127.0.0.1:8720 
+               %%% NodeProxy proxyctxcoldstorageservice | WAIT/RETRY TO SET PROXY TO 127.0.0.1:8720 
