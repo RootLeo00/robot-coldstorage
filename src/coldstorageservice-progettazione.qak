@@ -241,7 +241,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 	discardMsg Off
 	//try to engage basicrobot on startup
     println("$name |  request engage") color red
-    request basicrobot -m engage : engage( transporttrolley ,330)
+    request basicrobot -m engage : engage( transporttrolley ,125)
   	}
    	Transition t0 whenReply engagedone    -> waitforcommands
                 whenReply engagerefused -> waitrobotfree
