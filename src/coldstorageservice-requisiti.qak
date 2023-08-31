@@ -276,10 +276,11 @@ QActor transporttrolley context ctxcoldstorageservice{
 		//send event "robot is in indoor"
 		println("$name | robot is in indoor") color red
 		println("$name | moving robot to coldroom") color red
-		[#
-			var event = MsgUtil.buildEvent( "transporttrolley","pickupindoordone","ok");	
-			emitLocalEvent(event); //not propagated to remote actors
-		#] 
+//		[#
+//			var event = MsgUtil.buildEvent( "transporttrolley","pickupindoordone","ok");	
+//			emitLocalEvent(event); //not propagated to remote actors
+//		#] 
+		forward coldstorageservice -m pickupindoordone:pickupindoordone(ok)
 		request basicrobot -m moverobot:moverobot($COLDROOMX,$COLDROOMY)
 	}
 	Transition t3 whenReply moverobotdone -> depositactionended
@@ -296,7 +297,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 	Transition t4 whenTime 100    -> moverobottohome
 	whenRequest dodepositaction -> moverobottoindoor
 	 			  
-				
+				 
 	
 	
 	  

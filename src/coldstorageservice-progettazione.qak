@@ -18,6 +18,7 @@ Reply ticketrejected: ticketrejected(ARG) 			//sender:coldstorageservice receive
 Reply requestaccepted:requestaccepted(ARG)
 Request loaddone:loaddone(ARG)
 Reply chargetaken : chargetaken(ARG)				//sender:coldstorageservice receiver:serviceaccessgui 
+Dispatch pickupindoordone : pickupindoordone(ARG) //emitter:transporttrolley
 //start depositaction
 Dispatch dodepositaction:dodepositaction(TICKETCODE)
 //robot events

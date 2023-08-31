@@ -3,7 +3,7 @@
 ### Goal conseguiti nello sprint1
 - sviluppo del core business ColdStorageService + TransportTrolley
 ### architettura logica sprint1
-![[coldstorageservicearch-progettazione-sprint1.png]]
+![[userDocs/coldstorageservicearch-progettazione-sprint1.png]]
 ### Goal dello sprint2
 - introduzione della  GUI nel sistema ottenuto nello sprint1 e testing
 **Si noti che lo sviluppo del progetto dello sprint2 è da intendersi come estensione del progetto dello sprint1**
@@ -52,12 +52,6 @@ Reply ticketrejected: ticketrejected(ARG)
 ### Il problema della disponibilità della GUI
 da requisiti si evince che la gui deve essere sempre disponibile ad accettare richieste, le comunicazioni intraprese devono essere di natura **NON BLOCCANTE**
 
-### Trasparenza della gui
-per il principio di clean architecture la GUI deve operare in maniera trasparente al sistema
-
-#### La scelta del contesto
-data l'assenza di particolari requisiti che richiedano di inserire la serviceaccessgui in un contesto diverso si decide di inserirla nello stesso contesto del sistema
-
 ## PROGETTAZIONE
 
 Tutto il codice della parte di progettazione è consultabile al seguente link [github](https://github.com/RootLeo00/robot-coldstorage/tree/sprint2)
@@ -80,8 +74,8 @@ che sfrutta le seguenti route
 /storefood
 ~~~
 
-la prima route fornisce hai client la UI con cui interagire,
-le altre due implementano la comunicazione con **coldstorageservice** per realizzare le funzionalita richieste.
+la prima route fornisce ai client la UI con cui interagire,
+le altre due implementano la comunicazione con **coldstorageservice** per realizzare le funzionalità richieste.
 ### Architettura finale progettazione
 Il codice della seguente architettura si può trovare al link:
 https://github.com/RootLeo00/robot-coldstorage/blob/sprint2/src/coldstorageservice-progettazione.qak
