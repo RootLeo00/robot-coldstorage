@@ -245,14 +245,14 @@ QActor transporttrolley context ctxcoldstorageservice{
 		var HOMEY=0;
 		var TICKETCODE=-1;
 	#]
-	State s0 initial{
+	State s0 initial{ 
 		//set home,indoor,coldroom positions
 		
 	//usefull for keep tracking of coldstorageservice request operations
 	discardMsg Off
 	//try to engage basicrobot on startup
     println("$name |  request engage") color red
-    request basicrobot -m engage : engage( transporttrolley )
+    request basicrobot -m engage : engage( transporttrolley,125 )
   	}
    	Transition t0 whenReply engagedone    -> waitforcommands
                 whenReply engagerefused -> waitrobotfree

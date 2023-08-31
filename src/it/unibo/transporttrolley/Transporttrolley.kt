@@ -31,7 +31,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						discardMessages = false
 						CommUtils.outred("$name |  request engage")
-						request("engage", "engage(transporttrolley,330)" ,"basicrobot" )  
+						request("engage", "engage(transporttrolley,125)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -57,7 +57,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t19",targetState="moverobottoindoor",cond=whenRequest("dodepositaction"))
+					 transition(edgeName="t19",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
 				}	 
 				state("moverobottoindoor") { //this:State
 					action { //it:State
@@ -80,9 +80,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						CommUtils.outred("$name | robot is in indoor")
 						CommUtils.outred("$name | moving robot to coldroom")
-						
-									var event = MsgUtil.buildEvent( "transporttrolley","pickupindoordone","ok");	
-									emitLocalEvent(event); //not propagated to remote actors
+						emit("robotisinindoor", "robotisindoor(ok)" ) 
 						request("moverobot", "moverobot($COLDROOMX,$COLDROOMY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
@@ -94,7 +92,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("depositactionended") { //this:State
 					action { //it:State
-						answer("dodepositaction", "depositactionended", "depositactionended($TICKETCODE)"   )  
+						emit("depositactionended", "depositactionended($TICKETCODE)" ) 
 						CommUtils.outred("$name | robot is in coldroom")
 						CommUtils.outred("$name | depositaction ended")
 						CommUtils.outred("$name | waiting for next move")
@@ -106,7 +104,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				 	 					  scope, context!!, "local_tout_transporttrolley_depositactionended", 100.toLong() )
 					}	 	 
 					 transition(edgeName="t414",targetState="moverobottohome",cond=whenTimeout("local_tout_transporttrolley_depositactionended"))   
-					transition(edgeName="t415",targetState="moverobottoindoor",cond=whenRequest("dodepositaction"))
+					transition(edgeName="t415",targetState="moverobottoindoor",cond=whenDispatch("dodepositaction"))
 				}	 
 				state("moverobottohome") { //this:State
 					action { //it:State
@@ -116,8 +114,19 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t516",targetState="waitforcommands",cond=whenReply("moverobotdone"))
+					 transition(edgeName="t516",targetState="emitrobotisinhome",cond=whenReply("moverobotdone"))
 					transition(edgeName="t517",targetState="robotmovefailed",cond=whenReply("moverobotfailed"))
+				}	 
+				state("emitrobotisinhome") { //this:State
+					action { //it:State
+						emit("robotisinhome", "robotisinhome(ok)" ) 
+						CommUtils.outred("$name | robot is in home")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="waitforcommands", cond=doswitch() )
 				}	 
 				state("robotmovefailed") { //this:State
 					action { //it:State
