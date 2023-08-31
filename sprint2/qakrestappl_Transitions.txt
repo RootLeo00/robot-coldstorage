@@ -1,3 +1,0 @@
-{"actor":"coldroom", "msgType":"dispatch", "curstate":"s0", "nextstate":"handleupdateKg", "msgId":"updatekg"}
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"waitforcommands", "nextstate":"moverobottoindoor", "msgId":"dodepositaction"}
-{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"depositactionended", "nextstate":"moverobottoindoor", "msgId":"dodepositaction"}
