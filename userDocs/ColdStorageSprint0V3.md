@@ -78,7 +78,7 @@ Come si legge nei requisiti, le interazioni tra le entità sono
 
 
 il codice della seguente architettura puo essere visionato  al seguente link: https://github.com/RootLeo00/robot-coldstorage/blob/sprint0/src/coldstorageservice.qak
-![[coldstorageservicearch.png]]
+![[coldstorageservicearch-requisiti.png]]
 
 ## Piano di lavoro
 

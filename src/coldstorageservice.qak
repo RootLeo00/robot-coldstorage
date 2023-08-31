@@ -18,12 +18,12 @@ Reply ticketexpired: ticketexpired(ARG) 			//sender:coldstorageservice receiver:
 													//emitter:serviceaccessgui listener:coldstorageservice
 													//emitter:serviceaccessgui listener:fakeuser
 
- 
+  
 //robot pos messages
 Request moverobot    :  moverobot(TARGETX, TARGETY)
 Reply moverobotdone  :  moverobotok(ARG)
 Reply moverobotfailed:  moverobotfailed(ARG)
- 
+  
 
 Context ctxserviceaccessgui ip [host="localhost" port=8720]
 Context ctxcoldstorageservice ip [host="localhost" port=8720]
@@ -33,7 +33,7 @@ Context ctxbasicrobot ip [host="10.0.0.3" port=8020]
 
 ExternalQActor basicrobot context ctxbasicrobot
 //ExternalQActor serviceaccessgui context ctxgui
-
+ 
 /*  
  * ------------------------------------------------------------------
  *  coldstorageservice 
@@ -140,7 +140,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 	
 	State moverobottoindoor{
 		//send event "robot is in indoor"
-		request basicrobot -m moverobot:moverobot(1,6)
+//		request basicrobot -m moverobot:moverobot(1,6)
 	}
 	Transition t1 whenReply moverobotdone -> moverobottostorage
  				  whenReply moverobotfailed -> moverobottohome
@@ -148,7 +148,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 	State moverobottostorage{
 		//send event "robot is in indoor"
 		
-		request basicrobot -m moverobot:moverobot(3,5)
+//		request basicrobot -m moverobot:moverobot(3,5)
 	}
 	Transition t2 whenReply moverobotdone -> moverobottohome
  				  whenReply moverobotfailed -> moverobottohome
@@ -156,7 +156,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 	State moverobottohome{
 		//send event "robot is in home"
 		
-		request basicrobot -m moverobot:moverobot(1,1)
+//		request basicrobot -m moverobot:moverobot(1,1)
 	}
 	Transition t3 whenReply moverobotdone -> emitrobotisinhome
  				  whenReply moverobotfailed -> moverobottohome
