@@ -19,15 +19,14 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		
-				var COLDROOMX=DomainSystemConfig.getColdRoomX();
-				var COLDROOMY=DomainSystemConfig.getColdRoomY();
-				var INDOORX=DomainSystemConfig.getIndoorX();
-				var INDOORY=DomainSystemConfig.getIndoorY();
-				var HOMEX=DomainSystemConfig.getHomeX();
-				var HOMEY=DomainSystemConfig.getHomeY();
-				var TICKETCODE=-1; 
+				var COLDROOMX=4;
+				var COLDROOMY=3;
+				var INDOORX=0;
+				var INDOORY=4;
+				var HOMEX=0;
+				var HOMEY=0;
+				var TICKETCODE=-1;
 				
-				var StepTime=DomainSystemConfig.getStepTime(); 
 				var lastmove=""; //var per gestire la alarm/endalarm
 		
 		return { //this:ActionBasciFsm
@@ -35,7 +34,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						discardMessages = false
 						CommUtils.outmagenta("${name} |  request engage")
-						request("engage", "engage(transporttrolley,$StepTime)" ,"basicrobot" )  
+						request("engage", "engage(transporttrolley,300)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -89,9 +88,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						 lastmove = "moverobottocoldroom"  
 						CommUtils.outmagenta("${name} | robot is in indoor")
 						CommUtils.outmagenta("${name} | moving robot to coldroom")
-						
-									var event = MsgUtil.buildEvent( "transporttrolley","pickupindoordone","ok");	
-									emitLocalEvent(event); //not propagated to remote actors
+						forward("pickupindoordone", "pickupindoordone(ok)" ,"coldstorageservice" ) 
 						request("moverobot", "moverobot($COLDROOMX,$COLDROOMY)" ,"basicrobot" )  
 						//genTimer( actor, state )
 					}

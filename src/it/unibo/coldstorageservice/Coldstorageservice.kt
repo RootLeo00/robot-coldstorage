@@ -20,7 +20,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		 
 					var Kgtoload : Int = 0; 
-					var Expirationtime:Long = DomainSystemConfig.getExpirationTime();
+					var Expirationtime:Long = 100;
 					var ticketList=it.unibo.ticket.TicketList(Expirationtime);
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
@@ -34,7 +34,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					}	 	 
 					 transition(edgeName="t00",targetState="askhowmanykgoccupied",cond=whenRequest("storefood"))
 					transition(edgeName="t01",targetState="checkforticketexpired",cond=whenRequest("sendticket"))
-					transition(edgeName="t02",targetState="sendchargetaken",cond=whenEvent("pickupindoordone"))
+					transition(edgeName="t02",targetState="sendchargetaken",cond=whenDispatch("pickupindoordone"))
 					transition(edgeName="t03",targetState="updatecoldstorage",cond=whenReply("depositactionended"))
 				}	 
 				state("askhowmanykgoccupied") { //this:State
