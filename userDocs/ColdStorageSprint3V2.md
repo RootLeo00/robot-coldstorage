@@ -5,7 +5,7 @@
 ### architettura logica sprint1
 Codice dell'architettura:  
 https://github.com/RootLeo00/robot-coldstorage/blob/sprint1/src/coldstorageservice-analisi.qak
-![[coldstorageservicearch-analisi-sprint1-v2.png]]
+![[coldstorageservicearch-progettazione-sprint1.png]]
 ### Goal dello sprint3
 - introduzione del alarm requirement nel prototipo sviluppato nella progettazione dello sprint1
 
@@ -42,13 +42,13 @@ https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageser
 ## Problem Analysis
 
 ### Misurazioni corrette Sonar
-Si predispongono due CodedQActor usabili per costruire una pipe che ha sonar come sorgente-dati e che provvede a eliminare dati spuri ([dataCleaner](https://github.com/RootLeo00/robot-coldstorage/blob/main/sprint3.4/userDocs)) e a generare ([distancefilter](https://github.com/RootLeo00/robot-coldstorage/blob/main/sprint3.4/userDocs)) eventi significativi per il livello applicativo.
+il sonar reale produce molti dati spuri che possono influenzare il comportamento del sistema.
 
 ### Alarm Basic Robot
 Per fermare il robot si fa affidamento al comando "alarm", già formalizzato dai messaggi presenti in questa documentazione: [BasicRobot23.html](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/BasicRobot23.html#basicrobot23-messaggi)
 
 ### Il messaggio endalarm
-Quando il Transport Trolley riceve un evento di alarm, il Basic Robot poi gli invia **moverobotfailed** come risposta finale dell'ultimo comando. Dunque si deve tener traccia dell'ultima mossa finale del Transport Trolley, dovendo così estendere il Transport Trolley sviluppato allo sprint1.
+per poter riprendere l'esecuzione corretta delle **depositaction** interrotte da un segnale di alarm  e necessario  tener traccia dell'ultima mossa fatta dal transport trolley al momento dell'interruzione.
 
 ### Lo stato del Basic Robot
 Il comportamento del led è profondamente legato allo stato del Basic Robot. In particolare, il led ha bisogno di sapere se il Basic Robot è in home, in movimento oppure fermo a causa di un alarm.
@@ -90,7 +90,6 @@ Il sistema è composto da:
 
 Codice dell'architettura:  
 https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageservice-progettazione.qak
-
 ![[coldstorageservicearch-progettazione.png]]
 
 ## Deployment
@@ -100,7 +99,7 @@ L'architettura sottostante mostra che il Sonar e Led sono in un contesto esterno
 Codice dell'architettura:  
 https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageservice-deployment.qak
 
-![[coldstorageservicearch-deployment-sprint3V2.png]]
+![[coldstorageservicearch-deployment.png]]
 <div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
         By Caterina Leonelli email: caterina.leonelli2@studio.unibo.it,
         GIT repo: https://github.com/RootLeo00/sw-eng.git
