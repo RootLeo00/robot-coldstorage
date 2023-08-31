@@ -60,6 +60,12 @@ Il comportamento del led è profondamente legato allo stato del Basic Robot. In 
 
 ### Misurazioni corrette Sonar
 Si predispongono due CodedQActor usabili per costruire una pipe che ha sonar come sorgente-dati e che provvede a eliminare dati spuri ([dataCleaner]()) e a generare ([distancefilter]()) eventi significativi per il livello applicativo.
+Qui di seguito viene mostrato il flow dei messaggi tra Sonar, ransport Trolley e Basic Robot.
+In particolare vengono mandati i messagi nel seguente ordine:
+1. **stopobstacle**, da Sonar a Transport Trolley
+2. **alarm**, emesso da Transport Trolley
+3. ricezione di **alarm** da parte di Basic Robot
+![[alarm_message_flow.jpg]]
 
 ### Il messaggio stopobstacle
 Si è deciso di inserire tutta la logica dell'alarm requirement all'interno dell'entità Sonar, ma non sarà questa entità a fermare direttamente il basicrobot, bensì sarà solo il Transport Trolley ad avere la responsabilità di fermare il basicrobot. 
