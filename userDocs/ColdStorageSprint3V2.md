@@ -45,7 +45,9 @@ https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageser
 il sonar reale produce molti dati spuri che possono influenzare il comportamento del sistema.
 
 ### Alarm Basic Robot
-Per fermare il robot si fa affidamento al comando "alarm", già formalizzato dai messaggi presenti in questa documentazione: [BasicRobot23.html](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/BasicRobot23.html#basicrobot23-messaggi)
+Per fermare il robot si vuole sfruttare il comando "alarm", già formalizzato dai messaggi presenti in questa documentazione: [BasicRobot23.html](file:///home/leo/github/sw-eng/issLab23/iss23Material/html/BasicRobot23.html#basicrobot23-messaggi).
+Se l'attore Sonar emettesse direttamente l'evento **alarm**, fermando così il basicrobot il Transport Trolley dovrebbe gestire i casi di fallimento dovuti alla risposta **moverobotfailed** data dal basic robot. 
+
 
 ### Il messaggio endalarm
 per poter riprendere l'esecuzione corretta delle **depositaction** interrotte da un segnale di alarm  e necessario  tener traccia dell'ultima mossa fatta dal transport trolley al momento dell'interruzione.
@@ -60,10 +62,7 @@ Il comportamento del led è profondamente legato allo stato del Basic Robot. In 
 Si predispongono due CodedQActor usabili per costruire una pipe che ha sonar come sorgente-dati e che provvede a eliminare dati spuri ([dataCleaner]()) e a generare ([distancefilter]()) eventi significativi per il livello applicativo.
 
 ### Il messaggio stopobstacle
-Se l'attore Sonar emettesse direttamente l'evento **alarm**, fermando così il basicrobot il Transport Trolley dovrebbe gestire i casi di fallimento dovuti alla risposta **moverobotfailed** data dal basic robot. Questo è il problema che si è riscontrato nello sprint3 originale. 
-In questo sprint3.4, si è deciso di inserire tutta la logica dell'alarm requirement all'interno dell'entità Sonar, ma non sarà questa entità a fermare direttamente il basicrobot, bensì sarà solo il Transport Trolley ad avere la responsabilità di fermare il basicrobot. 
-Si veda l'entità Sonar nella progettazione per maggiori dettagli, al seguente link:
-https://github.com/RootLeo00/robot-coldstorage/blob/sprint3.5/src/coldstorageservice.qak
+Si è deciso di inserire tutta la logica dell'alarm requirement all'interno dell'entità Sonar, ma non sarà questa entità a fermare direttamente il basicrobot, bensì sarà solo il Transport Trolley ad avere la responsabilità di fermare il basicrobot. 
 
 
 ### Il timer 
