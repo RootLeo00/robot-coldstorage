@@ -117,7 +117,7 @@ QActor coldstorageservice context ctxcoldstorageservice{
 			if [# Kgtoload <= Kgavailable-Totalkgtostore#] { 
 				[# 
 				var ticket=ticketList.createTicket(Kgtoload);
-			   var TICKETCODE = ticket.getTicketNumber();
+			   var TICKETCODE = ticket.getTicketNumber(); 
 			   var TICKETSECRET= ticket.getTicketSecret();
 			   var TIMESTAMP = ticket.getTimestamp(); 
 			#]
@@ -378,14 +378,14 @@ QActor transporttrolley context ctxcoldstorageservice{
  *  sonar
  * ------------------------------------------------------------------
 */ 
-//CodedQActor sonarfisico  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
+CodedQActor sonarfisico  context ctxcoldstorageservice className "sonarSimulator"       //IN LOCALE
 ////CodedQActor sonar  context ctxsonarqak23 className "sonarHCSR04Support23"   //SU RASP
 ////CodedQActor datalogger     context ctxsonarqak23 className "rx.dataLogger"
-//CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataCleaner"
-//CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
+CodedQActor datacleaner    context ctxcoldstorageservice className "rx.dataCleaner"
+CodedQActor distancefilter context ctxcoldstorageservice className "rx.distanceFilter"
 
 QActor sonar context ctxcoldstorageservice{ 
-	[# val DLIMIT = 70 ; 
+	[# val DLIMIT = 100 ; 
 	   var stopped=false;
 	   
 	   	var startInstant:Long = 0;
