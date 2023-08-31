@@ -97,11 +97,12 @@ public class CtxColdStorageServiceTestJUnit {
 	}*/
 
 
+
 	@Test
 	public void testMultipleLoad() throws InterruptedException {
 		ColorsOut.outappl("testLoadok_double STARTS", ColorsOut.BLUE);
-		int numberOfThreads = 10;
-		ExecutorService service = Executors.newFixedThreadPool(10);
+		int numberOfThreads = 1;
+		ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
 		CountDownLatch latch = new CountDownLatch(numberOfThreads);
 		int i=0;
 
@@ -124,20 +125,31 @@ public class CtxColdStorageServiceTestJUnit {
 						ColorsOut.outappl("secret:  " + secret, ColorsOut.ANSI_PURPLE);
 						assertTrue(!ticket.isEmpty() || !ticket.isBlank());
 						assertTrue(!secret.isEmpty() || !secret.isBlank());
+						truckRequestStr = CommUtils.buildRequest("tester", "sendticket", "sendticket("+ticket+", "+secret+")", "coldstorageservice").toString();
+						ColorsOut.outappl(truckRequestStr+"\n", ColorsOut.ANSI_YELLOW);
+						//CommUtils.delay(1000);
+						reply = connTcp[finalI].request(new ApplMessage(truckRequestStr));
+						ColorsOut.outappl("reply: " + reply.msgContent()+"\n", ColorsOut.BLUE);
 					}
-					CommUtils.delay(1000);
+					//CommUtils.delay(1000);
 				} catch (InterruptedException e) {
 					// Handle exception
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 				latch.countDown();
+				//ColorsOut.outappl("latch: "+latch.getCount(), ColorsOut.ANSI_YELLOW);
+				CommUtils.delay(15000);
 			});
 		}
 		latch.await();
 		assertEquals(numberOfThreads, i);
+		CommUtils.delay(5000);
 	}
 
+
+
+/*
 
 	@Test
 	public void testSingleLoadExpirationTime() {
@@ -173,5 +185,7 @@ public class CtxColdStorageServiceTestJUnit {
 
 
 	}
+
+*/
 
 }

@@ -49,12 +49,12 @@ https://github.com/RootLeo00/robot-coldstorage/blob/sprint1/src/coldstorageservi
 ## Problem Analysis
 
 ### Modello della service area
-- dai requisiti si evince la necessità di fornire una coordinata all'entita cooldroom in modo da avere una locazione in grado di essere elaborata dal calcolatore. Per fare ciò si decide di rappresentare la service area come una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**"
+- dai requisiti si evince la necessità di fornire una coordinata all'entita Coldroom in modo da avere una locazione in grado di essere elaborata dal calcolatore. Per fare ciò si decide di rappresentare la service area come una mappa che rappresenta una suddivisione in celle. La dimensione di ogni cella è legata alla dimensione del transport trolley. La mappa quindi è modellata come una griglia di quadrati di lato RD, dato che nei requisiti è specificaato che "The transport trolley has the form of a square of side length **RD**"
 - Il robot viene considerato un oggetto inscrivibile in un cerchio di raggio RD numero reale positivo
 - Il concetto di INDOOR e di PORT vengono modellate come posizioni nella mappa, ovvero come coppie di coordinate. In particolare INDOOR è formalizzata con la cella di coordinate la coordinata **(5,0)** oppure **(5,1),**  mentre PORT è formalizzata con la cella di coordinate **(2,4)** oppure **(2,5)**
 ![[modello_stanza2.png]]
 
-- si decide di rappresentare la service area in questo modo per facilitare la progettazione in fase successiva in quanto il componente **BASICROBOT** fornito dal committente posseiede una primitiva:
+- si decide di rappresentare la service area in questo modo per facilitare la progettazione in fase successiva in quanto il componente **BASICROBOT** fornito dal committente possiede una primitiva:
 ~~~
 Request step       : step(TIME)
 Reply stepdone     : stepdone(V)
@@ -73,7 +73,7 @@ dai requisiti si evince che il messaggio **chargetaken** deve essere inviato da 
 possibili soluzioni:
 - **transporttrolley emette un evento** che, viene catturato da coldstorageservice, che invia il messaggio chargetaken, in seguito viene comunicato al transporttrolley di spostarsi verso la coldroom
 - **transporttrolley emette un Dispatch** verso coldstorageservice, che, di conseguenza invia il messaggio chargetaken, in seguito viene comunicato al transporttrolley di spostarsi verso la coldroom
-Si decide di predisporre un dispatch di nome pickupindoored
+Si decide di predisporre un dispatch di nome pickupindoored, dato che la comunicazione è diretta esclusivamente a ColdStorageService e non ad altri. 
 
 ### Carico del transport trolley
 il transporttrolley potrebbe ammettere un carico massimo trasportabile, dopo opportune discussioni con il committente si è deciso di non prendere in carico questa eventualità

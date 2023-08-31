@@ -1,1 +1,2 @@
+{"actor":"coldstorageservice", "msgType":"dispatch", "curstate":"s0", "nextstate":"sendchargetaken", "msgId":"pickupindoordone"}
 {"actor":"coldroom", "msgType":"dispatch", "curstate":"s0", "nextstate":"handleupdateKg", "msgId":"updatekg"}
