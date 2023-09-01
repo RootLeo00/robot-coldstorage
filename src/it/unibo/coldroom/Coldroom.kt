@@ -31,8 +31,8 @@ class Coldroom ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t05",targetState="replywithcoldroomspacestate",cond=whenRequest("howmanykgavailable"))
-					transition(edgeName="t06",targetState="handleupdateKg",cond=whenDispatch("updatekg"))
+					 transition(edgeName="t06",targetState="replywithcoldroomspacestate",cond=whenRequest("howmanykgavailable"))
+					transition(edgeName="t07",targetState="handleupdateKg",cond=whenDispatch("updatekg"))
 				}	 
 				state("replywithcoldroomspacestate") { //this:State
 					action { //it:State

@@ -65,8 +65,19 @@ public class MainController {
             System.out.println("message sent");
             // handling response
             String response = reader.readLine();
+            String msgtype=getMsgType(response);
+            if(msgtype.equals("requestaccepted")){
+                msg = "msg(loaddone,request,webgui,coldstorageservice,loaddone(arg),1)\n";
+                 writer.write(msg);
+                writer.flush();
+                  response = reader.readLine();
+                 msgtype=getMsgType(response);
+            }
             model.addAttribute("msgtype", getMsgType(response));
             return "insertticket";
+
+            
+
         } catch (IOException e) {
             e.printStackTrace();
             return "error";

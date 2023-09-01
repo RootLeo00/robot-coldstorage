@@ -28,7 +28,7 @@ class Controllerled ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t028",targetState="handlerobotstate",cond=whenEvent("robotstate"))
+					 transition(edgeName="t029",targetState="handlerobotstate",cond=whenEvent("robotstate"))
 				}	 
 				state("handlerobotstate") { //this:State
 					action { //it:State
@@ -60,7 +60,7 @@ class Controllerled ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t029",targetState="handlerobotstate",cond=whenEvent("robotstate"))
+					 transition(edgeName="t030",targetState="handlerobotstate",cond=whenEvent("robotstate"))
 				}	 
 			}
 		}

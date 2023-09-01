@@ -88,8 +88,12 @@ QActor coldstorageservice context ctxcoldstorageservice{
 	   	}  
 	   	Transition t0 whenRequest storefood -> askhowmanykgoccupied
 	    			whenRequest sendticket-> checkforticketexpired
-	    			whenMsg pickupindoordone-> sendchargetaken
+	    			whenRequest loaddone-> waitingtransporttrolley
 	    			whenReply depositactionended -> updatecoldstorage
+	    State waitingtransporttrolley{
+	    	
+	    }
+	    Transition t10 whenMsg pickupindoordone-> sendchargetaken
 	  	
 	  	///STOREFOOD REQUEST MANAGEMENT/////////////////
 	  	State askhowmanykgoccupied{ 
@@ -264,7 +268,7 @@ QActor transporttrolley context ctxcoldstorageservice{
 	discardMsg Off
 	//try to engage basicrobot on startup
     println("${name} |  request engage") color magenta
-    request basicrobot -m engage : engage( transporttrolley , 125)
+    request basicrobot -m engage : engage( transporttrolley , 330)
   	}
    	Transition t0 whenReply engagedone    -> waitforcommands
                 whenReply engagerefused -> waitrobotfree

@@ -44,8 +44,8 @@ class Sonar ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t024",targetState="handlesonardata",cond=whenEvent("sonardata"))
-					transition(edgeName="t025",targetState="handleobstacle",cond=whenEvent("obstacle"))
+					 transition(edgeName="t025",targetState="handlesonardata",cond=whenEvent("sonardata"))
+					transition(edgeName="t026",targetState="handleobstacle",cond=whenEvent("obstacle"))
 				}	 
 				state("handlesonardata") { //this:State
 					action { //it:State

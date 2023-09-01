@@ -35,8 +35,17 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					}	 	 
 					 transition(edgeName="t00",targetState="askhowmanykgoccupied",cond=whenRequest("storefood"))
 					transition(edgeName="t01",targetState="checkforticketexpired",cond=whenRequest("sendticket"))
-					transition(edgeName="t02",targetState="sendchargetaken",cond=whenDispatch("pickupindoordone"))
+					transition(edgeName="t02",targetState="waitingtransporttrolley",cond=whenRequest("loaddone"))
 					transition(edgeName="t03",targetState="updatecoldstorage",cond=whenReply("depositactionended"))
+				}	 
+				state("waitingtransporttrolley") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t104",targetState="sendchargetaken",cond=whenDispatch("pickupindoordone"))
 				}	 
 				state("askhowmanykgoccupied") { //this:State
 					action { //it:State
@@ -51,7 +60,7 @@ class Coldstorageservice ( name: String, scope: CoroutineScope  ) : ActorBasicFs
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="checkifthereisenoughspace",cond=whenReply("kgavailable"))
+					 transition(edgeName="t05",targetState="checkifthereisenoughspace",cond=whenReply("kgavailable"))
 				}	 
 				state("checkifthereisenoughspace") { //this:State
 					action { //it:State
